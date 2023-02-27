@@ -16,7 +16,8 @@ Reducing food waste one buffet at a time
 <img src="ReadmeFiles\overview_new.png">
 
 # Set-up Instructions
-1. clone this repo :)
+1. Clone this repo :)
+2. For those working on the backend and using FastAPI, please give the `/backend/fastapi_template/README.md` a good read.
 
 # Frameworks and Databases Utilised
 **Services and UI**

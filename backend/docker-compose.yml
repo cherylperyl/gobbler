@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  fastapi-template-network:
+    driver: bridge
+
+services:
+  fastapi-template:
+    build:
+      context: ./fastapi_template
+      dockerfile: Dockerfile
+    image: fastapi-template
+    container_name: fastapi-template
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      PYTHONPATH: ${PYTHONPATH}
+      DB_SERVER: host.docker.internal
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DATABASE: ${DATABASE}
+    networks:
+      - fastapi-template-network
