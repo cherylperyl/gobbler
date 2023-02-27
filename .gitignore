@@ -133,3 +133,6 @@ dmypy.json
 #databaseFile
 
 /cartMs/mongoDB/database
+
+#vscode
+/.vscode
