@@ -1,22 +1,28 @@
-import logging
-from fastapi import FastAPI, Request, status, Depends
+from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 import stripe 
 from os import environ
 
-from stripe_model import StripeEvent
-from crud import get_all_users, create_user, get_user
-import schema 
-import models
-from db import SessionLocal, engine
+from app.crud import get_all_users, create_user, get_user
+import app.schemas as schemas
+import app.models as models
+from app.database import SessionLocal, engine
 
-models.Base.metadata.create_all(bind=engine)
 stripe.api_key = environ.get("stripe_api_key")
 
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+
+# catch all exceptions and return error message
+@app.exception_handler(Exception)
+async def all_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500, content={"message": request.url.path + " " + str(exc)}
+    )
+
 
 def get_db():
     db = SessionLocal()
@@ -24,6 +30,14 @@ def get_db():
         yield db
     finally:   
         db.close()
+
+@app.get("/ping")
+def ping():
+    """
+    Health check endpoint
+    """
+    return {"ping": "pong!"}
+
 
 @app.get("/users")
 async def get_users(db: Session = Depends(get_db)):
@@ -59,24 +73,17 @@ async def create_checkout_session():
 
 # stripe calls this webhook. when payment is successful, save the payment data 
 @app.post("/webhook")
-async def webhook_received(event: StripeEvent, db: Session = Depends(get_db)): 
+async def webhook_received(event: schemas.StripeEvent, db: Session = Depends(get_db)): 
 
     webhook_secret = ""  # TODO - set up secret validation for webhook to filter out spoofed requests 
 
     if event.type == "customer.subscription.created":
     #     # create db entries 
         print(f"Subscription # {event.data.object['id']} created for stripe id {event.data.object['customer']}")
-        user = schema.UserCreate(
+        user = schemas.UserCreate(
             stripe_user_id = event.data.object["customer"],
             subscription = event.data.object['id']
             )
         print(create_user(db = db, user=user))
     
     return 200
-
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-	logging.error(f"{request}: {exc_str}")
-	content = {'status_code': 10422, 'message': exc_str, 'data': None}
-	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
