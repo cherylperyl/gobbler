@@ -1,3 +1,8 @@
+### `/.env.example`
+
+Make a copy of this file and rename it `/.env`. Populate as necessary. This is the secure store of environment variables.
+**NEVER COMMIT ENVIRONMENT VARIABLES**. If you happen to accidentally commit, immediately ping the group so someone with know how can try to wipe it from git history.
+
 ### Rebuilding the Docker images
 
 If you have made changes to the Dockerfile, requirements.txt, or any other files used to build the Docker images, you will need to rebuild the images before you can run the application.
