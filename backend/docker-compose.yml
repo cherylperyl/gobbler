@@ -5,6 +5,23 @@ networks:
     driver: bridge
 
 services:
+  fastapi-template-mysql:
+    build:
+      context: ./fastapi_template/mysql
+      dockerfile: Dockerfile
+    container_name: fastapi-template-mysql
+    restart: always
+    ports:
+      - "8001:8001"
+    networks:
+      - fastapi-template-network
+    environment:
+      DATABASE: reservations
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./fastapi_template/mysql/data:/var/lib/mysql
+      - ./fastapi_template/mysql/logs:/var/log/mysql
+
   fastapi-template:
     build:
       context: ./fastapi_template
@@ -15,11 +32,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      PYTHONPATH: ${PYTHONPATH}
-      DB_SERVER: host.docker.internal
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DATABASE: ${DATABASE}
+      DB_SERVER: fastapi-template-mysql
+      DB_PORT: 8001
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: reservations
     networks:
       - fastapi-template-network
+    depends_on: 
+      - fastapi-template-mysql

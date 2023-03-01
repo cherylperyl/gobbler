@@ -49,14 +49,51 @@ This file contains the SQLAlchemy model class that is used to interact with the 
 This file contains the Pydantic model class that is used to type validate the objects used in endpoints, and in translation to SQLAlchemy models. This should mimic the SQLAlchemy model class, although there is a separate of attributes depending on the usage (CREATE, UPDATE, etc.) so as to allow things like optional values.
 **Edit as need be**
 
-### `/.env.example`
+### `/mysql`
 
-Make a copy of this file and rename it `/.env`. Populate as necessary. This is the secure store of environment variables.
-**NEVER COMMIT ENVIRONMENT VARIABLES**. If you happen to accidentally commit, immediately ping the group so someone with know how can try to wipe it from git history.
+This folder contains all the MySQL related files needed to boot a Docker MySQL instance.
+
+### `/mysql/conf.d/my.cnf`
+
+This file contains all the MySQL configurations
+**Edit the port as needed**
+
+### `/mysql/data`
+
+Just contains the directory for the data volume
+**No need to edit, do not add files in**
+
+### `/mysql/logs`
+
+Just contains the directory for the logs volume
+**No need to edit, do not add files in**
+
+### `/mysql/Dockerfile`
+
+This file contains the Docker definitions for MySQL.
+**Edit as need be**
+
+Update the exposed port to match `/mysql/conf.d/my.cnf` and the `docker-compose.yml`
+
+### `/mysql/setup.sql`
+
+This file contains the setup SQL statements for MySQL.
+**Edit as need be**
+
+Insert your create schema definition here.
+While the FastAPI app should auto create your tables based on the `models.py` file, you may also include the create table statement here if you want to add seed data
+```bash
+# e.g.
+CREATE TABLE reservations(
+    id INT NOT NULL PRIMARY KEY
+    user_id INT NOT NULL
+);
+INSERT INTO reservations.reservations VALUES (1, 123);
+```
 
 ### `/Dockerfile`
 
-This file contains Dockerfile definitions.
+This file contains Docker definitions for the FastAPI App.
 **Edit as need be**
 Please update the CMD port and make sure there's no clash.
 
