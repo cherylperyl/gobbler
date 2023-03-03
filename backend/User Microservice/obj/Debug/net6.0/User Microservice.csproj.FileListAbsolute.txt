@@ -1,0 +1,36 @@
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/appsettings.Development.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/appsettings.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/User Microservice
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/User Microservice.deps.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/User Microservice.runtimeconfig.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/User Microservice.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/User Microservice.pdb
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.OpenApi.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.csproj.AssemblyReference.cache
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.GeneratedMSBuildEditorConfig.editorconfig
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.AssemblyInfoInputs.cache
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.AssemblyInfo.cs
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.csproj.CoreCompileInputs.cache
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.MvcApplicationPartsAssemblyInfo.cs
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.MvcApplicationPartsAssemblyInfo.cache
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/staticwebassets.build.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/staticwebassets.development.json
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/scopedcss/bundle/User Microservice.styles.css
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.csproj.CopyComplete
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/refint/User Microservice.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.pdb
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/User Microservice.genruntimeconfig.cache
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/Debug/net6.0/ref/User Microservice.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.Extensions.Caching.Memory.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Npgsql.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Swashbuckle.AspNetCore.Annotations.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Humanizer.dll
+/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Design.dll
