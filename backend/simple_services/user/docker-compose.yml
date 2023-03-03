@@ -1,0 +1,52 @@
+version: '3.4'
+
+# This is the network that the containers will use to communicate with each other
+networks:
+  dev:
+    driver: bridge # Use the default bridge driver
+
+# This is the volume that the database will use to store its data
+volumes:
+  user_data:
+
+# This is the list of containers that will be created
+services:
+  
+  # User: The User microservice
+  user:
+    image: cherylperyl/user:1.0
+    depends_on:
+      - "user_db"
+    container_name: user-microservice
+    ports:
+        - "8081:80"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - ConnectionStrings__DefaultConnection=User Id=cherylperyl;Password=password;Server=user_db;Port=5432;Database=user_microservice;IntegratedSecurity=true;Pooling=true;
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - dev
+
+  # app_db: The database that the user microservice will use
+  user_db:
+    image: postgres:latest
+    container_name: user-db
+    environment:
+      POSTGRES_DB: user_microservice
+      POSTGRES_USER: cherylperyl
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5435:5432"
+    restart: always
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - dev
+#    healthcheck:
+#      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
