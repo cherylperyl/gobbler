@@ -955,11 +955,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/User Microservice.csproj",
+      "projectUniqueName": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/simple_services/user/User Microservice.csproj",
       "projectName": "User Microservice",
-      "projectPath": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/User Microservice.csproj",
+      "projectPath": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/simple_services/user/User Microservice.csproj",
       "packagesPath": "/Users/cherylperyl/.nuget/packages/",
-      "outputPath": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/User Microservice/obj/",
+      "outputPath": "/Users/cherylperyl/Documents/04 ESD/Project/gobbler/backend/simple_services/user/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/cherylperyl/.nuget/NuGet/NuGet.Config"
