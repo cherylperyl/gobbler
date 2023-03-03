@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "User_Microservice": {
+    "user": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

@@ -1,4 +1,4 @@
-namespace User_Microservice;
+namespace user;
 
 public class User
 {

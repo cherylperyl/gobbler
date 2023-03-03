@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using User_Microservice.Data;
+using user.Data;
 
-namespace User_Microservice.Controllers
+namespace user.Controllers
 
 {
     [Route("api/[controller]")]
