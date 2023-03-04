@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - ConnectionStrings__DefaultConnection=User Id=cherylperyl;Password=password;Server=user_db;Port=5432;Database=user_microservice;IntegratedSecurity=true;Pooling=true;
+      - ConnectionStrings__DefaultConnection=User Id=postgres;Password=postgres;Server=user_db;Port=5432;Database=user_microservice;IntegratedSecurity=true;Pooling=true;
       - ASPNETCORE_URLS=http://+:80
     networks:
       - dev
@@ -36,17 +36,17 @@ services:
     container_name: user-db
     environment:
       POSTGRES_DB: user_microservice
-      POSTGRES_USER: cherylperyl
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "5435:5432"
+      - "5432:5432"
     restart: always
     volumes:
       - user_data:/var/lib/postgresql/data
     networks:
       - dev
-#    healthcheck:
-#      test: [ "CMD", "pg_isready", "-U", "postgres" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

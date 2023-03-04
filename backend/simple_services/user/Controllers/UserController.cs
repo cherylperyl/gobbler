@@ -40,7 +40,7 @@ namespace user.Controllers
                 return Ok(await _context.Users.ToListAsync());
             }
                 
-            return BadRequest("User already exists in database.");
+            return BadRequest("User with user_id " + user.UserId.ToString() + " already exists in database.");
         }
         
         
@@ -50,7 +50,7 @@ namespace user.Controllers
         {
             var user = await _context.Users.FindAsync(user_id);
             if (user == null)
-                return BadRequest("User not found.");
+                return BadRequest("User with user_id " + user_id.ToString() + " not found.");
             return Ok(user);
         }
         
@@ -61,7 +61,7 @@ namespace user.Controllers
         {
             var user = await _context.Users.FindAsync(request.UserId);
             if (user == null)
-                return BadRequest("User not found.");
+                return BadRequest("User with user_id " + request.UserId.ToString() + " not found.");
             
             user.IsPremium = request.IsPremium;
             user.Username = request.Username;
@@ -82,7 +82,7 @@ namespace user.Controllers
         {
             var user = await _context.Users.FindAsync(user_id);
             if (user == null)
-                return BadRequest("User not found.");
+                return BadRequest("User with user_id " + user_id.ToString() + "not found.");
             
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
@@ -98,7 +98,7 @@ namespace user.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u=>u.Email == email);
             if (user == null)
-                return BadRequest("User with email (" + email + ") not found.");
+                return BadRequest("User with email " + email + " not found.");
             return Ok(user);
         }
     }
