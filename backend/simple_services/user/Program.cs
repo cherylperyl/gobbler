@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using User_Microservice.Data;
+using user.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,14 +24,19 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 
 var app = builder.Build();
 
+await using var scope = app.Services.CreateAsyncScope();
+await using var db = scope.ServiceProvider.GetService<DataContext>();
+await db.Database.MigrateAsync();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
