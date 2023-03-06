@@ -1,0 +1,12 @@
+Notification Service->Premium Mobile User Interface:Send push notification
+Premium Mobile User Interface->Premium Mobile User Interface:Click on push notification
+Premium Mobile User Interface->API Gateway:User sends view post details request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward view post request
+Post Management->Post Service:Get one post data
+Post Service->Post Management:Return post data
+Post Management->Reservation Service:Get all reservations of post
+Reservation Service->Post Management:Return reservation data for post
+Post Management->API Gateway:Return post details
+API Gateway->Premium Mobile User Interface:Return post details

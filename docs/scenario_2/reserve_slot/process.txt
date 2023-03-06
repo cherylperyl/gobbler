@@ -1,0 +1,10 @@
+Mobile User Interface->API Gateway: User sends reserve slot for post request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Reservation Management:Forward reserve slot for post request
+Reservation Management->Post Service:Get total reservation slots
+Post Service->Reservation Management:Return total reservation slots
+Reservation Management->Reservation Service:Create new reservation slot
+Reservation Service->Reservation Management:Return new reservation slot success
+Reservation Management->API Gateway:Return reservation slot success
+API Gateway->Mobile User Interface:Return reservation slot success

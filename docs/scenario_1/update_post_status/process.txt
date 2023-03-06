@@ -1,0 +1,9 @@
+Mobile User Interface->API Gateway: User sends update post to expired request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward update post request
+Post Management->Post Service:Update post status to expired
+Post Service->Post Service:Checks if request user is post owner
+Post Service->Post Management:Return updated post success
+Post Management->API Gateway:Return updated post success
+API Gateway->Mobile User Interface:Return updated post success

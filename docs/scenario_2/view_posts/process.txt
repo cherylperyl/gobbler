@@ -1,0 +1,12 @@
+Mobile User Interface->API Gateway: User sends view all posts request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward view all posts request
+Post Management->Location Service:Get user location
+Location Service->Post Management:Return user location
+Post Management->Post Service:Get all posts within range of location
+Post Service->Post Management:Return all posts within range of location
+Post Management->Reservation Service: Get number of reservations of each post
+Reservation Service->Post Management: Return number of reservations of each post
+Post Management->API Gateway:Return all post and reservation details
+API Gateway->Mobile User Interface:Return post details

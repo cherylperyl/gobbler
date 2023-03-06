@@ -1,0 +1,14 @@
+Mobile User Interface->API Gateway: User sends view post details request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward view post request
+Post Management->Post Service:Get one post data
+Post Service->Post Management:Return post data
+Post Management->Reservation Service:Get all reservations of post
+Reservation Service->Post Management:Return reservation data for post
+alt user is post creator
+	Post Management->User Service:Get all users reserved for post
+	User Service->Post Management:Return user data for post
+end
+Post Management->API Gateway:Return post details
+API Gateway->Mobile User Interface:Return post details
