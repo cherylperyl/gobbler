@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, TIMESTAMP, String, DECIMAL, DATETIME
+from sqlalchemy import Column, Integer, TIMESTAMP, String, DECIMAL, DATETIME, BOOLEAN
 from database import Base
 
 
@@ -15,3 +15,4 @@ class Post(Base):
     time_end = Column(DATETIME, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False)
     updated_at = Column(TIMESTAMP, nullable=True)
+    is_available = Column(BOOLEAN, nullable=False)

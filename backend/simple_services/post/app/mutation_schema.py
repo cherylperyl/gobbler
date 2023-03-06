@@ -15,3 +15,10 @@ class Mutation:
         if db_post is None:
             raise Exception("Post not found")
         return crud.update_post(db_post, post)
+    
+    @strawberry.mutation
+    def delete_post(self, post_id: int) -> Post:
+        db_post = crud.get_post_by_post_id(post_id)
+        if db_post is None:
+            raise Exception("Post not found")
+        return crud.delete_post(db_post)

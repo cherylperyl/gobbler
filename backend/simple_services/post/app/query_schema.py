@@ -20,3 +20,11 @@ class Query:
         """
         post = crud.get_post_by_post_id(post_id)
         return post
+    
+    @strawberry.field
+    def nearby_posts(self, lat: float, long: float) -> List[Post]:
+        """
+        Get nearby posts by lat, long
+        """
+        filtered_posts = crud.get_nearby_posts(lat, long)
+        return filtered_posts

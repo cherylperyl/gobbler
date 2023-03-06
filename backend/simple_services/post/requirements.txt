@@ -1,5 +1,6 @@
 asyncmy==0.27
 fastapi==0.89.1
+haversine==2.8.0
 mysql-connector-python==8.0.32
 pydantic==1.10.4
 python-dotenv==0.21.0
