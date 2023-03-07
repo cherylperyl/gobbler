@@ -82,4 +82,10 @@ public class UserAccount {
         this.role = role;
     }
 
+    public ArrayList<String> getRoles() {
+        ArrayList<String> roles = new ArrayList<String>();
+        roles.add(this.role);
+        return roles;
+    }
+
 }

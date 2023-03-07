@@ -33,7 +33,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             UserAccount creds = new ObjectMapper()
                 .readValue(request.getInputStream(), UserAccount.class);
-            System.out.println(creds);
 
             return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -48,9 +47,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
+
+        String [] roles = auth.getAuthorities().stream().map(a -> a.getAuthority()).toArray(String[]::new);
+
         String token = JWT.create()
             .withSubject(((User) auth.getPrincipal()).getUsername())
-            .withClaim("role", auth.getAuthorities().iterator().next().getAuthority())
+            .withArrayClaim("USER_ROLES", roles)
             .withExpiresAt(new Date(System.currentTimeMillis() + AuthenticationConfigConstants.EXPIRATION_TIME))
             .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
         response.addHeader(AuthenticationConfigConstants.HEADER_STRING, AuthenticationConfigConstants.TOKEN_PREFIX + token);

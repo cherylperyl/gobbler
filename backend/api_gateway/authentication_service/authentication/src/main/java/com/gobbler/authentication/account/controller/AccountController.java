@@ -46,9 +46,4 @@ public class AccountController {
         System.out.println("Authenticated user email: " + email);
         return userOps.readUserByEmail(email);
     }
-    // @GetMapping("/user_profile")
-    // public UserAccount getUserProfile(@RequestParam("email") String email) {
-    //     return userOps.readUserByEmail(email);
-    // }
-
 }

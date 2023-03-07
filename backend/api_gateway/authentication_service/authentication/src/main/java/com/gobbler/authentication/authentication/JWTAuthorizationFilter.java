@@ -6,15 +6,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.FilterChain;
@@ -44,23 +41,21 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
         if (token != null) {
             // parse the token.
-            DecodedJWT verify = JWT.require(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()))
+            DecodedJWT decodedToken = JWT.require(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()))
                 .build()
                 .verify(token.replace(AuthenticationConfigConstants.TOKEN_PREFIX, ""));
 
-            String username = verify.getSubject();
-            String role = verify.getClaim("role").asString();
-            System.out.println(role);
-
-            if (username != null) {
-                return new UsernamePasswordAuthenticationToken(username, null, getAuthorities(role));
+            if (decodedToken != null) {
+                List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+                List<String> userRoleClaim = decodedToken.getClaim("USER_ROLES").asList(String.class);
+                for (String role : userRoleClaim) {
+                    authorities.add(new SimpleGrantedAuthority(role));
+                }
+                return new UsernamePasswordAuthenticationToken(decodedToken.getSubject(), null, authorities);
             }
             return null;
         }
         return null;
     }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(String role) {
-        return Arrays.asList(new SimpleGrantedAuthority(role));
-    }
+    
 }

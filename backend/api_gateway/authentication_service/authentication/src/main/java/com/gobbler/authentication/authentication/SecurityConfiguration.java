@@ -23,8 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/h2-console/**").permitAll().and() // permit h2-console
                 .authorizeRequests().antMatchers(HttpMethod.POST, AuthenticationConfigConstants.SIGN_UP_URL).permitAll().and() // permit signup URL on POST
                 .authorizeRequests().antMatchers(HttpMethod.GET, AuthenticationConfigConstants.HEALTH_CHECK_URL).permitAll().and() // permit signup URL on POST
-                .authorizeRequests().antMatchers("/api/v1/**").hasAnyAuthority("ROLE_USER")
-                .anyRequest().authenticated().and()
+                .authorizeRequests().anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // // this disables session creation on Spring Security
