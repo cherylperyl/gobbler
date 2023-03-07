@@ -1,0 +1,17 @@
+Mobile User Interface->API Gateway: User sends subscribe request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->User Management:Forward subscribe request
+User Management->Payment Service:Create subscription
+Payment Service->Stripe API:Create subscription
+Stripe API->Payment Service:Return redirect URL
+Payment Service->User Management:Return redirect URL
+User Management->Mobile User Interface:Return redirect URL
+Mobile User Interface->Stripe Interface:User enters payment details
+Stripe Interface->Mobile User Interface:Return payment success
+Stripe Interface->API Gateway:Send webhook for payment success
+API Gateway->User Management:Forward webhook for payment success
+User Management->User Service:Update user to premium status
+User Service->User Management:Return updated user
+User Management->API Gateway:Return subscription success
+API Gateway->Mobile User Interface:Return subscription success

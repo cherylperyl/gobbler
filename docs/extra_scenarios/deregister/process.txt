@@ -1,0 +1,8 @@
+Mobile User Interface->API Gateway: User sends deregister slot for post request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Reservation Management:Forward deregister slot for post request
+Reservation Management->Reservation Service:Delete reservation slot
+Reservation Service->Reservation Management:Return delete reservation slot success
+Reservation Management->API Gateway:Return deregister slot success
+API Gateway->Mobile User Interface:Return deregister slot success

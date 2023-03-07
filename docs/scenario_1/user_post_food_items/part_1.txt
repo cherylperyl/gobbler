@@ -1,0 +1,10 @@
+Mobile User Interface->API Gateway:User sends create post request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward post request with data
+Post Management->Post Service:Create post with data
+Post Service->Post Management:Returns created post object
+Post Management->New Post Queue:Send post object message
+New Post Queue->Notification Management:Consume post object message
+Post Management->API Gateway:Return post object
+API Gateway->Mobile User Interface:Return post object
