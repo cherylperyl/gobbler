@@ -18,7 +18,6 @@ Use browser to access http://localhost:8081/swagger/index.html to view and test 
 | username         | string   |
 | dateCreated      | DateTime |
 | lastUpdated      | DateTime |
-| creditCardNumber | string   |
 | email            | string   |
 
 ## Endpoints

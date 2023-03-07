@@ -11,9 +11,7 @@ public class User
     public DateTime DateCreated { get; set; }
     
     public DateTime LastUpdated { get; set; }
-    
-    public string CreditCardNumber { get; set; }
-    
+
     public string Email { get; set; }
     
 }
