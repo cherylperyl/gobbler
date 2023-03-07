@@ -1,7 +1,5 @@
-Notification Management->Location Service:Fetch all users within range of new post
-Location Service->Notification Management:Return all users within range
-Notification Management->User Service:Fetch is_premium status of each user
-Notification Management->Notification Management:Filter out non-premium users
+Notification Management->User Service:Fetch all premium users
+User Service->Notification Management:Return all premium users
 Notification Management->User Notification Queue:Send queue message of new post object to premium user queues
 User Notification Queue->Notification Service:New post object in premium user queue consumed
 Notification Service->Premium User Mobile:Send push notification
