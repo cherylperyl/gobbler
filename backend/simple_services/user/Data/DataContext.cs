@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace User_Microservice.Data;
+namespace user.Data;
 
 public class DataContext : DbContext
 {
