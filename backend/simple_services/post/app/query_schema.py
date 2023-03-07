@@ -1,7 +1,7 @@
 import strawberry
-from post_scalar import Post
+from app.post_scalar import Post
 from typing import List
-import crud
+from . import crud
 
 @strawberry.type
 class Query:

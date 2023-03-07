@@ -1,6 +1,6 @@
 import strawberry
-from post_scalar import PostInput, Post, PostUpdate
-import crud
+from app.post_scalar import PostInput, Post, PostUpdate
+import app.crud as crud
 
 @strawberry.type
 class Mutation:

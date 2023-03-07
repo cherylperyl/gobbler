@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 
-
-import models
-from database import engine
-from query_schema import Query
-from mutation_schema import Mutation
+from app import models
+from app.database import engine
+from app.query_schema import Query
+from app.mutation_schema import Mutation
 
 from fastapi.responses import JSONResponse
 
@@ -19,7 +18,6 @@ models.Base.metadata.create_all(bind=engine)
 
 # create FastAPI app
 app = FastAPI()
-
 
 # catch all exceptions and return error message
 @app.exception_handler(Exception)

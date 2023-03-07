@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 from typing import Any, Dict, Union, List
 from datetime import datetime
 from fastapi.encoders import jsonable_encoder
-from database import SessionLocal
+from app.database import SessionLocal
 from haversine import haversine
 
 
-import models, post_scalar
+import app.models as models, app.post_scalar as post_scalar
 
 
 def get_all() -> List[models.Post]:

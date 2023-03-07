@@ -1,1 +1,1 @@
-CREATE SCHEMA reservations;
+CREATE SCHEMA posts;

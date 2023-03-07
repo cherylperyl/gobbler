@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, TIMESTAMP, String, DECIMAL, DATETIME, BOOLEAN
-from database import Base
+from app.database import Base
 
 
 class Post(Base):
