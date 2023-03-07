@@ -80,6 +80,17 @@ def get_reservations_by_post_id(post_id: int, db: Session = Depends(get_db)):
     return reservations
 
 
+@app.get("/reservations/slots/post/{post_id}")
+def get_reservations_by_post_id(post_id: int, db: Session = Depends(get_db)):
+    """
+    Get number of reservations by post_id
+    """
+    reservations = crud.get_reservations_by_post_id(post_id, db)
+    if not reservations:
+        raise HTTPException(status_code=404, detail="No reservations found")
+    return len(reservations)
+
+
 @app.post("/reservations", response_model=schemas.Reservation)
 def create_reservation(
     reservation: schemas.ReservationCreate, db: Session = Depends(get_db)
