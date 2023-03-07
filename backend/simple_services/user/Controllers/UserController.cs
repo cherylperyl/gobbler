@@ -67,7 +67,6 @@ namespace user.Controllers
             user.Username = request.Username;
             user.DateCreated = request.DateCreated;
             user.LastUpdated = request.LastUpdated;
-            user.CreditCardNumber = request.CreditCardNumber;
             user.Email = request.Email;
             
             await _context.SaveChangesAsync();
@@ -82,7 +81,7 @@ namespace user.Controllers
         {
             var user = await _context.Users.FindAsync(user_id);
             if (user == null)
-                return BadRequest("User with user_id " + user_id.ToString() + "not found.");
+                return BadRequest("User with user_id " + user_id.ToString() + " not found.");
             
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
