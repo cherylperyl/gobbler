@@ -2,9 +2,11 @@
 Stores user data. See [Database Schema](#database-schema) to see what details are stored.
 ___
 ## To run
-`docker compose up`
+`docker compose up --build`
 
-Use browser to access http://localhost:8081/swagger/index.html to view and test the available endpoints.
+Use browser to access http://localhost:8081/swagger/index.html to view and test the available endpoints.  
+  
+To shut down: `docker compose down`
 
 ## Todos
 - put this on a server
