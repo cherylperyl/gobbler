@@ -1,0 +1,17 @@
+version: "3.8"
+
+services: 
+  post:
+    image: ebilsanta/post:1.0
+    restart: always
+    ports:
+      - "5001:8000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_SERVER=host.docker.internal
+      - DATABASE=posts
