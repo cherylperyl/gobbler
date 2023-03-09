@@ -14,4 +14,5 @@ Make all queries to at http://localhost:5001/graphql/
 ## To-do
 1. Implement image upload to cloud 
 2. Change get_nearby_posts to get_posts_sorted_by_proximity
+3. Add location_description String field to Posts (since long/lat is not descriptive enough)
 
