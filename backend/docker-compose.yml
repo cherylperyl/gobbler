@@ -5,6 +5,38 @@ networks:
     driver: bridge
 
 services:
+  reservation-mysql:
+    build:
+        context: ./simple_services/reservation/mysql
+        dockerfile: Dockerfile
+    container_name: reservation-mysql
+    restart: always
+    ports:
+      - "5004:5004"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./simple_services/reservation/mysql/data:/var/lib/mysql
+      - ./simple_services/reservation/mysql/logs:/var/log/mysql
+
+  reservation-simple-ms:
+      build:
+        context: ./simple_services/reservation
+        dockerfile: Dockerfile
+      image: reservation-simple-ms
+      container_name: reservation-simple-ms
+      restart: always
+      ports:
+        - "5003:5003"
+      environment:
+        DB_SERVER: reservation-mysql
+        DB_PORT: 5004
+        DB_USER: ${DATABASE_USER}
+        DB_PASSWORD: ${DATABASE_PASSWORD}
+        DATABASE: reservations
+      depends_on: 
+        - reservation-mysql
+
   fastapi-template-mysql:
     build:
       context: ./fastapi_template/mysql

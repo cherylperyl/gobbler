@@ -80,7 +80,7 @@ def get_reservations_by_post_id(post_id: int, db: Session = Depends(get_db)):
     return reservations
 
 
-@app.get("/reservations/slots/post/{post_id}")
+@app.get("/reservations/post/slots/{post_id}")
 def get_reservations_by_post_id(post_id: int, db: Session = Depends(get_db)):
     """
     Get number of reservations by post_id
