@@ -14,3 +14,57 @@ services:
     protocols:
       - http
       - https
+- name: login
+  host: authentication-service-ms
+  port: 5401
+  path: "/login"
+  protocol: http
+  routes:
+  - name: login
+    paths:
+      - /login
+    protocols:
+      - http
+      - https
+- name: authentication
+  host: authentication-service-ms
+  port: 5401
+  path: "/authentication"
+  protocol: http
+  routes:
+  - name: authentication
+    paths:
+      - /api/v1/account
+    protocols:
+      - http
+      - https
+
+# plugins:
+# - name: cors
+#   config: 
+#     origins:
+#     - "*"
+#     methods:
+#     - HEAD
+#     - GET
+#     - POST
+#     - PUT
+#     - PATCH
+#     - DELETE
+#     headers:
+#     - Access-Control-Allow-Origin
+#     - Accept
+#     - Accept-Version
+#     - Content-Length
+#     - Content-MD5
+#     - Content-Type
+#     - Date
+#     - Authorization
+#     exposed_headers:
+#     - Authorization
+#     credentials: true
+#     max_age: 3600
+#     preflight_continue: false
+- name: authentication_plugin
+  config:
+    url: http://172.17.0.1:5401/api/v1/account/me
