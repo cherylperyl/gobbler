@@ -1,8 +1,7 @@
 version: "3.8"
 
 volumes:
-  pgdata: 
-  kongadata:
+  authentication-service-pgdata:
 
 networks:
   gobbler-net:
@@ -37,6 +36,44 @@ services:
       - "8003:8003"
       - "8004:8004"
 
+  authentication-service-postgres:
+    image: postgres:13
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5400:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready -U ${DATABASE_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - authentication-service-pgdata:/var/lib/postgresql/data
+
+  authentication-service:
+    build:
+      context: ./api_gateway/authentication_service/authentication
+      dockerfile: Dockerfile
+    image: authentication-service
+    container_name: authentication-service
+    restart: always
+    environment:
+      DATABASE_SERVER: authentication-service-postgres
+      DATABASE_PORT: 5432
+      POSTGRES_USERNAME: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
+    ports:
+      - "5401:5401"
+    networks:
+      - gobbler-net
+    depends_on: 
+      - authentication-service-postgres
+
   fastapi-template-mysql:
     build:
       context: ./fastapi_template/mysql
@@ -64,7 +101,7 @@ services:
     environment:
       DB_SERVER: fastapi-template-mysql
       DB_PORT: 8081
-      DB_USER: ${DATABASE_USER}
+      DB_USER: ${DATABASE_USERNAME}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: reservations
     networks:
