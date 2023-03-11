@@ -1,0 +1,16 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- name: fastapi-template
+  host: fastapi-template-ms
+  port: 8080
+  path: "/reservations"
+  protocol: http
+  routes:
+  - name: fastapi-template
+    paths:
+      - /reservations
+    protocols:
+      - http
+      - https

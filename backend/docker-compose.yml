@@ -1,10 +1,42 @@
 version: "3.8"
 
+volumes:
+  pgdata: 
+  kongadata:
+
 networks:
-  fastapi-template-network:
+  gobbler-net:
     driver: bridge
 
 services:
+  kong:
+    build:
+      context: ./api_gateway/kong
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+      - "8002:8002"
+      - "8445:8445"
+      - "8003:8003"
+      - "8004:8004"
+
   fastapi-template-mysql:
     build:
       context: ./fastapi_template/mysql
@@ -12,9 +44,9 @@ services:
     container_name: fastapi-template-mysql
     restart: always
     ports:
-      - "8001:8001"
+      - "8081:8081"
     networks:
-      - fastapi-template-network
+      - gobbler-net
     environment:
       DATABASE: reservations
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
@@ -29,15 +61,13 @@ services:
     image: fastapi-template
     container_name: fastapi-template
     restart: always
-    ports:
-      - "8000:8000"
     environment:
       DB_SERVER: fastapi-template-mysql
-      DB_PORT: 8001
+      DB_PORT: 8081
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: reservations
     networks:
-      - fastapi-template-network
+      - gobbler-net
     depends_on: 
       - fastapi-template-mysql
