@@ -14,9 +14,9 @@ public class AuthenticationConfigConstants {
 
     public static final String HEADER_STRING = "Authorization";
 
-    public static final String SIGN_UP_URL = "/api/v1/account/create";
+    public static final String SIGN_UP_URL = "/account/create";
 
-    public static final String HEALTH_CHECK_URL = "/api/v1/account/ping";
+    public static final String HEALTH_CHECK_URL = "/account/ping";
 
     @Value("${authentication.config.token.secret}")
     public void setDatabase(String secret) {

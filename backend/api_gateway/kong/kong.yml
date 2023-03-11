@@ -3,7 +3,7 @@ _transform: true
 
 services:
 - name: fastapi-template
-  host: fastapi-template-ms
+  host: fastapi-template # this name must be the same as the container name
   port: 8080
   path: "/reservations"
   protocol: http
@@ -15,7 +15,7 @@ services:
       - http
       - https
 - name: login
-  host: authentication-service-ms
+  host: authentication-service
   port: 5401
   path: "/login"
   protocol: http
@@ -26,45 +26,48 @@ services:
     protocols:
       - http
       - https
-- name: authentication
-  host: authentication-service-ms
+- name: account
+  host: authentication-service
   port: 5401
-  path: "/authentication"
+  path: "/account"
   protocol: http
   routes:
-  - name: authentication
+  - name: account
     paths:
-      - /api/v1/account
+      - /account
     protocols:
       - http
       - https
 
-# plugins:
-# - name: cors
-#   config: 
-#     origins:
-#     - "*"
-#     methods:
-#     - HEAD
-#     - GET
-#     - POST
-#     - PUT
-#     - PATCH
-#     - DELETE
-#     headers:
-#     - Access-Control-Allow-Origin
-#     - Accept
-#     - Accept-Version
-#     - Content-Length
-#     - Content-MD5
-#     - Content-Type
-#     - Date
-#     - Authorization
-#     exposed_headers:
-#     - Authorization
-#     credentials: true
-#     max_age: 3600
-#     preflight_continue: false
+plugins:
+- name: cors
+  config: 
+    origins:
+    - "*"
+    methods:
+    - HEAD
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    headers:
+    - Access-Control-Allow-Origin
+    - Accept
+    - Accept-Version
+    - Content-Length
+    - Content-MD5
+    - Content-Type
+    - Date
+    - Authorization
+    exposed_headers:
+    - Authorization
+    credentials: true
+    max_age: 3600
+    preflight_continue: false
 - name: authentication_plugin
   config:
-    url: http://172.17.0.1:5401/api/v1/account/me
+    url: http://authentication-service:5401/account/me
+    public_paths:
+      - /login
+      - /account/create
