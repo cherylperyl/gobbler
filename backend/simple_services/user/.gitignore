@@ -690,8 +690,8 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
-#Migrations
-Migrations/
+##Migrations
+#Migrations/
 
 #Deployment packages
 deploy/
