@@ -1,49 +1,4 @@
-<div id="top"></div>
-
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-
-  <h3 align="center">IS442 G1T1 Backend</h3>
-
-</div>
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About the Project</a>
-    </li>
-    <li>
-      <a href="#prerequisites">Prerequisites</a>
-    </li>
-    <li>
-      <a href="#installation-and-set-up">Installation and Set-Up</a>
-    </li>
-      <ul>
-        <li><a href="#set-up-local-directories">Set-up Local Directories</a></li>
-      </ul>
-      <ul>
-        <li><a href="#choosing-the-environment-to-run">Choosing Environment Variables</a></li>
-      </ul>
-      <ul>
-        <li><a href="#provide-environment-variables">Provide Environment Variables</a></li>
-      </ul>
-    <li>
-      <a href="#running-the-application-locally">Running the Application Locally</a>
-    </li>
-    <li><a href="#authentication-via-jwt">Authentication via JWT</a></li>
-    <li><a href="#copyright">Copyright</a></li>
-  </ol>
-</details>
-
-## About the Project
-
-Java-based RESTful API built with Spring Boot. This API serves the computation logic needed for the Corporate Pass Application for Singapore Sports School and is optimized to be used by its [accompanying web application](https://github.com/IS442-202223T1/group-project-g1t1-frontend).
-
-<img src="./uml-class-diagram.png" alt="UML Class Diagram" width=500 />
-
+# Authentication Service
 ## Prerequisites
 
 - Recommended platform
@@ -56,12 +11,11 @@ Java-based RESTful API built with Spring Boot. This API serves the computation l
 
 ## Installation and Set-Up
 
-### Set-up Local Directories
+### Compile JAR file for Docker deployment
 
-Clone this repository or download to files to local directory. Open a terminal session and navigate to this application root (`.../group-project-g1t1-backend`)
-
-```bash
-cd /path/to/group-project-g1t1-backend
+Ensure that you have `mvn` installed. Run the script:
+```
+./scripts/compile.sh
 ```
 
 ### Choosing the Environment to run
@@ -102,7 +56,7 @@ Navigate to `.../group-project-g1t1-backend/cpa` and execute the following comma
 mvn spring-boot:run
 ```
 
-By default, the application runs on port 8080.
+By default, the application runs on port 5401.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -142,11 +96,5 @@ Alternatively, use `scripts/get_access_token.sh` to get an access token printed 
 
 Bearer XXX
 ```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Copyright
-
-Released under the Apache License 2.0. See the [LICENSE](https://github.com/codecentric/springboot-sample-app/blob/master/LICENSE) file.
 
 <p align="right">(<a href="#top">back to top</a>)</p>

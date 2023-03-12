@@ -8,11 +8,11 @@
 		<version>2.7.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.is442project</groupId>
-	<artifactId>cpa</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>com.gobbler</groupId>
+	<artifactId>authentication</artifactId>
+	<version>1.0.0</version>
 	<name>cpa</name>
-	<description>Backend application for Corporate Pass App</description>
+	<description>Authentication Service for Gobbler</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
