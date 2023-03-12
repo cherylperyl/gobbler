@@ -38,6 +38,9 @@ dependencies:
   provider: ^6.0.5
   shrine_images: ^2.0.2
   http: ^0.13.5
+  shared_preferences: ^2.0.18
+  flutter_dotenv: ^5.0.2
+  fluttertoast: ^8.2.1
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +64,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - .env
     - packages/shrine_images/0-0.jpg
     - packages/shrine_images/1-0.jpg
     - packages/shrine_images/2-0.jpg
