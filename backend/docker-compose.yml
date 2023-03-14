@@ -56,6 +56,7 @@ services:
       retries: 5
 
   authentication-service:
+    platform: linux/amd64
     build:
       context: ./api_gateway/authentication_service/authentication
       dockerfile: Dockerfile
@@ -77,6 +78,7 @@ services:
         condition: service_healthy
 
   reservation-mysql:
+    platform: linux/amd64
     build:
       context: ./simple_services/reservation/mysql
       dockerfile: Dockerfile
@@ -108,6 +110,7 @@ services:
       retries: 5
 
   reservation-simple-ms:
+    platform: linux/amd64
     build:
       context: ./simple_services/reservation
       dockerfile: Dockerfile
@@ -129,6 +132,7 @@ services:
         condition: service_healthy
 
   payment-mysql:
+    platform: linux/amd64
     build:
       context: ./simple_services/payment/mysql
       dockerfile: Dockerfile
@@ -183,6 +187,7 @@ services:
         condition: service_healthy
 
   fastapi-template-mysql:
+    platform: linux/amd64
     build:
       context: ./fastapi_template/mysql
       dockerfile: Dockerfile
@@ -216,6 +221,7 @@ services:
       retries: 5
 
   fastapi-template:
+    platform: linux/amd64
     build:
       context: ./fastapi_template
       dockerfile: Dockerfile
