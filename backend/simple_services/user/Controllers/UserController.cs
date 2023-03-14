@@ -32,7 +32,8 @@ namespace user.Controllers
         [SwaggerOperation(Summary = "Add new user. (No need pass user_id as it is auto-incremented in DB)")]
         public async Task<ActionResult<List<User>>> AddUser(User user)
         {
-            var user_db = await _context.Users.FindAsync(user.UserId);
+            var user_db = await _context.Users
+                .FirstOrDefaultAsync(u=>u.Email == user.Email);
             if (user_db == null)
             {
                 await _context.Users.AddAsync(user);
@@ -40,7 +41,7 @@ namespace user.Controllers
                 return Ok(user);
             }
                 
-            return BadRequest("User with user_id " + user.UserId.ToString() + " already exists in database.");
+            return BadRequest("User with email " + user.Email.ToString() + " already exists in database.");
         }
         
         
