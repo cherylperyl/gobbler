@@ -16,34 +16,34 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  late String? bearer;
+  String? bearer;
 
   void initState() {
     super.initState();
-    userData();
+    userData().then((value) {
+      setState(() {
+        bearer = value;
+      });
+    });
   }
-  void userData() async {
+  Future<String?> userData() async {
     final prefs = await SharedPreferences.getInstance();
     String? prefsBearer = prefs.getString('bearerToken');
-    if (prefsBearer != null) {
-      bearer = prefsBearer;
-    } else {
-      bearer = '';
-    }
+    return prefsBearer;
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text("Profile"),
+        middle: Text('Profile'),
       ),
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(20),
           child: ListView(
             children: [
-              bearer == '' ?
+              bearer == null ?
               CupertinoButton.filled(
                 child: Text("Log in"), 
                 onPressed: () {
@@ -53,12 +53,15 @@ class _ProfileTabState extends State<ProfileTab> {
                       builder: (context) => LoginPage()
                     )
                   );
+                  setState(() {});
                 })
               : CupertinoButton.filled(
                 child: Text("Log out"), 
                 onPressed: () {
                   UserRepository.logoutUser(); 
-                  setState((){});
+                  setState((){
+                    bearer = null;
+                  });
                   }
               )
             ],

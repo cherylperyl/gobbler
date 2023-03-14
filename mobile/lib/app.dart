@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/individual_post.dart';
 import 'posts_list_tab.dart';   
-import 'search_tab.dart';         
+import 'create_tab.dart';         
 import 'profile_tab.dart';  
 
 class CupertinoStoreApp extends StatelessWidget {
@@ -35,8 +35,8 @@ class CupertinoStoreHomePage extends StatelessWidget {
             label: 'Posts',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.search),
-            label: 'Search',
+            icon: Icon(CupertinoIcons.plus_app),
+            label: 'New',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.shopping_cart),
@@ -57,7 +57,7 @@ class CupertinoStoreHomePage extends StatelessWidget {
           case 1:
             returnValue = CupertinoTabView(builder: (context) {
               return const CupertinoPageScaffold(
-                child: SearchTab(),
+                child: CreateTab(),
               );
             });
             break;
