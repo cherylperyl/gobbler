@@ -29,7 +29,7 @@ namespace user.Controllers
         
         
         [HttpPost]
-        [SwaggerOperation(Summary = "Add new user")]
+        [SwaggerOperation(Summary = "Add new user. (No need pass user_id as it is auto-incremented in DB)")]
         public async Task<ActionResult<List<User>>> AddUser(User user)
         {
             var user_db = await _context.Users.FindAsync(user.UserId);
@@ -37,7 +37,7 @@ namespace user.Controllers
             {
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
-                return Ok(await _context.Users.ToListAsync());
+                return Ok(user);
             }
                 
             return BadRequest("User with user_id " + user.UserId.ToString() + " already exists in database.");
