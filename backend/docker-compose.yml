@@ -9,94 +9,261 @@ networks:
     driver: bridge
 
 services:
-  kong:
-    build:
-      context: ./api_gateway/kong
-      dockerfile: Dockerfile
-    image: kong
-    container_name: kong
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: kong.yml
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001
-      KONG_ADMIN_GUI_URL: http://localhost:8002
-    ports:
-      - "8000:8000"
-      - "8443:8443"
-      - "8001:8001"
-      - "8444:8444"
-      - "8002:8002"
-      - "8445:8445"
-      - "8003:8003"
-      - "8004:8004"
+  # kong:
+  #   build:
+  #     context: ./api_gateway/kong
+  #     dockerfile: Dockerfile
+  #   image: kong
+  #   container_name: kong
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     KONG_DATABASE: "off"
+  #     KONG_DECLARATIVE_CONFIG: kong.yml
+  #     KONG_PROXY_ACCESS_LOG: /dev/stdout
+  #     KONG_ADMIN_ACCESS_LOG: /dev/stdout
+  #     KONG_PROXY_ERROR_LOG: /dev/stderr
+  #     KONG_ADMIN_ERROR_LOG: /dev/stderr
+  #     KONG_ADMIN_LISTEN: 0.0.0.0:8001
+  #     KONG_ADMIN_GUI_URL: http://localhost:8002
+  #   ports:
+  #     - "8000:8000"
+  #     - "8443:8443"
+  #     - "8001:8001"
+  #     - "8444:8444"
+  #     - "8002:8002"
+  #     - "8445:8445"
+  #     - "8003:8003"
+  #     - "8004:8004"
 
-  authentication-service-postgres:
-    image: postgres:13
-    container_name: authentication-service-postgres
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "5400:5432"
-    volumes:
-      - authentication-service-pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready -U ${DATABASE_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # authentication-service-postgres:
+  #   image: postgres:13
+  #   container_name: authentication-service-postgres
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     POSTGRES_USER: ${DATABASE_USER}
+  #     POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  #   ports:
+  #     - "5400:5432"
+  #   volumes:
+  #     - authentication-service-pgdata:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready -U ${DATABASE_USER}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
-  authentication-service:
+  # authentication-service:
+  #   platform: linux/amd64
+  #   build:
+  #     context: ./api_gateway/authentication_service/authentication
+  #     dockerfile: Dockerfile
+  #   image: authentication-service
+  #   container_name: authentication-service
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     DATABASE_SERVER: authentication-service-postgres
+  #     DATABASE_PORT: 5432
+  #     POSTGRES_USERNAME: ${DATABASE_USER}
+  #     POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  #     AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
+  #   ports:
+  #     - "5401:5401"
+  #   depends_on:
+  #     authentication-service-postgres:
+  #       condition: service_healthy
+
+  # reservation-mysql:
+  #   platform: linux/amd64
+  #   build:
+  #     context: ./simple_services/reservation/mysql
+  #     dockerfile: Dockerfile
+  #   container_name: reservation-mysql
+  #   restart: always
+  #   ports:
+  #     - "5004:5004"
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     DATABASE: reservations
+  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+  #   volumes:
+  #     - ./simple_services/reservation/mysql/data:/var/lib/mysql
+  #     - ./simple_services/reservation/mysql/logs:/var/log/mysql
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD",
+  #         "mysqladmin",
+  #         "ping",
+  #         "-h",
+  #         "localhost",
+  #         "-u",
+  #         "${DATABASE_USER}",
+  #         "-p${DATABASE_PASSWORD}",
+  #       ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # reservation-simple-ms:
+  #   platform: linux/amd64
+  #   build:
+  #     context: ./simple_services/reservation
+  #     dockerfile: Dockerfile
+  #   image: reservation-simple-ms
+  #   container_name: reservation-simple-ms
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     DB_SERVER: reservation-mysql
+  #     DB_PORT: 5004
+  #     DB_USER: ${DATABASE_USER}
+  #     DB_PASSWORD: ${DATABASE_PASSWORD}
+  #     DATABASE: reservations
+  #   ports:
+  #     - "5003:5003"
+  #   depends_on:
+  #     reservation-mysql:
+  #       condition: service_healthy
+
+  # payment-mysql:
+  #   platform: linux/amd64
+  #   build:
+  #     context: ./simple_services/payment/mysql
+  #     dockerfile: Dockerfile
+  #   image: payment-mysql
+  #   container_name: payment-mysql
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+  #   ports:
+  #     - "5005:3306"
+  #   volumes:
+  #     - ./simple_services/payment/mysql/data:/var/lib/mysql
+  #     - ./simple_services/payment/mysql/logs:/var/log/mysql
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD",
+  #         "mysqladmin",
+  #         "ping",
+  #         "-h",
+  #         "localhost",
+  #         "-u",
+  #         "${DATABASE_USER}",
+  #         "-p${DATABASE_PASSWORD}",
+  #       ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # payment-simple-ms:
+  #   build:
+  #     context: ./simple_services/payment
+  #     dockerfile: Dockerfile
+  #   image: payment-simple-ms
+  #   container_name: payment-simple-ms
+  #   restart: always
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     DB_SERVER: payment-mysql
+  #     DB_PORT: 3306
+  #     DB_USER: ${DATABASE_USER}
+  #     DB_PASSWORD: ${DATABASE_PASSWORD}
+  #     DATABASE: payment
+  #     STRIPE_API_KEY: ${STRIPE_API_KEY}
+  #   ports:
+  #     - "5006:8080"
+  #   depends_on:
+  #     - "payment-mysql"
+  #       # - condition: service_healthy
+
+  # user-postgres:
+  #   image: postgres:13
+  #   container_name: user-postgres
+  #   restart: always
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     POSTGRES_DB: users
+  #     POSTGRES_USER: ${DATABASE_USER}
+  #     POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  #   healthcheck:
+  #     test: [ "CMD", "pg_isready -U ${DATABASE_USER}" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   volumes:
+  #     - user-service-pgdata:/var/lib/postgresql/data
+
+  # user-simple-ms:
+  #   build:
+  #     context: ./simple_services/user
+  #     dockerfile: Dockerfile
+  #   image: user-simple-ms
+  #   container_name: user-simple-ms
+  #   restart: always
+  #   ports:
+  #       - "8081:80"
+  #   environment:
+  #     - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
+  #     - ASPNETCORE_URLS=http://+:80
+  #   networks:
+  #     - gobbler-net
+  #   depends_on:
+  #     - "user-postgres"
+
+  post-simple-ms:
     platform: linux/amd64
     build:
-      context: ./api_gateway/authentication_service/authentication
+      context: ./simple_services/post
       dockerfile: Dockerfile
-    image: authentication-service
-    container_name: authentication-service
+    image: post-simple-ms
+    container_name: post-simple-ms
     restart: always
     networks:
       - gobbler-net
     environment:
-      DATABASE_SERVER: authentication-service-postgres
-      DATABASE_PORT: 5432
-      POSTGRES_USERNAME: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
+      DB_SERVER: post-mysql
+      DB_PORT: 8083
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: posts
     ports:
-      - "5401:5401"
+      - "8082:8082"
     depends_on:
-      authentication-service-postgres:
-        condition: service_healthy
-
-  reservation-mysql:
+      - "post-mysql"
+        # condition: service_healthy
+  
+  post-mysql:
     platform: linux/amd64
     build:
-      context: ./simple_services/reservation/mysql
+      context: ./simple_services/post/mysql
       dockerfile: Dockerfile
-    container_name: reservation-mysql
+    container_name: post-mysql
     restart: always
     ports:
-      - "5004:5004"
+      - "8083:8083"
     networks:
       - gobbler-net
     environment:
-      DATABASE: reservations
+      MYSQL_DATABASE: posts
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "5004:5004"
     volumes:
-      - ./simple_services/reservation/mysql/data:/var/lib/mysql
-      - ./simple_services/reservation/mysql/logs:/var/log/mysql
+      - ./simple_services/post/mysql/data:/var/lib/mysql
+      - ./simple_services/post/mysql/logs:/var/log/mysql
     healthcheck:
       test:
         [
@@ -112,120 +279,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  reservation-simple-ms:
-    platform: linux/amd64
-    build:
-      context: ./simple_services/reservation
-      dockerfile: Dockerfile
-    image: reservation-simple-ms
-    container_name: reservation-simple-ms
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      DB_SERVER: reservation-mysql
-      DB_PORT: 5004
-      DB_USER: ${DATABASE_USER}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE: reservations
-    ports:
-      - "5003:5003"
-    depends_on:
-      reservation-mysql:
-        condition: service_healthy
-
-  payment-mysql:
-    platform: linux/amd64
-    build:
-      context: ./simple_services/payment/mysql
-      dockerfile: Dockerfile
-    image: payment-mysql
-    container_name: payment-mysql
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "5005:3306"
-    volumes:
-      - ./simple_services/payment/mysql/data:/var/lib/mysql
-      - ./simple_services/payment/mysql/logs:/var/log/mysql
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "${DATABASE_USER}",
-          "-p${DATABASE_PASSWORD}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  payment-simple-ms:
-    build:
-      context: ./simple_services/payment
-      dockerfile: Dockerfile
-    image: payment-simple-ms
-    container_name: payment-simple-ms
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      DB_SERVER: payment-mysql
-      DB_PORT: 3306
-      DB_USER: ${DATABASE_USER}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE: payment
-      STRIPE_API_KEY: ${STRIPE_API_KEY}
-    ports:
-      - "5006:8080"
-    depends_on:
-      payment-mysql:
-        condition: service_healthy
-
-  user-postgres:
-    image: postgres:13
-    container_name: user-postgres
-    restart: always
-    ports:
-      - "5432:5432"
-    networks:
-      - gobbler-net
-    environment:
-      POSTGRES_DB: users
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    healthcheck:
-      test: [ "CMD", "pg_isready -U ${DATABASE_USER}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - user-service-pgdata:/var/lib/postgresql/data
-
-  user-simple-ms:
-    build:
-      context: ./simple_services/user
-      dockerfile: Dockerfile
-    image: user-simple-ms
-    container_name: user-simple-ms
-    restart: always
-    ports:
-        - "8081:80"
-    environment:
-      - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
-      - ASPNETCORE_URLS=http://+:80
-    networks:
-      - gobbler-net
-    depends_on:
-      - "user-postgres"
 
   # fastapi-template-mysql:
   #   build:
