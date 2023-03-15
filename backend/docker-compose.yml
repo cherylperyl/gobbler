@@ -2,6 +2,7 @@ version: "3.9"
 
 volumes:
   authentication-service-pgdata:
+  user-service-pgdata:
 
 networks:
   gobbler-net:
@@ -84,9 +85,12 @@ services:
       dockerfile: Dockerfile
     container_name: reservation-mysql
     restart: always
+    ports:
+      - "5004:5004"
     networks:
       - gobbler-net
     environment:
+      DATABASE: reservations
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5004:5004"
@@ -186,56 +190,74 @@ services:
       payment-mysql:
         condition: service_healthy
 
-  fastapi-template-mysql:
-    platform: linux/amd64
-    build:
-      context: ./fastapi_template/mysql
-      dockerfile: Dockerfile
-    image: fastapi-template-mysql
-    container_name: fastapi-template-mysql
+  user-postgres:
+    image: postgres:13
+    container_name: user-postgres
     restart: always
+    ports:
+      - "5432:5432"
     networks:
       - gobbler-net
     environment:
-      DATABASE: reservations
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./fastapi_template/mysql/data:/var/lib/mysql
-      - ./fastapi_template/mysql/logs:/var/log/mysql
+      POSTGRES_DB: users
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "${DATABASE_USER}",
-          "-p${DATABASE_PASSWORD}",
-        ]
+      test: [ "CMD", "pg_isready -U ${DATABASE_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - user-service-pgdata:/var/lib/postgresql/data
 
-  fastapi-template:
-    platform: linux/amd64
+  user-simple-ms:
     build:
-      context: ./fastapi_template
+      context: ./simple_services/user
       dockerfile: Dockerfile
-    image: fastapi-template
-    container_name: fastapi-template
+    image: user-simple-ms
+    container_name: user-simple-ms
     restart: always
+    ports:
+        - "8081:80"
+    environment:
+      - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
+      - ASPNETCORE_URLS=http://+:80
     networks:
       - gobbler-net
-    environment:
-      DB_SERVER: fastapi-template-mysql
-      DB_PORT: 8081
-      DB_USER: ${DATABASE_USER}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE: reservations
     depends_on:
-      fastapi-template-mysql:
-        condition: service_healthy
+      - "user-postgres"
+
+  # fastapi-template-mysql:
+  #   build:
+  #     context: ./fastapi_template/mysql
+  #     dockerfile: Dockerfile
+  #   container_name: fastapi-template-mysql
+  #   restart: always
+  #   ports:
+  #     - "8081:8081"
+  #   networks:
+  #     - gobbler-net
+  #   environment:
+  #     DATABASE: reservations
+  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+  #   volumes:
+  #     - ./fastapi_template/mysql/data:/var/lib/mysql
+  #     - ./fastapi_template/mysql/logs:/var/log/mysql
+
+  # fastapi-template:
+  #   build:
+  #     context: ./fastapi_template
+  #     dockerfile: Dockerfile
+  #   image: fastapi-template
+  #   container_name: fastapi-template
+  #   restart: always
+  #   environment:
+  #     DB_SERVER: fastapi-template-mysql
+  #     DB_PORT: 8081
+  #     DB_USER: ${DATABASE_USER}
+  #     DB_PASSWORD: ${DATABASE_PASSWORD}
+  #     DATABASE: reservations
+  #   networks:
+  #     - gobbler-net
+  #   depends_on: 
+  #     - fastapi-template-mysql

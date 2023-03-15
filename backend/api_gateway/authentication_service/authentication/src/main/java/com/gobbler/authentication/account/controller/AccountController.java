@@ -3,6 +3,7 @@ package com.gobbler.authentication.account.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,14 @@ public class AccountController {
 
     @PostMapping("/create")
     public ResponseEntity createUser (@RequestBody UserCreateRequest userCreateRequest) {
-        UserAccount user = userOps.createUser(userCreateRequest);
+        UserAccount user;
+        try {
+            user = userOps.createUser(userCreateRequest);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Something went wrong");
+        }
         System.out.println("User created: " + user);
         return ResponseEntity.ok().build();
     }
