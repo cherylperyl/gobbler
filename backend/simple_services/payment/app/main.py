@@ -3,49 +3,44 @@ from fastapi import FastAPI, Request, status, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
 import stripe
 from os import environ
 
 from .stripe_model import StripeEvent
-from .crud import get_all_users, create_user, get_user
-from . import schema, models
-from .database import SessionLocal, engine
+from .crud import update_user
+from . import schema
 
-models.Base.metadata.create_all(bind=engine)
+
 stripe.api_key = environ.get("STRIPE_API_KEY")
 
 app = FastAPI()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 @app.get("/users")
-async def get_users(db: Session = Depends(get_db)):
-    return get_all_users(db=db)
+async def get_users():
+    pass
 
-
-# GET request functionality is there for easy testing from browser. Actual app should only accept POST requests.
 # TODO - change redirect URLs to actual frontend URLs
-@app.get("/create-checkout-session")
 @app.post("/create-checkout-session")
-async def create_checkout_session():
+async def create_checkout_session(
+    checkout_request: schema.CheckoutRequest
+):
     """Returns a redirect to send user to checkout page."""
     try:
         price = stripe.Price.retrieve("price_1Mg4I5CmAo6VxEslaX2e93Na")
 
+        # metadata will be returned to the webhook so we can connect the stripe details to our internal user id 
         checkout_session = stripe.checkout.Session.create(
             line_items=[{"price": price.id, "quantity": 1}],
             mode="subscription",
-            success_url="http://localhost:5000/users?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://localhost:5000/cancel",
+            success_url=checkout_request.success_url,
+            subscription_data=
+            {
+                "metadata": {"userId": checkout_request.userId}
+            }
         )
+        # printing url so you can follow it during testing 
+        print(checkout_session.url)
+
         return RedirectResponse(checkout_session.url, status_code=303)
 
     except Exception as e:
@@ -55,21 +50,28 @@ async def create_checkout_session():
 
 # stripe calls this webhook. when payment is successful, save the payment data
 @app.post("/webhook")
-async def webhook_received(event: StripeEvent, db: Session = Depends(get_db)):
+async def process_webhook(event: StripeEvent):
     webhook_secret = (
         ""  # TODO - set up secret validation for webhook to filter out spoofed requests
     )
 
     if event.type == "customer.subscription.created":
-        #     # create db entries
-        print(
-            f"Subscription # {event.data.object['id']} created for stripe id {event.data.object['customer']}"
+        # create User object 
+        user = schema.UserUpdate(
+            userId = event.data.object["metadata"]["userId"],
+            isPremium = True,
+            stripeId = event.data.object["customer"],
+            subscription = event.data.object["id"]
         )
-        user = schema.UserCreate(
-            stripe_user_id=event.data.object["customer"],
-            subscription=event.data.object["id"],
-        )
-        print(create_user(db=db, user=user))
+
+        patch_response = update_user(user)
+        if patch_response not in range(200, 300):
+            # print error but don't raise exception, because stripe needs to see a 200 
+            print(f"Error: {patch_response.status_code} - {patch_response.text}")
+        else:
+            print(f"Updated user {user.userId}")
+    
+    # TODO - handle unsubscribe event
 
     return 200
 
@@ -78,7 +80,7 @@ async def webhook_received(event: StripeEvent, db: Session = Depends(get_db)):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
     logging.error(f"{request}: {exc_str}")
-    content = {"status_code": 10422, "message": exc_str, "data": None}
+    content = {"status_code": 422, "message": exc_str, "data": None}
     return JSONResponse(
         content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
     )
