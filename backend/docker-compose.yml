@@ -2,6 +2,7 @@ version: "3.8"
 
 volumes:
   authentication-service-pgdata:
+  user-service-pgdata:
 
 networks:
   gobbler-net:
@@ -138,3 +139,46 @@ services:
       - gobbler-net
     depends_on: 
       - fastapi-template-mysql
+
+  user-simple-ms:
+    image: user-simple-ms
+    depends_on:
+      - "user-postgres"
+    container_name: user-simple-ms
+    ports:
+        - "8081:80"
+    build:
+      context: ./simple_services/user
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      POSTGRES_USERNAME: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_SERVER: user-postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: user_microservice
+      IntegratedSecurity: true
+      Pooling: true
+      ASPNETCORE_URLS: http://+:80
+    networks:
+      - gobbler-net
+
+  user-postgres:
+    image: postgres:13
+    container_name: user-postgres
+    environment:
+      POSTGRES_DB: user_microservice
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - user-service-pgdata:/var/lib/postgresql/data
+    networks:
+      - gobbler-net
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
