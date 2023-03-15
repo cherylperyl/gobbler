@@ -1,0 +1,73 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- name: fastapi-template
+  host: fastapi-template # this name must be the same as the container name
+  port: 8080
+  path: "/reservations"
+  protocol: http
+  routes:
+  - name: fastapi-template
+    paths:
+      - /reservations
+    protocols:
+      - http
+      - https
+- name: login
+  host: authentication-service
+  port: 5401
+  path: "/login"
+  protocol: http
+  routes:
+  - name: login
+    paths:
+      - /login
+    protocols:
+      - http
+      - https
+- name: account
+  host: authentication-service
+  port: 5401
+  path: "/account"
+  protocol: http
+  routes:
+  - name: account
+    paths:
+      - /account
+    protocols:
+      - http
+      - https
+
+plugins:
+- name: cors
+  config: 
+    origins:
+    - "*"
+    methods:
+    - HEAD
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    headers:
+    - Access-Control-Allow-Origin
+    - Accept
+    - Accept-Version
+    - Content-Length
+    - Content-MD5
+    - Content-Type
+    - Date
+    - Authorization
+    exposed_headers:
+    - Authorization
+    credentials: true
+    max_age: 3600
+    preflight_continue: false
+- name: authentication_plugin
+  config:
+    url: http://authentication-service:5401/account/me
+    public_paths:
+      - /login
+      - /account/create
