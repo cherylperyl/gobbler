@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 
-
 class EventData(BaseModel):
     object: object 
-    previous_attributes: object | None = None
+    previous_attributes: object = None
 
 class StripeEvent(BaseModel):
     id: str
@@ -12,7 +11,7 @@ class StripeEvent(BaseModel):
     request: object
     type: str
     object: str
-    account: str | None
+    account: str
     created: int
     livemode: bool
     pending_webhooks: int
