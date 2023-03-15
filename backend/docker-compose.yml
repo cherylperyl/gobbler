@@ -75,8 +75,8 @@ services:
     ports:
       - "5401:5401"
     depends_on:
-      authentication-service-postgres:
-        condition: service_healthy
+      - "authentication-service-postgres"
+        # condition: service_healthy
 
   reservation-mysql:
     platform: linux/amd64
