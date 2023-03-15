@@ -13,14 +13,16 @@ To shut down: `docker compose down`
 - compare with chok to see what other features needs to be added/changed
 
 ## Database Schema
-| Variable Name    | Type     |
-|------------------|----------|
-| userId           | int      |
-| isPremium        | bool     |
-| username         | string   |
-| dateCreated      | DateTime |
-| lastUpdated      | DateTime |
-| email            | string   |
+| Variable Name  | Type     |
+|----------------|----------|
+| userId         | int      |
+| isPremium      | bool     |
+| username       | string   |
+| dateCreated    | DateTime |
+| lastUpdated    | DateTime |
+| email          | string   |
+| stripeId       | string   |
+| subscriptionId | string   |
 
 ## Endpoints
 [GET] `/api/User` Get all users  
