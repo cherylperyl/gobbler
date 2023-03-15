@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 volumes:
   authentication-service-pgdata:
@@ -13,6 +13,8 @@ services:
     build:
       context: ./api_gateway/kong
       dockerfile: Dockerfile
+    image: kong
+    container_name: kong
     restart: always
     networks:
       - gobbler-net
@@ -37,6 +39,7 @@ services:
 
   authentication-service-postgres:
     image: postgres:13
+    container_name: authentication-service-postgres
     restart: always
     networks:
       - gobbler-net
@@ -45,21 +48,24 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5400:5432"
+    volumes:
+      - authentication-service-pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready -U ${DATABASE_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - authentication-service-pgdata:/var/lib/postgresql/data
 
   authentication-service:
+    platform: linux/amd64
     build:
       context: ./api_gateway/authentication_service/authentication
       dockerfile: Dockerfile
     image: authentication-service
     container_name: authentication-service
     restart: always
+    networks:
+      - gobbler-net
     environment:
       DATABASE_SERVER: authentication-service-postgres
       DATABASE_PORT: 5432
@@ -68,15 +74,15 @@ services:
       AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
     ports:
       - "5401:5401"
-    networks:
-      - gobbler-net
-    depends_on: 
-      - authentication-service-postgres
+    depends_on:
+      authentication-service-postgres:
+        condition: service_healthy
 
   reservation-mysql:
+    platform: linux/amd64
     build:
-        context: ./simple_services/reservation/mysql
-        dockerfile: Dockerfile
+      context: ./simple_services/reservation/mysql
+      dockerfile: Dockerfile
     container_name: reservation-mysql
     restart: always
     ports:
@@ -86,29 +92,103 @@ services:
     environment:
       DATABASE: reservations
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5004:5004"
     volumes:
       - ./simple_services/reservation/mysql/data:/var/lib/mysql
       - ./simple_services/reservation/mysql/logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DATABASE_USER}",
+          "-p${DATABASE_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   reservation-simple-ms:
-      build:
-        context: ./simple_services/reservation
-        dockerfile: Dockerfile
-      image: reservation-simple-ms
-      container_name: reservation-simple-ms
-      restart: always
-      ports:
-        - "5003:5003"
-      environment:
-        DB_SERVER: reservation-mysql
-        DB_PORT: 5004
-        DB_USER: ${DATABASE_USER}
-        DB_PASSWORD: ${DATABASE_PASSWORD}
-        DATABASE: reservations
-      networks:
-        - gobbler-net
-      depends_on: 
-        - reservation-mysql
+    platform: linux/amd64
+    build:
+      context: ./simple_services/reservation
+      dockerfile: Dockerfile
+    image: reservation-simple-ms
+    container_name: reservation-simple-ms
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      DB_SERVER: reservation-mysql
+      DB_PORT: 5004
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: reservations
+    ports:
+      - "5003:5003"
+    depends_on:
+      reservation-mysql:
+        condition: service_healthy
+
+  payment-mysql:
+    platform: linux/amd64
+    build:
+      context: ./simple_services/payment/mysql
+      dockerfile: Dockerfile
+    image: payment-mysql
+    container_name: payment-mysql
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5005:3306"
+    volumes:
+      - ./simple_services/payment/mysql/data:/var/lib/mysql
+      - ./simple_services/payment/mysql/logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DATABASE_USER}",
+          "-p${DATABASE_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  payment-simple-ms:
+    build:
+      context: ./simple_services/payment
+      dockerfile: Dockerfile
+    image: payment-simple-ms
+    container_name: payment-simple-ms
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      DB_SERVER: payment-mysql
+      DB_PORT: 3306
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: payment
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+    ports:
+      - "5006:8080"
+    depends_on:
+      payment-mysql:
+        condition: service_healthy
 
   user-postgres:
     image: postgres:13
