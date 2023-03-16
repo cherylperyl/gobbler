@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-
 import 'model/app_state_model.dart';
 import 'post_row_item.dart'; 
 
@@ -12,6 +11,7 @@ class PostsListTab extends StatelessWidget {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
         final posts = model.getPosts();
+        final location = model.getLoc();
         return CustomScrollView(
           semanticChildCount: posts.length,
           slivers: <Widget>[
@@ -37,7 +37,13 @@ class PostsListTab extends StatelessWidget {
                 )
                 : const CupertinoListTile(title: Text('No posts available'))
               ),
-            ),                            
+            ),   
+            SliverSafeArea(
+              sliver: SliverToBoxAdapter(
+                child: location == null ? Text('Location not granted') :
+                Text('${location.latitude.toString()} ${location.longitude.toString()}'),
+              )
+            )                         
           ],
         );
       },
@@ -46,5 +52,6 @@ class PostsListTab extends StatelessWidget {
 
   Future<void> _pullRefresh(AppStateModel model) async {
     model.loadPosts();
+    model.updateLocation();
   }
 }

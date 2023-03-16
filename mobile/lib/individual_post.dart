@@ -48,7 +48,7 @@ class _IndividualPostState extends State<IndividualPost> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 14),
+              padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 14),
               child: Container(
                 width: double.infinity,
                 child: Card(
@@ -80,7 +80,9 @@ class _IndividualPostState extends State<IndividualPost> {
                 ),
               ),
               ),
-              Center(
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 18),
+                width: double.infinity,
                 child: CupertinoButton.filled(
                   child: Text("Chope!"), 
                   onPressed: () {

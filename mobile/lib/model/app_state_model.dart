@@ -1,7 +1,12 @@
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:location/location.dart';
+import 'location_repository.dart';
 
 import 'post.dart';
 import 'post_repository.dart';
+
+import 'user.dart';
+import 'user_repository.dart';
 
 double _salesTaxRate = 0.06;
 double _shippingCostPerItem = 7;
@@ -9,7 +14,8 @@ double _shippingCostPerItem = 7;
 class AppStateModel extends foundation.ChangeNotifier {
   // All the available Posts.
   List<Post> _availablePosts = [];
-
+  LocationData? _currentLocation;
+  User? _user;
   // The currently selected category of Posts.
   // Category _selectedCategory = Category.all;
 
@@ -70,6 +76,12 @@ class AppStateModel extends foundation.ChangeNotifier {
     //   }).toList();
     // }
   }
+  LocationData? getLoc() {
+    return _currentLocation;
+  }
+  User? getUser() {
+    return _user;
+  }
   
 
   // Search the Post catalog
@@ -116,6 +128,17 @@ class AppStateModel extends foundation.ChangeNotifier {
 
   void loadPosts() async {
     _availablePosts = await PostRepository.fetchPosts();
+    notifyListeners();
+  }
+
+  void updateLocation() async {
+    _currentLocation = await LocationRepository.getLoc();
+    notifyListeners();
+  }
+
+  Future<void> loginUser(String email, String password) async {
+    String? bearer = await UserRepository.loginUser(email, password);
+    _user = await UserRepository.getUserData(bearer);
     notifyListeners();
   }
 

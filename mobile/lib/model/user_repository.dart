@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'post.dart';
+import 'user.dart';
 import 'package:http/http.dart' as http;
 
 class UserRepository {
@@ -24,7 +23,7 @@ class UserRepository {
     return Future.error('Unable to login user');
   }
 
-    static Future<bool> logoutUser() async {
+  static Future<bool> logoutUser() async {
     // var url = Uri.http(dotenv.env['BASE_API_URL']!,'/login');
     // var response = await http.post(
     //   url,
@@ -44,4 +43,22 @@ class UserRepository {
     await prefs.remove('bearerToken');
     return true;
   }
+
+  static Future<User?> getUserData(bearer) async {
+    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/getUser');
+    var response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer: $bearer"
+      }
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print(data);
+      final user = User.fromJson(data);
+      return user;
+    }
+    return null;
+  }
+
 }

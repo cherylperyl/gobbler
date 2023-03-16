@@ -9,7 +9,7 @@ Future main() async {
   await dotenv.load(fileName: ".env");
  runApp(
    ChangeNotifierProvider<AppStateModel>(            
-     create: (_) => AppStateModel()..loadPosts(), 
+     create: (_) => AppStateModel()..loadPosts() ..updateLocation(), 
      child: const CupertinoStoreApp(),               
    ),
  );
