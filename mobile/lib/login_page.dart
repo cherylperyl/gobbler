@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    super.initState();
     showPassword = false;
     errorMessage = '';
     isLoading = false;

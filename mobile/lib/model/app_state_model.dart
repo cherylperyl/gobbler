@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'location_repository.dart';
+import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 
 import 'post.dart';
 import 'post_repository.dart';
@@ -136,12 +139,48 @@ class AppStateModel extends foundation.ChangeNotifier {
     notifyListeners();
   }
 
+  void updateUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final user = prefs.getString('user');
+    print('update user: $user');
+    if (user != null) {
+      _user = User.fromJson(jsonDecode(user));
+    }
+  }
+
   Future<void> loginUser(String email, String password) async {
     String? bearer = await UserRepository.loginUser(email, password);
     _user = await UserRepository.getUserData(bearer);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('user',jsonEncode(_user.toString()));
     notifyListeners();
   }
 
+  Future<void> logoutUser() async {
+    await UserRepository.logoutUser();
+    _user = null;
+    notifyListeners();
+  }
+
+  Future<bool> uploadPost(
+    String title, 
+    String locationDesc, 
+    String servings,
+    String expiryTime,
+    int userId,
+    XFile image,
+    LocationData locationData
+  ) async {
+    final post = await PostRepository.uploadPost(
+      title, 
+      locationDesc, 
+      servings, 
+      expiryTime, 
+      userId, 
+      image, 
+      locationData);
+    return post != null;
+  }
   
 
   // Loads the list of available Posts from the repo.

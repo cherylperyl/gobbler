@@ -18,12 +18,13 @@ class UserRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('bearerToken', data['bearer_token']);
 
+
       return data['bearer_token'];
     }
     return Future.error('Unable to login user');
   }
 
-  static Future<bool> logoutUser() async {
+  static Future<void> logoutUser() async {
     // var url = Uri.http(dotenv.env['BASE_API_URL']!,'/login');
     // var response = await http.post(
     //   url,
@@ -41,7 +42,6 @@ class UserRepository {
     // return Future.error('Unable to login user');
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('bearerToken');
-    return true;
   }
 
   static Future<User?> getUserData(bearer) async {
