@@ -62,7 +62,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   : CupertinoButton.filled(
                     child: Text("Log out"), 
                     onPressed: () {
-                      UserRepository.logoutUser(); 
+                      model.logoutUser(); 
                       setState((){
                         bearer = null;
                       });
