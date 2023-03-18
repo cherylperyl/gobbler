@@ -16,11 +16,13 @@ namespace user.Migrations
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IsPremium = table.Column<bool>(type: "boolean", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false)
+                    IsPremium = table.Column<bool>(type: "boolean", nullable: true),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    StripeId = table.Column<string>(type: "text", nullable: true),
+                    SubscriptionId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
