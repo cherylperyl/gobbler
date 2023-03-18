@@ -4,29 +4,33 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class ReservationBase(BaseModel):
-    # this is the base class for ReservationCreate and ReservationUpdate
+class PostBase(BaseModel):
+    # this is the base class for PostCreate and PostUpdate
     # EDIT THIS
+    title: str
     user_id: int
-    post_id: int
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    image_url: str
+    location_latitude: float
+    location_longitude: float
+    available_reservations: int
+    total_reservations: int
+    time_end: datetime
 
 
-class ReservationCreate(ReservationBase):
+class PostCreate(PostBase):
     # this is the class for creating a new reservation
     # ONLY EDIT IF YOUR CREATE HAS FANCY STUFF
     pass
 
 
-class ReservationUpdate(ReservationBase):
+class PostUpdate(PostBase):
     # in case you want to update only some fields
     # EDIT THIS SO IT HAS ALL THE FIELDS YOU WANT TO UPDATE
     user_id: Optional[int] = None
     post_id: Optional[int] = None
 
 
-class ReservationInDBBase(ReservationBase):
+class PostInDBBase(PostBase):
     # this is the base class for ReservationInDB and ReservationUpdateInDB
     # SHOULD NOT NEED TO EDIT THIS
     reservation_id: Optional[
@@ -37,7 +41,10 @@ class ReservationInDBBase(ReservationBase):
         orm_mode = True
 
 
-class Reservation(ReservationInDBBase):
+class Post(PostInDBBase):
     # this is the class for returning a reservation
     # SHOULD NOT NEED TO EDIT THIS
-    reservation_id: int
+    post_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    is_available: bool
