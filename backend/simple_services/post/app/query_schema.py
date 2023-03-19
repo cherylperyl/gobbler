@@ -44,4 +44,3 @@ class Query:
         """
         filtered_posts = crud.get_posts_by_ids(post_ids)
         return filtered_posts
-    
