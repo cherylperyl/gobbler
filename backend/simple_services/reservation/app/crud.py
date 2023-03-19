@@ -25,6 +25,10 @@ def get_reservations_by_post_id(post_id: int, db: Session) -> List[models.Reserv
         db.query(models.Reservation).filter(models.Reservation.post_id == post_id).all()
     )
 
+def get_reservations_by_user_id(user_id: int, db: Session) -> List[models.Reservation]:
+    return (
+        db.query(models.Reservation).filter(models.Reservation.user_id == user_id).all()
+    )
 
 def create_reservation(
     reservation: schemas.ReservationCreate, db: Session
