@@ -61,7 +61,7 @@ async def process_webhook(event: StripeEvent):
             userId = event.data.object["metadata"]["userId"],
             isPremium = True,
             stripeId = event.data.object["customer"],
-            subscription = event.data.object["id"]
+            subscriptionId = event.data.object["id"]
         )
 
         patch_response = update_user(user)

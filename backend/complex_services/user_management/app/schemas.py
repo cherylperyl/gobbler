@@ -14,6 +14,7 @@ class AccountBase(BaseModel):
     lastUpdated: Optional[datetime] = None
     email: Optional[str]
     stripeId: Optional[str] = None
+    subscriptionId: Optional[str]
 
 
 class AccountCreate(AccountBase):
@@ -25,7 +26,7 @@ class AccountCreate(AccountBase):
 class AccountUpdate(AccountBase):
     # in case you want to update only some fields
     # EDIT THIS SO IT HAS ALL THE FIELDS YOU WANT TO UPDATE
-    stripeId: Optional[str] = None
+    pass
 
 
 # class AccountInDBBase(AccountBase):
