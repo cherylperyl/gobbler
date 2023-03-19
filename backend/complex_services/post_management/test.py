@@ -7,28 +7,27 @@
 import json
 import os
 
-import amqp_setup
+from app import amqp_setup
+from app.amqp_setup import queue_name, exchangename
 
 monitorBindingKey = '#'
 
 
 def receivePost():
-    amqp_setup.check_setup()
-
-    queue_name = "Notification"
+    channel = amqp_setup.setup("localhost", 5672)
 
     # set up a consumer and start to wait for coming messages
-    amqp_setup.channel.basic_consume(
+    channel.basic_consume(
         queue=queue_name,
         on_message_callback=callback,
         auto_ack=True
     )
     # an implicit loop waiting to receive messages;
     # it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
-    amqp_setup.channel.start_consuming()
+    channel.start_consuming()
 
 
-def callback(body):
+def callback(ch, method, properties, body):
     """
     required signature for the callback; no return
     """
@@ -50,5 +49,5 @@ def processPost(post):
 
 if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
-    print(f": monitoring routing key '{monitorBindingKey}' in exchange '{amqp_setup.exchangename}' ...")
+    print(f": monitoring routing key '{monitorBindingKey}' in exchange '{exchangename}' ...")
     receivePost()

@@ -1,3 +1,4 @@
+# this is just a draft! its not working, use main docker-compose in backend/ to start this service
 version: "3.9"
 
 networks:
