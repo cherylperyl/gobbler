@@ -14,7 +14,8 @@ import models
 from db import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
-stripe.api_key = environ.get("stripe_api_key")
+# stripe.api_key = environ.get("stripe_api_key")
+stripe.api_key = 'sk_test_51Mg3pCCmAo6VxEsll44QnuTNHBcaGAvGymeceTVczlI0jt1BGhUiXoRRW0QUN9lSc3ViueCX6QusDwEWlm2zYKPX00yIvRX0ch'
 
 app = FastAPI()
 

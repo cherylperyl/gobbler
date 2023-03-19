@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 class PostRepository {
   static Future<List<Post>> fetchPosts() async {
-    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/posts');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/posts');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
@@ -25,7 +25,7 @@ class PostRepository {
   static Future<void> reserveSnack(int postId) async {
     final prefs = await SharedPreferences.getInstance();
     final String? bearer = prefs.getString('bearerToken');
-    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/reserve');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/reserve');
     // short circuit
     // should fetch data again from 
     return ;
@@ -60,9 +60,10 @@ class PostRepository {
     LocationData locationData
   ) async {
       // user_id, lat/long, 
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
     final bytes = await image.readAsBytes();
-
-    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/createpost');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/createpost');
     var response = await http.post(
       url,
       body: jsonEncode({
@@ -74,7 +75,11 @@ class PostRepository {
         'available_reservations': servings,
         'time_end': expiryTime,
         'image_bytes': bytes
-      })
+      }),
+      headers: {
+        "Authorization": "Bearer: $bearer",
+        "Content-Type": "application/json"
+      }
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

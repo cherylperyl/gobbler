@@ -39,8 +39,8 @@ class CupertinoStoreHomePage extends StatelessWidget {
             label: 'New',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.shopping_cart),
-            label: 'Cart',
+            icon: Icon(CupertinoIcons.person_crop_circle),
+            label: 'Profile',
           ),
         ],
       ),
