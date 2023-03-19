@@ -21,9 +21,9 @@ Use browser to access http://localhost:5003/docs to view and test the available 
 
 ## Endpoints
 [GET] `/reservations/all` Get all reservations  
-[GET] `/reservations/{reservation_id}` Get reservations by reservation_id
-[GET] `/reservations/post/{post_id}` Get reservations by post_id
-[GET] `/reservations/post/slots/{post_id}` Get number of reservations by post_id
-[POST] `/reservations/` Create a new reservation
-[PUT] `/reservations/{reservation_id}` Update a reservation
+[GET] `/reservations/{reservation_id}` Get reservations by reservation_id  
+[GET] `/reservations/post/{post_id}` Get reservations by post_id  
+[GET] `/reservations/post/slots/{post_id}` Get number of reservations by post_id  
+[POST] `/reservations/` Create a new reservation  
+[PUT] `/reservations/{reservation_id}` Update a reservation  
 [DELETE] `/reservations/{reservation_id}` Delete reservation by reservation_id  
