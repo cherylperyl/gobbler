@@ -19,6 +19,10 @@ class Post(PostInput):
     updated_at: typing.Optional[datetime.datetime]
     post_id: int
     is_available: bool
+    
+@strawberry.type
+class PostNearby(Post):
+    distance: float
 
 @strawberry.input
 class PostUpdate:
