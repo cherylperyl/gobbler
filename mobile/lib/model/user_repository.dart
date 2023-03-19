@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class UserRepository {
   static Future<String> loginUser(String email, String password) async {
-    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/login');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/login');
     var response = await http.post(
       url,
       body: jsonEncode(<String, String>{
@@ -45,7 +45,7 @@ class UserRepository {
   }
 
   static Future<User?> getUserData(bearer) async {
-    var url = Uri.http(dotenv.env['BASE_API_URL']!,'/getUser');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/getUser');
     var response = await http.get(
       url,
       headers: {
@@ -54,7 +54,7 @@ class UserRepository {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
+      // print(data);
       final user = User.fromJson(data);
       return user;
     }

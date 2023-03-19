@@ -139,20 +139,39 @@ class AppStateModel extends foundation.ChangeNotifier {
     notifyListeners();
   }
 
-  void updateUser() async {
+  Future<void> getLoggedInUser() async {
     final prefs = await SharedPreferences.getInstance();
     final user = prefs.getString('user');
-    print('update user: $user');
     if (user != null) {
+      final userJson = jsonEncode(user);
+      // print(userJson);
       _user = User.fromJson(jsonDecode(user));
     }
+    notifyListeners();
   }
 
+  Future<void> getUpdatedUserDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
+    _user = await UserRepository.getUserData(bearer);
+    if (_user != null) {
+      final prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> userJson = User.toJson(_user!);
+      // print('jsonEncode ${jsonEncode(userJson)}');
+      prefs.setString('user', jsonEncode(User.toJson(_user!)));
+    }
+    notifyListeners();
+  }
   Future<void> loginUser(String email, String password) async {
     String? bearer = await UserRepository.loginUser(email, password);
     _user = await UserRepository.getUserData(bearer);
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('user',jsonEncode(_user.toString()));
+    if (_user != null) {
+      final prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> userJson = User.toJson(_user!);
+      // print('jsonEncode ${jsonEncode(userJson)}');
+      prefs.setString('user', jsonEncode(User.toJson(_user!)));
+    }
+    
     notifyListeners();
   }
 
@@ -162,7 +181,7 @@ class AppStateModel extends foundation.ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> uploadPost(
+  Future<Post?> uploadPost(
     String title, 
     String locationDesc, 
     String servings,
@@ -178,8 +197,9 @@ class AppStateModel extends foundation.ChangeNotifier {
       expiryTime, 
       userId, 
       image, 
-      locationData);
-    return post != null;
+      locationData
+    );
+    return post;
   }
   
 

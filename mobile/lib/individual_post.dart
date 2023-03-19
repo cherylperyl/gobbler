@@ -7,6 +7,7 @@ import 'package:mobile/model/post.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/model/app_state_model.dart';
+import 'package:provider/provider.dart';
 
 class IndividualPost extends StatefulWidget {
   const IndividualPost({
@@ -31,68 +32,79 @@ class _IndividualPostState extends State<IndividualPost> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text("Gobble Snack"),
-      ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(widget.post.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.36,
-              width: double.infinity,
-              child: Image.network(widget.post.imageUrl,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 14),
-              child: Container(
+    return Consumer<AppStateModel>(
+      builder: (context, model, child) {
+        final userId = model.getUser()?.userId;
+        return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text("Gobble Snack"),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(widget.post.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.36,
                 width: double.infinity,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [const Icon(CupertinoIcons.placemark),const Text(" Location", style: const TextStyle(fontWeight: FontWeight.bold),)]),
-                        Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription)),
-                        const SizedBox(height: 12),
-                        Row(children: [const Icon(CupertinoIcons.calendar),Text(" Posted at", style: TextStyle(fontWeight: FontWeight.bold),)]),
-                        Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0), child: Text("Today "+DateFormat.jm().format(widget.post.createdAt)),),
-                        const SizedBox(height: 12),
-                        Row(children: [
-                          const Icon(CupertinoIcons.clear_circled),
-                          Text(" Expires in: ", style: TextStyle(fontWeight: FontWeight.bold),),
-                          Text(getExpiryTime())
-                          ]),
-                        const SizedBox(height: 12),
-                        Row(children: [
-                          const Icon(CupertinoIcons.number_square),
-                          Text(" Servings left: ", style: TextStyle(fontWeight: FontWeight.bold),), 
-                          Text(availableReservations.toString())
-                          ]),
-                      ],
+                child: Image.network(widget.post.imageUrl,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 14),
+                child: Container(
+                  width: double.infinity,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [const Icon(CupertinoIcons.placemark),const Text(" Location", style: const TextStyle(fontWeight: FontWeight.bold),)]),
+                          Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription)),
+                          const SizedBox(height: 12),
+                          Row(children: [const Icon(CupertinoIcons.calendar),Text(" Posted at", style: TextStyle(fontWeight: FontWeight.bold),)]),
+                          Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0), child: Text("Today "+DateFormat.jm().format(widget.post.createdAt)),),
+                          const SizedBox(height: 12),
+                          Row(children: [
+                            const Icon(CupertinoIcons.clear_circled),
+                            Text(" Expires in: ", style: TextStyle(fontWeight: FontWeight.bold),),
+                            Text(getExpiryTime())
+                            ]),
+                          const SizedBox(height: 12),
+                          Row(children: [
+                            const Icon(CupertinoIcons.number_square),
+                            Text(" Servings left: ", style: TextStyle(fontWeight: FontWeight.bold),), 
+                            Text(availableReservations.toString())
+                            ]),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 18),
-                width: double.infinity,
-                child: CupertinoButton.filled(
-                  child: Text("Chope!"), 
-                  onPressed: () {
-                    handleReservationPressed(context);
-                  }),
-              )
-              
-          ],),
-      )
-      );
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 18),
+                  width: double.infinity,
+                  child: userId == widget.post.userId
+                  ? CupertinoButton.filled(
+                    child: Text("Your post"),
+                    onPressed: null,
+                    disabledColor: CupertinoColors.systemGrey3,
+                  )
+                  : CupertinoButton.filled(
+                    child: Text("Chope!"), 
+                    onPressed: () {
+                      handleReservationPressed(context);
+                    }),
+                )
+                
+            ],),
+        )
+        );
+      }
+    );
   }
 
   String getExpiryTime() {

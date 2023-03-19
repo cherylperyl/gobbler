@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class User {
   const User({
     required this.userId,
@@ -32,5 +34,15 @@ class User {
   @override
   String toString() {
     return "{userId: $userId, email: $email, isPremium: $isPremium, dateCreated: $dateCreated, lastUpdated: $lastUpdated, username: $username}";
+  }
+  static Map<String, dynamic> toJson(User userObj) {
+    return {
+      'userId': userObj.userId,
+      'isPremium': userObj.isPremium,
+      'username': userObj.username,
+      'dateCreated': DateFormat().format(userObj.dateCreated),
+      'lastUpdated': userObj.lastUpdated != null ? DateFormat().format(userObj.lastUpdated!) : null,
+      'email': userObj.email
+    };
   }
 }
