@@ -1,5 +1,5 @@
 import strawberry
-from app.post_scalar import Post
+from app.post_scalar import Post, PostNearby
 from typing import List
 from . import crud
 
@@ -22,9 +22,26 @@ class Query:
         return post
     
     @strawberry.field
-    def nearby_posts(self, lat: float, long: float) -> List[Post]:
+    def nearby_posts(self, lat: float, long: float) -> List[PostNearby]:
         """
         Get nearby posts by lat, long
         """
         filtered_posts = crud.get_nearby_posts(lat, long)
         return filtered_posts
+    
+    @strawberry.field
+    def posts_by_user(self, user_id: int) -> List[Post]:
+        """
+        get posts created by a user
+        """
+        filtered_posts = crud.get_posts_by_user(user_id)
+        return filtered_posts
+    
+    @strawberry.field
+    def posts_from_ids(self, post_ids: List[int]) -> List[Post]:
+        """
+        get a list of posts from their ids
+        """
+        filtered_posts = crud.get_posts_by_ids(post_ids)
+        return filtered_posts
+    

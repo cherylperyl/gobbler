@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from app.database import SessionLocal
 from haversine import haversine
+from sqlalchemy import text
 
 
 import app.models as models, app.post_scalar as post_scalar
@@ -11,7 +12,7 @@ import app.models as models, app.post_scalar as post_scalar
 
 def get_all() -> List[models.Post]:
     db = SessionLocal()
-    result = db.query(models.Post).all()
+    result = db.query(models.Post).filter(models.Post.time_end > datetime.now())
     db.close()
     return result
 
@@ -61,16 +62,32 @@ def update_post(
 
 def get_nearby_posts(lat: float, long: float) -> List[models.Post]:
     db = SessionLocal()
-    current_location = (lat, long)
-    filteredResult = [x for x in db.query(models.Post).all()
-                      if haversine(
-                        (current_location),
-                        (jsonable_encoder(x)['location_latitude'],jsonable_encoder(x)['location_longitude'])
-                      ) < 5
-                      ]
+    query = text("""
+    SELECT ( 6371 * acos( cos( radians(:lat) ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians(:long) ) + sin( radians(:lat) ) * sin(radians(location_latitude)) ) ) 
+    AS distance, 
+    title, post_id, user_id, image_url, location_latitude, location_longitude, available_reservations, total_reservations, time_end, created_at, updated_at, is_available
+    FROM posts
+    WHERE time_end >= NOW()
+    HAVING
+    distance < 5
+    ORDER BY distance;
+    """)
+    results = db.execute(query, {"lat": lat, "long": long})
     db.close()
-    return filteredResult
+    return results
 
+def get_posts_by_user(user_id: int) -> List[models.Post]:
+    db = SessionLocal()
+    result = db.query(models.Post).filter(models.Post.user_id == user_id)
+    db.close()
+    return result
+
+def get_posts_by_ids(post_ids: list) -> List[models.Post]:
+    db = SessionLocal()
+    print(post_ids)
+    result = db.query(models.Post).filter(models.Post.post_id.in_(post_ids))
+    db.close()
+    return result
 
 def delete_post(post: models.Post) -> models.Post:
     db = SessionLocal()
