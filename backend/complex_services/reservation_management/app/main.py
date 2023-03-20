@@ -1,19 +1,13 @@
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy.orm import Session
-
-from . import crud, models, schemas
-from .database import SessionLocal, engine
-
+from . import schemas
 from fastapi.responses import JSONResponse
 import os
 from datetime import datetime
 import requests
 
 ########### DO NOT MODIFY BELOW THIS LINE ###########
-# create tables
-models.Base.metadata.create_all(bind=engine)
 
 # create FastAPI app
 app = FastAPI()
@@ -54,19 +48,17 @@ def ping():
     return {"ping": "pong!"}
 
 
-@app.post("/reserve/{post_id}/user/{user_id}", response_model=schemas.Reservation)
+@app.post("/reserve", response_model=schemas.Reservation)
 def create_reservation(
-    post_id: int,
-    user_id: int,
     reservation: schemas.ReservationCreate
 ):
     """
     Create a new reservation
     """
-    reservation.user_id = user_id
-    reservation.post_id = post_id
-    reservation.dateCreated = datetime.now()
-    reservation.lastUpdated = datetime.now()
+    reservation.user_id = reservation.user_id
+    reservation.post_id = reservation.post_id
+    reservation.created_at = datetime.now()
+    reservation.updated_at = datetime.now()
 
     response = requests.post(
         f"{reservation_ms_url}/api/reservations",
@@ -77,40 +69,35 @@ def create_reservation(
     
     return response
 
-#incomplete, waiting for thad first
-@app.get("/reservations/{user_id}")
+@app.get("/reservations/all/{user_id}", response_model=List[schemas.Reservation])
 def get_all_posts_reserved_by_user(user_id: int):
     post_ids = requests.get(
         f"{reservation_ms_url}/api/reservations/{user_id}"
     )
     if post_ids.status_code not in range(200, 300):
         raise HTTPException(post_ids.status_code, detail = post_ids.text)
-    
-    post_list = []
-
-    for id in post_ids:
-        query = f"""
-                    query {{
-                        post(post_id:id){{
-                            user_id,
-                            post_id, 
-                            title,
-                            image_url,
-                            location_latitude,
-                            location_longitude,
-                            available_reservations,
-                            total_reservations,
-                            created_at,
-                            time_end,
-                            updated_at,
-                            is_available
-                        }}
+        
+    query = f"""
+                query {{
+                    post(post_ids:{post_ids}){{
+                        user_id,
+                        post_id, 
+                        title,
+                        image_url,
+                        location_latitude,
+                        location_longitude,
+                        available_reservations,
+                        total_reservations,
+                        created_at,
+                        time_end,
+                        updated_at,
+                        is_available
                     }}
-                """
-        payload = {"query": query}
-        r = requests.get(post_ms_url, params=payload)
-        nearby_posts = r.json()["data"]["nearby_posts"]
+                }}
+            """
+    payload = {"query": query}
+    response = requests.get(post_ms_url, params=payload)
+    posts_from_ids = response.json()["data"]["posts_from_ids"]
 
-
-    return post_list
+    return posts_from_ids
 

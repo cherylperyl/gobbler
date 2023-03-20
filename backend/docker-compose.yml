@@ -227,6 +227,24 @@ services:
     depends_on:
       - "user-postgres"
 
+  reservation-management:
+      platform: linux/amd64
+      build:
+        context: ./complex_services/reservation_management
+        dockerfile: Dockerfile
+      image: reservation-management
+      container_name: 'reservation-management'
+      restart: always
+      networks:
+          - gobbler-net
+      environment:
+        RESERVATION_MS_SERVER: reservation-simple-ms
+        RESERVATION_MS_PORT: 5003
+        POST_MS_SERVER: post-simple-ms
+        POST_MS_PORT: 8082
+      ports:
+          - 5007:5007
+
   # fastapi-template-mysql:
   #   build:
   #     context: ./fastapi_template/mysql
