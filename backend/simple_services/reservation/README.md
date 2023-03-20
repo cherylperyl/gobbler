@@ -6,4 +6,5 @@ ___
 ## To run
 `docker compose up` (in main folder)
 
+
 Use browser to access http://localhost:5003/docs to view and test the available endpoints.
