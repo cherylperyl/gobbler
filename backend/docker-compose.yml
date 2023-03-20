@@ -10,16 +10,11 @@ volumes:
   payment-mysql-data:
     driver: local
   payment-mysql-logs:
-<<<<<<< HEAD
     driver: local
   post-mysql-data:
     driver: local
   post-mysql-logs:
     driver: local
-=======
-  post-mysql-data:
-  post-mysql-logs:
->>>>>>> eb634e3 (Add upload to cloud storage for posts)
   user-service-pgdata:
     driver: local
 
