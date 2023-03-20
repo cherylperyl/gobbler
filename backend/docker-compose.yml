@@ -227,6 +227,62 @@ services:
     depends_on:
       - "user-postgres"
 
+  post-mysql:
+    platform: linux/amd64
+    build:
+      context: ./simple_services/post/mysql
+      dockerfile: Dockerfile
+    image: post-mysql
+    container_name: post-mysql
+    restart: always
+    networks:
+      - gobbler-net
+    ports:
+      - "8083:8083"
+    environment:
+      MYSQL_DATABASE: posts
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./simple_services/post/mysql/data:/var/lib/mysql
+      - ./simple_services/post/mysql/logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DATABASE_USER}",
+          "-p${DATABASE_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  post-simple-ms:
+    platform: linux/amd64
+    build:
+      context: ./simple_services/post
+      dockerfile: Dockerfile
+    image: post-simple-ms
+    container_name: post-simple-ms
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      DB_SERVER: post-mysql
+      DB_PORT: 8083
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: posts
+    ports:
+      - "8082:8082"
+    depends_on:
+      - "post-mysql"
+        # condition: service_healthy
+
   reservation-management:
       platform: linux/amd64
       build:
