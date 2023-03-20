@@ -10,11 +10,16 @@ volumes:
   payment-mysql-data:
     driver: local
   payment-mysql-logs:
+<<<<<<< HEAD
     driver: local
   post-mysql-data:
     driver: local
   post-mysql-logs:
     driver: local
+=======
+  post-mysql-data:
+  post-mysql-logs:
+>>>>>>> eb634e3 (Add upload to cloud storage for posts)
   user-service-pgdata:
     driver: local
 
@@ -206,6 +211,62 @@ services:
       - "5006:8080"
     depends_on:
       payment-mysql:
+        condition: service_healthy
+
+  post-mysql:
+    platform: linux/amd64
+    build:
+      context: ./simple_services/post/mysql
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-mysql:latest
+    container_name: post-mysql
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - post-mysql-data:/var/lib/mysql
+      - post-mysql-logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DATABASE_USER}",
+          "-p${DATABASE_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  post-simple-ms:
+    build:
+      context: ./simple_services/post
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-simple-ms:latest
+    container_name: post-simple-ms
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      DB_SERVER: post-mysql
+      DB_PORT: 3306
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: posts
+      GOOGLE_APPLICATION_CREDS: /root/.config/gcloud/application_default_credentials.json
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    ports:
+      - "5001:8000"
+    volumes:
+      - ~/.config/gcloud:/root/.config/gcloud
+    depends_on:
+      post-mysql:
         condition: service_healthy
 
   user-postgres:

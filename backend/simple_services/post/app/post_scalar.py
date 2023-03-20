@@ -1,12 +1,13 @@
 import strawberry
 import datetime
 import typing
+from strawberry.file_uploads import Upload
 
 @strawberry.input 
 class PostInput:
     user_id: int
     title: str
-    image_url: str
+    image_file: Upload
     location_latitude: float
     location_longitude: float
     available_reservations: int
@@ -27,7 +28,7 @@ class PostNearby(Post):
 @strawberry.input
 class PostUpdate:
     title: typing.Optional[str] = None
-    image_url: typing.Optional[str] = None
+    image_file: typing.Optional[Upload] = None
     location_latitude: typing.Optional[float] = None
     location_longitude: typing.Optional[float] = None
     available_reservations: typing.Optional[int] = None
