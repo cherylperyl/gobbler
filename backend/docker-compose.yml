@@ -2,11 +2,21 @@ version: "3.9"
 
 volumes:
   authentication-service-pgdata:
+    driver: local
   reservation-mysql-data:
+    driver: local
   reservation-mysql-logs:
+    driver: local
   payment-mysql-data:
+    driver: local
   payment-mysql-logs:
+    driver: local
+  post-mysql-data:
+    driver: local
+  post-mysql-logs:
+    driver: local
   user-service-pgdata:
+    driver: local
 
 networks:
   gobbler-net:
@@ -195,8 +205,8 @@ services:
     ports:
       - "5006:8080"
     depends_on:
-      - "payment-mysql"
-        # - condition: service_healthy
+      payment-mysql:
+        condition: service_healthy
 
   user-postgres:
     build:
@@ -205,22 +215,22 @@ services:
     image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-postgres:latest
     container_name: user-postgres
     restart: always
-    ports:
-      - "5007:5432"
     networks:
       - gobbler-net
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_DB: users
+      # POSTGRES_DB: users
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5007:5432"
+    volumes:
+      - user-service-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "pg_isready -U ${DATABASE_USER}" ]
+      test: /usr/bin/pg_isready
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - user-service-pgdata:/var/lib/postgresql/data
 
   user-simple-ms:
     build:
@@ -229,34 +239,35 @@ services:
     image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-simple-ms:latest
     container_name: user-simple-ms
     restart: always
-    ports:
-        - "8081:80"
+    networks:
+      - gobbler-net
     environment:
       - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
       - ASPNETCORE_URLS=http://+:80
-    networks:
-      - gobbler-net
+    ports:
+        - "8081:80"
     depends_on:
-      - "user-postgres"
+      user-postgres:
+        condition: service_healthy
 
   post-mysql:
     platform: linux/amd64
     build:
       context: ./simple_services/post/mysql
       dockerfile: Dockerfile
-    image: post-mysql
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-mysql:latest
     container_name: post-mysql
     restart: always
     networks:
       - gobbler-net
-    ports:
-      - "8083:8083"
     environment:
       MYSQL_DATABASE: posts
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "8083:8083"
     volumes:
-      - ./simple_services/post/mysql/data:/var/lib/mysql
-      - ./simple_services/post/mysql/logs:/var/log/mysql
+      - post-mysql-data:/var/lib/mysql
+      - post-mysql-logs:/var/log/mysql
     healthcheck:
       test:
         [
@@ -278,7 +289,7 @@ services:
     build:
       context: ./simple_services/post
       dockerfile: Dockerfile
-    image: post-simple-ms
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-simple-ms:latest
     container_name: post-simple-ms
     restart: always
     networks:
@@ -292,8 +303,8 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - "post-mysql"
-        # condition: service_healthy
+      post-mysql:
+        condition: service_healthy
 
   # fastapi-template-mysql:
   #   build:
@@ -309,8 +320,8 @@ services:
   #     DATABASE: reservations
   #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
   #   volumes:
-  #     - ./fastapi_template/mysql/data:/var/lib/mysql
-  #     - ./fastapi_template/mysql/logs:/var/log/mysql
+  #     - ./fastapi_template/mysql/data:/var/lib/mysql/:rw
+  #     - ./fastapi_template/mysql/logs:/var/log/mysql/:rw
 
   # fastapi-template:
   #   build:
