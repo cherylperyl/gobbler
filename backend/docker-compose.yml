@@ -75,8 +75,8 @@ services:
     ports:
       - "5401:5401"
     depends_on:
-      - "authentication-service-postgres"
-        # condition: service_healthy
+      authentication-service-postgres:
+        condition: service_healthy
 
   reservation-mysql:
     platform: linux/amd64
@@ -280,40 +280,6 @@ services:
     depends_on:
       - "post-mysql"
         # condition: service_healthy
-
-  post-management-rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: 'post-management-rabbitmq'
-    ports:
-        - 5672:5672
-        - 15672:15672
-    volumes:
-        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq/
-    networks:
-        - gobbler-net
-
-  post-management:
-    platform: linux/amd64
-    build:
-      context: ./complex_services/post_management
-      dockerfile: Dockerfile
-    image: post-management
-    container_name: 'post-management'
-    restart: always
-    networks:
-        - gobbler-net
-    environment:
-      AMQP_SERVER: post-management-rabbitmq
-      AMQP_PORT: 5672
-      POST_MS_SERVER: post-simple-ms
-      POST_MS_PORT: 8082
-      RESERVATION_MS_SERVER: reservation-simple-ms
-      RESERVATION_MS_PORT: 5003
-    ports:
-        - 8084:8084
-    depends_on:
-        - post-management-rabbitmq
 
   # fastapi-template-mysql:
   #   build:
