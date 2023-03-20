@@ -27,3 +27,8 @@ class Post(PostBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
     is_available: bool
+
+
+class NearbyPost(Post):
+    # this is the class for returning a nearby post
+    distance: float

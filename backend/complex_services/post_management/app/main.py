@@ -91,7 +91,7 @@ def create_post(
                     }}
                 }}
             """
-    
+
     payload = {"query": query}
     r = requests.post(post_ms_url, json=payload)
     created_post = r.json()["data"]["create_post"]
@@ -107,13 +107,13 @@ def create_post(
     return created_post
 
 
-@app.get("/viewposts", response_model=List[schemas.Post], tags=["Post"])
+@app.get("/viewposts", response_model=List[schemas.NearbyPost], tags=["Post"])
 def view_posts(
     latitude: float,
     longitude: float
 ):
     """
-    Gets all posts within a 2.5km radius of the user's location.
+    Gets all posts within a 5km radius of the user's location in ascending order of distance.
     """
 
     # 1. get nearby posts with post microservice
@@ -126,9 +126,11 @@ def view_posts(
                         post_id,
                         title,
                         user_id,
+                        distance,
                         image_url,
                         location_latitude,
                         location_longitude,
+                        available_reservations,
                         total_reservations,
                         time_end,
                         created_at,
@@ -163,10 +165,9 @@ def created_posts(
     Gets all posts created by user_id. An empty list returned indicates that the user has not created any posts.
     """
 
-    # 1. get all posts
-    query = """
-                query {
-                    posts{
+    # 1. get posts created by user
+    query = f"""query {{
+                    posts_by_user(user_id: {user_id}){{
                         post_id,
                         title,
                         user_id,
@@ -178,17 +179,14 @@ def created_posts(
                         created_at,
                         updated_at,
                         is_available
-                    }
-                }
-            """
+                    }}
+            }}"""
+
     payload = {"query": query}
     r = requests.get(post_ms_url, params=payload)
-    posts = r.json()["data"]["posts"]
+    created_posts = r.json()["data"]["posts_by_user"]
 
-    # 2. filter posts by user_id
-    created_posts = [post for post in posts if post["user_id"] == user_id]
-
-    # 3. get number of reservations left for each post
+    # 2. get number of reservations left for each post
     url = f"{reservation_ms_url}/posts/slots/"
     for post in created_posts:
         reservation_count = requests.get(url + str(post["post_id"]))
