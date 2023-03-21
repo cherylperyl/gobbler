@@ -2,13 +2,13 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
+from fastapi import UploadFile
 
 
 class PostBase(BaseModel):
     # this is the base class for PostCreate and PostUpdate
     title: str
     user_id: int
-    image_url: str  # to change to bytes
     location_latitude: float
     location_longitude: float
     available_reservations: int
@@ -18,7 +18,7 @@ class PostBase(BaseModel):
 
 class PostCreate(PostBase):
     # this is the class for creating a new post
-    pass
+    image_file: UploadFile
 
 
 class Post(PostBase):
@@ -27,6 +27,7 @@ class Post(PostBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
     is_available: bool
+    image_url: str
 
 
 class NearbyPost(Post):

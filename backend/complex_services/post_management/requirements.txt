@@ -37,3 +37,4 @@ uvicorn==0.20.0
 zipp==3.11.0
 requests==2.26.0
 pika==1.2.0
+python-multipart==0.0.6
