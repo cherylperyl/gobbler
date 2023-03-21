@@ -300,8 +300,11 @@ services:
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: posts
+      GOOGLE_APPLICATION_CREDS: /root/.config/gcloud/application_default_credentials.json
     ports:
       - "8082:8082"
+    volumes:
+      - ~/.config/gcloud:/root/.config/gcloud
     depends_on:
       post-mysql:
         condition: service_healthy

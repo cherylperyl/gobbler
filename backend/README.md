@@ -3,6 +3,24 @@
 Make a copy of this file and rename it `/.env`. Populate as necessary. This is the secure store of environment variables.
 **NEVER COMMIT ENVIRONMENT VARIABLES**. If you happen to accidentally commit, immediately ping the group so someone with know how can try to wipe it from git history.
 
+## Connecting to GCP
+
+1. Install gcloud cli (https://cloud.google.com/sdk/docs/install)
+```bash
+# For Mac:
+brew install --cask google-cloud-sdk
+```
+
+2. Login via gcloud CLI. This will prompt a browser to login a google account. Use the gobbler google account.
+```bash
+gcloud auth login
+```
+
+3. Create gcloud credential json.
+```bash
+gcloud auth application-default login
+```
+
 ### Rebuilding the Docker images
 
 If you have made changes to the Dockerfile, requirements.txt, or any other files used to build the Docker images, you will need to rebuild the images before you can run the application.
