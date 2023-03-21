@@ -1,13 +1,13 @@
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from . import schemas, amqp_setup
 import requests
 import pika
 import json
 import os
-
+from pyfa_converter import FormDepends
 
 ########### DO NOT MODIFY BELOW THIS LINE ###########
 # create FastAPI app
@@ -57,7 +57,8 @@ def ping():
 
 @app.post("/createpost", response_model=schemas.Post, tags=["Post"])
 def create_post(
-    post: schemas.PostCreate
+    post: schemas.PostCreate = FormDepends(schemas.PostCreate),
+    image_file: UploadFile = File(...)
 ):
     """
     Create a new post.
@@ -69,7 +70,7 @@ def create_post(
                     create_post(post: {{
                         title: "{post.title}",
                         user_id: {post.user_id},
-                        image_url: "{post.image_url}",
+                        image_url: "{image_file}",
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
                         available_reservations: {post.available_reservations},

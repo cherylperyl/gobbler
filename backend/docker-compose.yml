@@ -3,6 +3,8 @@ version: "3.9"
 volumes:
   authentication-service-pgdata:
   user-service-pgdata:
+  post-management-rabbitmq-data:
+  post-management-rabbitmq-log:
 
 networks:
   gobbler-net:
@@ -288,8 +290,8 @@ services:
         - 5672:5672
         - 15672:15672
     volumes:
-        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq/
+        - post-management-rabbitmq-data:/var/lib/rabbitmq/
+        - post-management-rabbitmq-log:/var/log/rabbitmq/
     networks:
         - gobbler-net
 
