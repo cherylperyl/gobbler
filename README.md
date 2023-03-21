@@ -1,5 +1,9 @@
 # Gobbler
-Reducing food waste one buffet at a time
+Reducing food waste one buffet at a time  
+
+1. [API Docs](https://docs.google.com/document/d/1p9xU6xDQlhA96rWvjR7AQRDs3OLuAAEXLBefcChBxCc/edit)
+2. [Project report](https://docs.google.com/document/d/1_VMYmIKxV-ouKZ3y6g-upth47BED7S6Sr370QjmmAiU/edit)
+3. [Project slides](https://docs.google.com/presentation/d/1-TyOVTGNd1wzkaCL0MiyIqw7BWRxx_4Z8tZ8LAhiL3E/edit#slide=id.g1f43977f471_2_179)
 
 # Table of Contents
 1. [Project Overview](#project-overview)
