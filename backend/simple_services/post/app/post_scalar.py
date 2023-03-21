@@ -15,7 +15,7 @@ class PostInput:
     time_end: datetime.datetime
 
 @strawberry.type
-class Post(PostInput):
+class Post:
     user_id: int
     title: str
     location_latitude: float
