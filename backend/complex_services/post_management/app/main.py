@@ -16,6 +16,7 @@ app = FastAPI()
 # set up AMQP
 AMQP_SERVER = os.getenv("AMQP_SERVER")
 AMQP_PORT = os.getenv("AMQP_PORT")
+
 channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
 
 # catch all exceptions and return error message
@@ -31,7 +32,6 @@ POST_MS_SERVER = os.getenv("POST_MS_SERVER")
 POST_MS_PORT = os.getenv("POST_MS_PORT")
 RESERVATION_MS_SERVER = os.getenv("RESERVATION_MS_SERVER")
 RESERVATION_MS_PORT = os.getenv("RESERVATION_MS_PORT")
-
 post_ms_url = "http://" + POST_MS_SERVER + ":" + POST_MS_PORT + "/graphql"
 reservation_ms_url = "http://" + RESERVATION_MS_SERVER + ":" + RESERVATION_MS_PORT + "/reservations"
 
@@ -66,11 +66,11 @@ def create_post(
 
     # create post with post microservice
     query = f"""
-                mutation {{
+                mutation ($image_file: Upload!){{
                     create_post(post: {{
                         title: "{post.title}",
                         user_id: {post.user_id},
-                        image_url: "{image_file}",
+                        image_file: $image_file,
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
                         available_reservations: {post.available_reservations},
@@ -93,8 +93,14 @@ def create_post(
                 }}
             """
 
-    payload = {"query": query}
-    r = requests.post(post_ms_url, json=payload)
+    operations = {"query": query, "variables": {"image_file": None}}
+    map = {"image_file": ["variables.image_file"]}
+    files = {"image_file": image_file.file}
+
+    r = requests.post(post_ms_url, files=files, data={
+        "operations": json.dumps(operations),
+        "map": json.dumps(map)
+    })
     created_post = r.json()["data"]["create_post"]
 
     # publish post to rabbitmq
