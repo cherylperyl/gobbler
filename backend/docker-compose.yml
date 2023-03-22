@@ -279,6 +279,8 @@ services:
       DATABASE: posts
     ports:
       - "8082:8082"
+    volumes:
+      - ~/.config/gcloud:/root/.config/gcloud
     depends_on:
       - "post-mysql"
         # condition: service_healthy
