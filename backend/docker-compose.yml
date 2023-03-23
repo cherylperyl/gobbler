@@ -7,10 +7,6 @@ volumes:
     driver: local
   reservation-mysql-logs:
     driver: local
-  payment-mysql-data:
-    driver: local
-  payment-mysql-logs:
-    driver: local
   post-mysql-data:
     driver: local
   post-mysql-logs:
