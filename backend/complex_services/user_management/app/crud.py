@@ -9,7 +9,7 @@ from dateutil import parser
 
 from . import schemas
 
-endpoint = os.environ.get("USER_ENDPOINT") if os.environ.get("USER_ENDPOINT") is not None else "http://localhost:8081"
+endpoint = f"{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_ENDPOINT") is not None else "http://localhost:8081"
 
 def create_account(
     account: schemas.AccountCreate
