@@ -13,6 +13,7 @@ class PostInput:
     available_reservations: int
     total_reservations: int
     time_end: datetime.datetime
+    file_name: str
 
 @strawberry.type
 class Post:

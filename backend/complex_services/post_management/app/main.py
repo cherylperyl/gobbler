@@ -8,6 +8,9 @@ import pika
 import json
 import os
 from pyfa_converter import FormDepends
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ########### DO NOT MODIFY BELOW THIS LINE ###########
 # create FastAPI app
@@ -63,7 +66,6 @@ def create_post(
     """
     Create a new post.
     """
-
     # create post with post microservice
     query = f"""
                 mutation ($image_file: Upload!){{
@@ -71,6 +73,7 @@ def create_post(
                         title: "{post.title}",
                         user_id: {post.user_id},
                         image_file: $image_file,
+                        file_name: "{image_file.filename}",
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
                         available_reservations: {post.available_reservations},
