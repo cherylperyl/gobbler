@@ -2,9 +2,25 @@ version: "3.9"
 
 volumes:
   authentication-service-pgdata:
+    driver: local
+  reservation-mysql-data:
+    driver: local
+  reservation-mysql-logs:
+    driver: local
+  payment-mysql-data:
+    driver: local
+  payment-mysql-logs:
+    driver: local
+  post-mysql-data:
+    driver: local
+  post-mysql-logs:
+    driver: local
   user-service-pgdata:
+    driver: local
   post-management-rabbitmq-data:
-  post-management-rabbitmq-log:
+    driver: local
+  post-management-rabbitmq-logs:
+    driver: local
 
 networks:
   gobbler-net:
@@ -15,7 +31,7 @@ services:
     build:
       context: ./api_gateway/kong
       dockerfile: Dockerfile
-    image: kong
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/kong:latest
     container_name: kong
     restart: always
     networks:
@@ -40,12 +56,17 @@ services:
       - "8004:8004"
 
   authentication-service-postgres:
-    image: postgres:13
+    platform: linux/amd64
+    build:
+      context: ./api_gateway/authentication_service/postgres
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/authentication-service-postgres:latest
     container_name: authentication-service-postgres
     restart: always
     networks:
       - gobbler-net
     environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
@@ -53,7 +74,7 @@ services:
     volumes:
       - authentication-service-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready -U ${DATABASE_USER}"]
+      test: /usr/bin/pg_isready
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,7 +84,7 @@ services:
     build:
       context: ./api_gateway/authentication_service/authentication
       dockerfile: Dockerfile
-    image: authentication-service
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/authentication-service:latest
     container_name: authentication-service
     restart: always
     networks:
@@ -77,14 +98,15 @@ services:
     ports:
       - "5401:5401"
     depends_on:
-      - "authentication-service-postgres"
-        # condition: service_healthy
+      authentication-service-postgres:
+        condition: service_healthy
 
   reservation-mysql:
     platform: linux/amd64
     build:
       context: ./simple_services/reservation/mysql
       dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-mysql:latest
     container_name: reservation-mysql
     restart: always
     ports:
@@ -95,8 +117,8 @@ services:
       DATABASE: reservations
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - ./simple_services/reservation/mysql/data:/var/lib/mysql
-      - ./simple_services/reservation/mysql/logs:/var/log/mysql
+      - reservation-mysql-data:/var/lib/mysql
+      - reservation-mysql-logs:/var/log/mysql
     healthcheck:
       test:
         [
@@ -118,7 +140,7 @@ services:
     build:
       context: ./simple_services/reservation
       dockerfile: Dockerfile
-    image: reservation-simple-ms
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-simple-ms:latest
     container_name: reservation-simple-ms
     restart: always
     networks:
@@ -140,7 +162,7 @@ services:
     build:
       context: ./simple_services/payment/mysql
       dockerfile: Dockerfile
-    image: payment-mysql
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/payment-mysql:latest
     container_name: payment-mysql
     restart: always
     networks:
@@ -150,8 +172,8 @@ services:
     ports:
       - "5005:3306"
     volumes:
-      - ./simple_services/payment/mysql/data:/var/lib/mysql
-      - ./simple_services/payment/mysql/logs:/var/log/mysql
+      - payment-mysql-data:/var/lib/mysql
+      - payment-mysql-logs:/var/log/mysql
     healthcheck:
       test:
         [
@@ -172,7 +194,7 @@ services:
     build:
       context: ./simple_services/payment
       dockerfile: Dockerfile
-    image: payment-simple-ms
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/payment-simple-ms:latest
     container_name: payment-simple-ms
     restart: always
     networks:
@@ -187,64 +209,69 @@ services:
     ports:
       - "5006:8080"
     depends_on:
-      - "payment-mysql"
-        # - condition: service_healthy
+      payment-mysql:
+        condition: service_healthy
 
   user-postgres:
-    image: postgres:13
+    build:
+      context: ./simple_services/user/postgres
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-postgres:latest
     container_name: user-postgres
     restart: always
-    ports:
-      - "5432:5432"
     networks:
       - gobbler-net
     environment:
-      POSTGRES_DB: users
+      PGDATA: /var/lib/postgresql/data/pgdata
+      # POSTGRES_DB: users
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5007:5432"
+    volumes:
+      - user-service-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "pg_isready -U ${DATABASE_USER}" ]
+      test: /usr/bin/pg_isready
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - user-service-pgdata:/var/lib/postgresql/data
 
   user-simple-ms:
     build:
       context: ./simple_services/user
       dockerfile: Dockerfile
-    image: user-simple-ms
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-simple-ms:latest
     container_name: user-simple-ms
     restart: always
-    ports:
-        - "8081:80"
+    networks:
+      - gobbler-net
     environment:
       - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
       - ASPNETCORE_URLS=http://+:80
-    networks:
-      - gobbler-net
+    ports:
+        - "8081:80"
     depends_on:
-      - "user-postgres"
+      user-postgres:
+        condition: service_healthy
 
   post-mysql:
     platform: linux/amd64
     build:
       context: ./simple_services/post/mysql
       dockerfile: Dockerfile
-    image: post-mysql
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-mysql:latest
     container_name: post-mysql
     restart: always
     networks:
       - gobbler-net
-    ports:
-      - "8083:8083"
     environment:
       MYSQL_DATABASE: posts
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "8083:8083"
     volumes:
-      - ./simple_services/post/mysql/data:/var/lib/mysql
-      - ./simple_services/post/mysql/logs:/var/log/mysql
+      - post-mysql-data:/var/lib/mysql
+      - post-mysql-logs:/var/log/mysql
     healthcheck:
       test:
         [
@@ -266,7 +293,7 @@ services:
     build:
       context: ./simple_services/post
       dockerfile: Dockerfile
-    image: post-simple-ms
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-simple-ms:latest
     container_name: post-simple-ms
     restart: always
     networks:
@@ -277,13 +304,14 @@ services:
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: posts
+      GOOGLE_APPLICATION_CREDS: /root/.config/gcloud/application_default_credentials.json
     ports:
       - "8082:8082"
     volumes:
       - ~/.config/gcloud:/root/.config/gcloud
     depends_on:
-      - "post-mysql"
-        # condition: service_healthy
+      post-mysql:
+        condition: service_healthy
 
   post-management-rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -293,7 +321,7 @@ services:
         - 15672:15672
     volumes:
         - post-management-rabbitmq-data:/var/lib/rabbitmq/
-        - post-management-rabbitmq-log:/var/log/rabbitmq/
+        - post-management-rabbitmq-logs:/var/log/rabbitmq/
     networks:
         - gobbler-net
 
