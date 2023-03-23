@@ -170,9 +170,9 @@ services:
       STRIPE_API_KEY: ${STRIPE_API_KEY}
     ports:
       - "5006:8080"
-    depends_on:
-      payment-mysql:
-        condition: service_healthy
+    # depends_on:
+      # payment-mysql:
+      #   condition: service_healthy
 
   user-postgres:
     build:
@@ -308,6 +308,26 @@ services:
         - 8084:8084
     depends_on:
         - post-management-rabbitmq
+  
+
+  user-management:
+    platform: linux/amd64 
+    build:
+      context: ./complex_services/user_management
+      dockerfile: Dockerfile
+    image: user-management
+    container_name: 'user-management'
+    restart: always 
+    networks: 
+      - gobbler-net 
+    environment:
+      USER_MS_SERVER: user-simple-ms
+      USER_MS_PORT: 8081
+    ports: 
+      - 8085:8000
+    depends_on:
+      - user-simple-ms
+
 
   # fastapi-template-mysql:
   #   build:
