@@ -351,7 +351,7 @@ def view_created_post(
 
 
 @app.post("/updatepost", response_model=schemas.Post, tags=["Post"])
-def update_post(
+def update_post_availability(
     post_id: int,
     is_available: bool
 ):
@@ -386,19 +386,19 @@ def update_post(
     r = requests.post(post_ms_url, json=payload)
     updated_post = r.json()["data"]["update_post"]
 
-    # 2. get number of reservations for post
-    url = f"{reservation_ms_url}/post/slots/"
-    reservation_count = requests.get(url + str(post_id))
-    if reservation_count.status_code == 404:
-        reservation_count = 0
+    if not updated_post["is_available"]:
+        updated_post["available_reservations"] = 0
+
     else:
-        reservation_count = reservation_count.json()
+        # 2. get number of reservations for post
+        url = f"{reservation_ms_url}/post/slots/"
+        reservation_count = requests.get(url + str(post_id))
+        if reservation_count.status_code == 404:
+            reservation_count = 0
+        else:
+            reservation_count = reservation_count.json()
 
-    # 3. calculate available reservations based on total and reserved
-    updated_post["available_reservations"] = updated_post["total_reservations"] - reservation_count
-
-    # 4. update post details
-    if updated_post["available_reservations"] == 0:
-        updated_post["is_available"] = False
+        # 3. calculate available reservations based on total and reserved
+        updated_post["available_reservations"] = updated_post["total_reservations"] - reservation_count
 
     return updated_post

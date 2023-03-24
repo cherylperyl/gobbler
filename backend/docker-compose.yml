@@ -343,7 +343,7 @@ services:
       RESERVATION_MS_SERVER: reservation-simple-ms
       RESERVATION_MS_PORT: 5003
       USER_MS_SERVER: user-simple-ms
-      USER_MS_PORT: 8081
+      USER_MS_PORT: 80
     ports:
         - 8084:8084
     depends_on:
