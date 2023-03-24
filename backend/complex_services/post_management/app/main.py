@@ -35,8 +35,12 @@ POST_MS_SERVER = os.getenv("POST_MS_SERVER")
 POST_MS_PORT = os.getenv("POST_MS_PORT")
 RESERVATION_MS_SERVER = os.getenv("RESERVATION_MS_SERVER")
 RESERVATION_MS_PORT = os.getenv("RESERVATION_MS_PORT")
+USER_MS_SERVER = os.getenv("USER_MS_SERVER")
+USER_MS_PORT = os.getenv("USER_MS_PORT")
+
 post_ms_url = "http://" + POST_MS_SERVER + ":" + POST_MS_PORT + "/graphql"
 reservation_ms_url = "http://" + RESERVATION_MS_SERVER + ":" + RESERVATION_MS_PORT + "/reservations"
+user_ms_url = "http://" + USER_MS_SERVER + ":" + USER_MS_PORT + "/api/User"
 
 sample_post = {
     "title": "Sample Post",
@@ -46,7 +50,7 @@ sample_post = {
     "location_longitude": 1.0,
     "available_reservations": 1,
     "total_reservations": 1,
-    "time_end": "2021-05-01T00:00:00"
+    "time_end": "2030-05-01T00:00:00"
 }
 
 
@@ -76,7 +80,7 @@ def create_post(
                         file_name: "{image_file.filename}",
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
-                        available_reservations: {post.available_reservations},
+                        available_reservations: {post.total_reservations},
                         total_reservations: {post.total_reservations},
                         time_end: "{post.time_end}"
                     }}) {{
@@ -117,13 +121,72 @@ def create_post(
     return created_post
 
 
+@app.get("/viewpost", response_model=schemas.PostUserView, tags=["Post"])
+def view_post(
+    post_id: int,
+    user_id: int
+):
+    """
+    Gets a post by its ID for a user. Will indicate if the user has already
+    reserved the post.
+    """
+    # 1. get post with post microservice
+    query = f"""
+                query {{
+                    post(post_id: {post_id}) {{
+                        post_id,
+                        title,
+                        user_id,
+                        image_url,
+                        location_latitude,
+                        location_longitude,
+                        total_reservations,
+                        time_end,
+                        created_at,
+                        updated_at,
+                        is_available
+                    }}
+                }}
+            """
+
+    payload = {"query": query}
+    r = requests.get(post_ms_url, params=payload)
+    post = r.json()["data"]["post"]
+
+    # 2. get reservation for post
+    url = f"{reservation_ms_url}/user/{str(user_id)}/post/{str(post_id)}/"
+    reservation = requests.get(url)
+    if reservation.status_code == 404:
+        post["reserved"] = False
+    else:
+        post["reserved"] = True
+
+    # 3. get number of reservations for post
+    url = f"{reservation_ms_url}/post/slots/"
+    reservation_count = requests.get(url + str(post["post_id"]))
+    if reservation_count.status_code == 404:
+        reservation_count = 0
+    else:
+        reservation_count = reservation_count.json()
+
+    post["available_reservations"] = post["total_reservations"] - reservation_count
+
+    # 4. update post details
+    if post["available_reservations"] == 0:
+        post["is_available"] = False
+
+    return post
+
+
 @app.get("/viewposts", response_model=List[schemas.NearbyPost], tags=["Post"])
 def view_posts(
     latitude: float,
-    longitude: float
+    longitude: float,
+    user_id: int
 ):
     """
-    Gets all posts within a 5km radius of the user's location in ascending order of distance.
+    Gets all posts within a 5km radius of the user's location in ascending
+    order of distance.
     """
 
     # 1. get nearby posts with post microservice
@@ -153,16 +216,30 @@ def view_posts(
     r = requests.get(post_ms_url, params=payload)
     nearby_posts = r.json()["data"]["nearby_posts"]
 
-    # 2. get number of reservations for each post
-    url = f"{reservation_ms_url}/posts/slots/"
+    url1 = f"{reservation_ms_url}/post/slots/"
+    url2 = f"{reservation_ms_url}/user/{user_id}/post/"
     for post in nearby_posts:
-        reservation_count = requests.get(url + str(post["post_id"]))
+
+        # 2. get number of reservations for each post
+        reservation_count = requests.get(url1 + str(post["post_id"]))
         if reservation_count.status_code == 404:
             reservation_count = 0
-            # calcaulate available reservations based on total and reserved
-            post["available_reservations"] = post["total_reservations"] - reservation_count
         else:
-            post["available_reservations"] = post["total_reservations"] - reservation_count.json()
+            reservation_count = reservation_count.json()
+
+        # 3. check if user has reserved the post
+        reservation = requests.get(url2 + str(post["post_id"]))
+        if reservation.status_code == 404:
+            post["reserved"] = False
+        else:
+            post["reserved"] = True
+
+        # 4. calculate available reservations based on total and reserved
+        post["available_reservations"] = post["total_reservations"] - reservation_count
+
+        # 5. update post details
+        if post["available_reservations"] == 0:
+            post["is_available"] = False
 
     return nearby_posts
 
@@ -197,13 +274,131 @@ def created_posts(
     created_posts = r.json()["data"]["posts_by_user"]
 
     # 2. get number of reservations left for each post
-    url = f"{reservation_ms_url}/posts/slots/"
+    url = f"{reservation_ms_url}/post/slots/"
     for post in created_posts:
         reservation_count = requests.get(url + str(post["post_id"]))
         if reservation_count.status_code == 404:
             reservation_count = 0
-            post["available_reservations"] = post["total_reservations"] - reservation_count
         else:
-            post["available_reservations"] = post["total_reservations"] - reservation_count.json()
+            reservation_count = reservation_count.json()
+
+        # 3. calculate available reservations based on total and reserved
+        post["available_reservations"] = post["total_reservations"] - reservation_count
+
+        # 4. update post details
+        if post["available_reservations"] == 0:
+            post["is_available"] = False
 
     return created_posts
+
+
+@app.get("/viewcreatedpost", response_model=schemas.CreatedPost, tags=["Post"])
+def view_created_post(
+    post_id: int
+):
+    """
+    Get details of a post created by a poster by post_id.
+    Includes the most updated reservation count as well as the list of users
+    that have reserved the post. Reservations by non-existent users are not
+    included.
+    """
+
+    # 1. get post
+    query = f"""query {{
+                    post(post_id: {post_id}){{
+                        post_id,
+                        title,
+                        user_id,
+                        image_url,
+                        location_latitude,
+                        location_longitude,
+                        total_reservations,
+                        time_end,
+                        created_at,
+                        updated_at,
+                        is_available
+                    }}
+            }}"""
+
+    payload = {"query": query}
+    r = requests.get(post_ms_url, params=payload)
+    post = r.json()["data"]["post"]
+    post["users"] = []
+
+    # 2. get reservations for the post
+    url = f"{reservation_ms_url}/post/"
+    reservations = requests.get(url + str(post["post_id"]))
+    if reservations.status_code == 404:
+        reservation_count = 0
+
+    # 3. get users that have reserved the post
+    else:
+        url = f"{user_ms_url}/"
+        for reservation in reservations.json():
+            user = requests.get(url + str(reservation["user_id"]))
+            if user.status_code != 400:
+                post["users"].append(user.json())
+        reservation_count = len(post["users"])
+
+    # 4. calculate available reservations based on total and reserved
+    post["available_reservations"] = post["total_reservations"] - reservation_count
+
+    # 4. update post details
+    if post["available_reservations"] == 0:
+        post["is_available"] = False
+
+    return post
+
+
+@app.post("/updatepost", response_model=schemas.Post, tags=["Post"])
+def update_post(
+    post_id: int,
+    is_available: bool
+):
+    """
+    Updates a post's availability status.
+    """
+
+    # 1. update post with post microservice
+    query = f"""
+                mutation {{
+                    update_post(post_id: {post_id},
+                        post: {{
+                            is_available: {str(is_available).lower()}
+                        }}
+                    ){{
+                        post_id,
+                        title,
+                        user_id,
+                        image_url,
+                        location_latitude,
+                        location_longitude,
+                        total_reservations,
+                        time_end,
+                        created_at,
+                        updated_at,
+                        is_available
+                    }}
+                }}
+            """
+
+    payload = {"query": query}
+    r = requests.post(post_ms_url, json=payload)
+    updated_post = r.json()["data"]["update_post"]
+
+    # 2. get number of reservations for post
+    url = f"{reservation_ms_url}/post/slots/"
+    reservation_count = requests.get(url + str(post_id))
+    if reservation_count.status_code == 404:
+        reservation_count = 0
+    else:
+        reservation_count = reservation_count.json()
+
+    # 3. calculate available reservations based on total and reserved
+    updated_post["available_reservations"] = updated_post["total_reservations"] - reservation_count
+
+    # 4. update post details
+    if updated_post["available_reservations"] == 0:
+        updated_post["is_available"] = False
+
+    return updated_post

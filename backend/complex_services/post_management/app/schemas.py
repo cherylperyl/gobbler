@@ -11,7 +11,6 @@ class PostBase(BaseModel):
     user_id: int
     location_latitude: float
     location_longitude: float
-    available_reservations: int
     total_reservations: int
     time_end: datetime
 
@@ -24,12 +23,24 @@ class PostCreate(PostBase):
 class Post(PostBase):
     # this is the class for returning a post
     post_id: int
+    available_reservations: int
     created_at: datetime
     updated_at: Optional[datetime] = None
     is_available: bool
     image_url: str
 
 
-class NearbyPost(Post):
+class CreatedPost(Post):
+    # this is the class for returning a created post
+    users: list
+
+
+class PostUserView(Post):
+    # this is the class for returning a post for a user
+    reserved: bool
+
+
+class NearbyPost(PostUserView):
     # this is the class for returning a nearby post
     distance: float
+
