@@ -108,3 +108,14 @@ def get_all_posts_reserved_by_user(user_id: int):
 
     return posts_from_ids
 
+@app.delete("/reserve/cancel", response_model=schemas.Reservation)
+def delete_reservation(reservation_id: int):
+    response = requests.delete(
+        f"{reservation_ms_url}/reservations/{reservation_id}"
+    )
+    if response.status_code not in range(200, 300):
+        raise HTTPException(response.status_code, detail = response.text)
+    
+    deleted_reservation = response.json()
+
+    return deleted_reservation
