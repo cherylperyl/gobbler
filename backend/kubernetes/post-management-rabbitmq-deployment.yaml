@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: post-management-rabbitmq
+  name: post-management-rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: post-management-rabbitmq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: post-management-rabbitmq
+    spec:
+      containers:
+        - image: rabbitmq:3-management-alpine
+          name: post-management-rabbitmq
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/rabbitmq
+              name: post-management-rabbitmq-data
+            - mountPath: /var/log/rabbitmq
+              name: post-management-rabbitmq-logs
+      restartPolicy: Always
+      volumes:
+        - name: post-management-rabbitmq-data
+          persistentVolumeClaim:
+            claimName: post-management-rabbitmq-data
+        - name: post-management-rabbitmq-logs
+          persistentVolumeClaim:
+            claimName: post-management-rabbitmq-logs
+status: {}

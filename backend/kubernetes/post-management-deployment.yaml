@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: post-management
+  name: post-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: post-management
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: post-management
+    spec:
+      containers:
+        - env:
+            - name: AMQP_PORT
+              value: "5672"
+            - name: AMQP_SERVER
+              value: post-management-rabbitmq
+            - name: POST_MS_PORT
+              value: "8082"
+            - name: POST_MS_SERVER
+              value: post-simple-ms
+            - name: RESERVATION_MS_PORT
+              value: "5003"
+            - name: RESERVATION_MS_SERVER
+              value: reservation-simple-ms
+          image: post-management
+          name: post-management
+          ports:
+            - containerPort: 8084
+          resources: {}
+      restartPolicy: Always
+status: {}

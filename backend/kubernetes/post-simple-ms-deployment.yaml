@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: post-simple-ms
+  name: post-simple-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: post-simple-ms
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: post-simple-ms
+    spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: gcp-key
+      containers:
+        - env:
+            - name: DATABASE
+              value: posts
+            - name: DB_PASSWORD
+              # value: ${DATABASE_PASSWORD}
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_PASSWORD
+            - name: DB_PORT
+              value: "8083"
+            - name: DB_SERVER
+              value: post-mysql
+            - name: DB_USER
+              # value: ${DATABASE_USER}
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_USER
+            - name: GOOGLE_APPLICATION_CREDS
+              value: /var/secrets/google/key.json
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-simple-ms:latest
+          name: post-simple-ms
+          ports:
+            - containerPort: 8082
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/secrets/google/key.json
+              name: post-simple-ms-claim0
+      restartPolicy: Always
+      volumes:
+        - name: post-simple-ms-claim0
+          persistentVolumeClaim:
+            claimName: post-simple-ms-claim0
+status: {}
