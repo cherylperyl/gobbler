@@ -7,13 +7,14 @@ import app.crud as crud
 class Mutation:
     @strawberry.mutation
     def create_post(self, post: PostInput) -> Post:
-        image_url = upload_to_posts_bucket(post.image_file.filename, post.image_file.file)
+        image_url = upload_to_posts_bucket(post.file_name, post.image_file.file)
         post.image_url = image_url
         del post.image_file
+        del post.file_name
 
         db_post = crud.create_post(post)
         return db_post
-    
+
     @strawberry.mutation
     def update_post(self, post_id: int, post: PostUpdate) -> Post:
         db_post = crud.get_post_by_post_id(post_id)

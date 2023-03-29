@@ -13,13 +13,22 @@ class PostInput:
     available_reservations: int
     total_reservations: int
     time_end: datetime.datetime
+    file_name: str
 
 @strawberry.type
-class Post(PostInput):
+class Post:
+    user_id: int
+    title: str
+    location_latitude: float
+    location_longitude: float
+    available_reservations: int
+    total_reservations: int
+    time_end: datetime.datetime
     created_at: datetime.datetime
     updated_at: typing.Optional[datetime.datetime]
     post_id: int
     is_available: bool
+    image_url: str
     
 @strawberry.type
 class PostNearby(Post):
