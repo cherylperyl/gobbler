@@ -357,6 +357,27 @@ services:
       post-management-rabbitmq:
         condition: service_healthy
 
+  notification-management:
+    platform: linux/amd64
+    build:
+      context: ./complex_services/notification_management
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/notification-management:latest
+    container_name: 'notification-management'
+    restart: always
+    networks:
+        - gobbler-net
+    environment:
+      AMQP_SERVER: post-management-rabbitmq
+      AMQP_PORT: 5672
+      USER_MS_SERVER: user-simple-ms
+      USER_MS_PORT: 80
+    ports:
+      - 8085:3000
+    # depends_on:
+    #   post-management-rabbitmq:
+    #     condition: service_healthy
+
   # fastapi-template-mysql:
   #   build:
   #     context: ./fastapi_template/mysql

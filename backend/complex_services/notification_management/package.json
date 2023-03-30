@@ -1,0 +1,58 @@
+{
+  "name": "notification-management",
+  "version": "1.0.3",
+  "description": "A TypeScript Koa application for notifications",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/index.js",
+    "build": "node_modules/typescript/bin/tsc",
+    "watch": "nodemon --watch 'app/**/*' -e ts --exec 'ts-node' ./app/app.ts",
+    "image:build": "docker build --tag koa-typescript-starter .",
+    "image:run": "docker run --rm -ti -p 3000:3000 koa-typescript-starter",
+    "test": "NODE_ENV=test node_modules/mocha/bin/mocha -r ts-node/register ./test/**/*.spec.ts && exit 0",
+    "coverage": "NODE_ENV=test node_modules/nyc/bin/nyc.js --reporter=html --reporter=text node_modules/mocha/bin/mocha --exit -r ts-node/register ./test/**/*.spec.ts",
+    "coverage:coveralls": "NODE_ENV=test node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov node_modules/mocha/bin/mocha --exit -r ts-node/register ./test/**/*.spec.ts | coveralls"
+  },
+  "dependencies": {
+    "@koa/cors": "^4.0.0",
+    "amqp-ts": "^1.8.0",
+    "dotenv": "^16.0.3",
+    "firebase-admin": "^11.5.0",
+    "koa": "^2.14.1",
+    "koa-async-validator": "^0.4.1",
+    "koa-body": "^6.0.1",
+    "koa-router": "^12.0.0",
+    "koa-static": "^5.0.0",
+    "koa2-swagger-ui": "^5.7.0",
+    "node-fetch": "^2.6.9"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "excludes": [
+      "**/*.d.ts",
+      "./test/**/*"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html",
+      "lcov"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.1",
+    "@types/bluebird": "^3.5.38",
+    "@types/koa": "^2.13.6",
+    "@types/koa__cors": "^4.0.0",
+    "@types/koa-router": "^7.4.4",
+    "@types/node-fetch": "^2.6.3",
+    "typescript": "^5.0.2"
+  }
+}
