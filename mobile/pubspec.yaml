@@ -43,6 +43,10 @@ dependencies:
   location: ^4.2.0
   image_picker: ^0.8.7
   webview_flutter: ^4.0.6
+  firebase_core: ^2.8.0
+  firebase_messaging: ^14.3.0
+  overlay_support: ^2.1.0
+  flutter_local_notifications: ^13.0.0
 
 dev_dependencies:
   flutter_test:

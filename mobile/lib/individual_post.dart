@@ -2,12 +2,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/edit_post.dart';
 import 'package:mobile/login_page.dart';
 import 'package:mobile/model/post.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/model/app_state_model.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class IndividualPost extends StatefulWidget {
   const IndividualPost({
@@ -23,6 +25,17 @@ class IndividualPost extends StatefulWidget {
 class _IndividualPostState extends State<IndividualPost> {
   bool isLoading = false;
   int availableReservations = 0;
+  final formKey = GlobalKey<FormState>();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController servingsController = TextEditingController();
+  DateTime dateTime = DateTime.now();
+  String? selectedTime;
+  String? formattedTime;
+  bool timeErrorMsg = false;
+  bool imageErrorMsg = false;
+  bool loading = false;
+  XFile? image;
 
   @override
   void initState() {  
@@ -34,17 +47,37 @@ class _IndividualPostState extends State<IndividualPost> {
   Widget build(BuildContext context) {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
-        final userId = model.getUser()?.userId;
+        // final userId = model.getUser()?.userId;
+        const userId = 22;
+        final userRegisteredPosts = model.getUserRegisteredPostsIds();
         return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text("Gobble Snack"),
+        navigationBar: CupertinoNavigationBar(
+          middle: const Text("Gobble Snack"),
+          trailing: userId == widget.post.userId 
+          ? CupertinoButton(
+            child: Icon(
+              CupertinoIcons.pen), 
+            onPressed: (){
+              Navigator.push(
+                context, 
+                CupertinoPageRoute(
+                  builder: (context) => EditPost(
+                    post: widget.post
+                  )
+                )
+              );
+            })
+          : null
         ),
         child: SafeArea(
           child: Column(
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(widget.post.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                child: Text(
+                  widget.post.title, 
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 20),)),
               Container(
                 height: MediaQuery.of(context).size.height * 0.36,
                 width: double.infinity,
@@ -88,18 +121,24 @@ class _IndividualPostState extends State<IndividualPost> {
                   margin: EdgeInsets.symmetric(horizontal: 18),
                   width: double.infinity,
                   child: userId == widget.post.userId
-                  ? CupertinoButton.filled(
-                    child: Text("Your post"),
-                    onPressed: null,
-                    disabledColor: CupertinoColors.systemGrey3,
+                  ? CupertinoButton(
+                    color: CupertinoColors.systemRed,
+                    child: Text("Delete your post"),
+                    onPressed: () {},
+                    
                   )
-                  : CupertinoButton.filled(
-                    child: Text("Chope!"), 
-                    onPressed: () {
-                      handleReservationPressed(context);
-                    }),
+                  : userRegisteredPosts.contains(widget.post.postId)
+                    ? CupertinoButton.filled(
+                      child: Text("Registered"), 
+                      onPressed: null,
+                      disabledColor: CupertinoColors.systemGrey,
+                    )
+                    : CupertinoButton.filled(
+                      child: Text("Chope!"), 
+                      onPressed: () {
+                        handleReservationPressed(context);
+                      }),
                 )
-                
             ],),
         )
         );
@@ -108,12 +147,10 @@ class _IndividualPostState extends State<IndividualPost> {
   }
 
   String getExpiryTime() {
-    Duration timeBetween = DateTime.now().difference(widget.post.timeEnd);
-    if (timeBetween.inMinutes >= 60) {
-      return 'Over an hour';
-    } else {
-      return '$timeBetween.inMinutes.toString() minutes';
-    }
+    Duration timeBetween = widget.post.timeEnd.difference(DateTime.now());
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(timeBetween.inMinutes.remainder(60));
+    return "${twoDigits(timeBetween.inHours)} hours $twoDigitMinutes minutes";
   }
   void handleReservationPressed(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/individual_post.dart';
@@ -5,9 +6,14 @@ import 'posts_list_tab.dart';
 import 'create_tab.dart';         
 import 'profile_tab.dart';  
 
-class CupertinoStoreApp extends StatelessWidget {
+class CupertinoStoreApp extends StatefulWidget {
   const CupertinoStoreApp({super.key});
 
+  @override
+  State<CupertinoStoreApp> createState() => _CupertinoStoreAppState();
+}
+
+class _CupertinoStoreAppState extends State<CupertinoStoreApp> {
   @override
   Widget build(BuildContext context) {
     // This app is designed only to work vertically, so we limit
@@ -24,6 +30,7 @@ class CupertinoStoreApp extends StatelessWidget {
 
 class CupertinoStoreHomePage extends StatelessWidget {
   const CupertinoStoreHomePage({super.key});
+  
 
   @override
   Widget build(BuildContext context) {

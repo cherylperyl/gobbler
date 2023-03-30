@@ -17,8 +17,11 @@ double _shippingCostPerItem = 7;
 class AppStateModel extends foundation.ChangeNotifier {
   // All the available Posts.
   List<Post> _availablePosts = [];
+  List<Post> _userCreatedPosts = [];
+  List<Post> _userRegisteredPosts = [];
   LocationData? _currentLocation;
   User? _user;
+  LocationRepository locationRespository = LocationRepository();
   // The currently selected category of Posts.
   // Category _selectedCategory = Category.all;
 
@@ -36,53 +39,127 @@ class AppStateModel extends foundation.ChangeNotifier {
     });
   }
 
-  // Category get selectedCategory {
-  //   return _selectedCategory;
-  // }
 
-  // Totaled prices of the items in the cart.
-  // double get subtotalCost {
-  //   return _PostsInCart.keys.map((id) {
-  //     // Extended price for Post line
-  //     return getPostById(id).price * _PostsInCart[id]!;
-  //   }).fold(0, (accumulator, extendedPrice) {
-  //     return accumulator + extendedPrice;
-  //   });
-  // }
-
-  // Total shipping cost for the items in the cart.
-  double get shippingCost {
-    return _shippingCostPerItem *
-        _PostsInCart.values.fold(0.0, (accumulator, itemCount) {
-          return accumulator + itemCount;
-        });
-  }
-
-  // Sales tax for the items in the cart
-  // double get tax {
-  //   return subtotalCost * _salesTaxRate;
-  // }
-
-  // Total cost to order everything in the cart.
-  // double get totalCost {
-  //   return subtotalCost + shippingCost + tax;
-  // }
 
   // Returns a copy of the list of available Posts, filtered by category.
   List<Post> getPosts() {
     return List.from(_availablePosts);
-    // if (_selectedCategory == Category.all) {
-    //   return List.from(_availablePosts);
-    // } else {
-    //   return _availablePosts.where((p) {
-    //     return p.category == _selectedCategory;
-    //   }).toList();
-    // }
   }
+  List<Post> getUserCreatedPosts() {
+    List<Post> mockPosts = [
+        Post(
+          userId: 22, 
+          postId: 22, 
+          title: "Chicken Rice", 
+          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+          locationDescription: "My mother's house", 
+          locationLatitude: 2, 
+          locationLongitude: 2, 
+          availableReservations: 22, 
+          totalReservations: 23, 
+          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+          isAvailable: true
+        ),
+        Post(
+          userId: 22, 
+          postId: 23, 
+          title: "Nasi Lemak", 
+          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+          locationDescription: "My mother's house", 
+          locationLatitude: 2, 
+          locationLongitude: 2, 
+          availableReservations: 22, 
+          totalReservations: 23, 
+          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+          isAvailable: true
+          )
+    ];
+    return List.from(mockPosts);
+    // return List.from(_userCreatedPosts);
+  }
+  List<Post> getUserRegisteredPosts() {
+    List<Post> mockPosts = [
+        Post(
+          userId: 23, 
+          postId: 22, 
+          title: "Chicken Rice", 
+          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+          locationDescription: "My mother's house", 
+          locationLatitude: 2, 
+          locationLongitude: 2, 
+          availableReservations: 22, 
+          totalReservations: 23, 
+          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+          isAvailable: true
+        ),
+        Post(
+          userId: 23, 
+          postId: 23, 
+          title: "Nasi Lemak", 
+          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+          locationDescription: "My mother's house", 
+          locationLatitude: 2, 
+          locationLongitude: 2, 
+          availableReservations: 22, 
+          totalReservations: 23, 
+          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+          isAvailable: true
+          )
+    ];
+    return List.from(mockPosts);
+    return List.from(_userRegisteredPosts);
+  }
+  List<int> getUserRegisteredPostsIds() {
+    List<Post> mockRegisteredPosts = [
+      Post(
+        userId: 23, 
+        postId: 22, 
+        title: "Chicken Rice", 
+        imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+        locationDescription: "My mother's house", 
+        locationLatitude: 2, 
+        locationLongitude: 2, 
+        availableReservations: 22, 
+        totalReservations: 23, 
+        createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+        timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+        isAvailable: true
+      ),
+      Post(
+        userId: 23, 
+        postId: 23, 
+        title: "Nasi Lemak", 
+        imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
+        locationDescription: "My mother's house", 
+        locationLatitude: 2, 
+        locationLongitude: 2, 
+        availableReservations: 22, 
+        totalReservations: 23, 
+        createdAt: DateTime.parse("2023-04-28T06:43:24"), 
+        timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
+        isAvailable: true
+        )
+    ];
+    return mockRegisteredPosts.map((post) => post.postId).toList();
+    return _userRegisteredPosts.map((post) => post.postId).toList();
+  }
+
   LocationData? getLoc() {
     return _currentLocation;
   }
   User? getUser() {
+    return User(
+      userId: 2,
+      isPremium: true,
+      username: "bobby",
+      dateCreated: DateTime.now(),
+      lastUpdated: null,
+      email: "bobby@gmail.com"
+    );
     return _user;
   }
   
@@ -135,7 +212,7 @@ class AppStateModel extends foundation.ChangeNotifier {
   }
 
   void updateLocation() async {
-    _currentLocation = await LocationRepository.getLoc();
+    _currentLocation = await locationRespository.getLoc();
     notifyListeners();
   }
 
@@ -143,8 +220,6 @@ class AppStateModel extends foundation.ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final user = prefs.getString('user');
     if (user != null) {
-      final userJson = jsonEncode(user);
-      // print(userJson);
       _user = User.fromJson(jsonDecode(user));
     }
     notifyListeners();
@@ -156,23 +231,28 @@ class AppStateModel extends foundation.ChangeNotifier {
     _user = await UserRepository.getUserData(bearer);
     if (_user != null) {
       final prefs = await SharedPreferences.getInstance();
-      Map<String, dynamic> userJson = User.toJson(_user!);
+      // Map<String, dynamic> userJson = User.toJson();
       // print('jsonEncode ${jsonEncode(userJson)}');
-      prefs.setString('user', jsonEncode(User.toJson(_user!)));
+      prefs.setString('user', jsonEncode(_user!));
     }
     notifyListeners();
   }
+  // possibly change to call one endpoint only
   Future<void> loginUser(String email, String password) async {
     String? bearer = await UserRepository.loginUser(email, password);
     _user = await UserRepository.getUserData(bearer);
-    if (_user != null) {
-      final prefs = await SharedPreferences.getInstance();
-      Map<String, dynamic> userJson = User.toJson(_user!);
-      // print('jsonEncode ${jsonEncode(userJson)}');
-      prefs.setString('user', jsonEncode(User.toJson(_user!)));
-    }
     
+    if (_user != null) {
+      _userCreatedPosts = await PostRepository.fetchCreatedPosts(_user!.userId);
+      _userRegisteredPosts = await PostRepository.fetchRegisteredPosts(_user!.userId);
+      final prefs = await SharedPreferences.getInstance();
+      // print('jsonEncode ${jsonEncode(userJson)}');
+      prefs.setString('user', jsonEncode(_user!));
+    }
     notifyListeners();
+  }
+  Future<void> signupUser(String username, String email, String password) async  {
+    bool success = await UserRepository.signupUser(username, email, password);
   }
 
   Future<void> logoutUser() async {
@@ -201,16 +281,4 @@ class AppStateModel extends foundation.ChangeNotifier {
     );
     return post;
   }
-  
-
-  // Loads the list of available Posts from the repo.
-  // void loadPosts() {
-  //   _availablePosts = PostRepository.fetchPosts();
-  //   notifyListeners();
-  // }
-
-  // void setCategory(Category newCategory) {
-  //   _selectedCategory = newCategory;
-  //   notifyListeners();
-  // }
 }
