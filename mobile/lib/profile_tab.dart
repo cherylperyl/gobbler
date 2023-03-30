@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/stripe_webview.dart';
+import 'package:mobile/signup_page.dart';
+import 'package:mobile/user_posts_page.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/model/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/login_page.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile/stripe_webview.dart';
 import 'model/app_state_model.dart';
 import './model/user.dart';
+import './model/post.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
 
@@ -44,6 +48,8 @@ class _ProfileTabState extends State<ProfileTab> {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
         User? user = model.getUser();
+        List<Post> userRegisteredPosts = model.getUserRegisteredPosts();
+        List<Post> userCreatedPosts = model.getUserCreatedPosts();
         return CustomScrollView(
           slivers: [
           const CupertinoSliverNavigationBar(
@@ -56,10 +62,16 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: CupertinoButton.filled(
                       child: const Text("Log in"), 
                       onPressed: () {
+                        // Navigator.push(
+                        //   context,
+                        //   CupertinoPageRoute(
+                        //     builder: (context) => LoginPage()
+                        //   )
+                        // );
                         Navigator.push(
                           context,
                           CupertinoPageRoute(
-                            builder: (context) => LoginPage()
+                            builder: (context) => SignupPage()
                           )
                         );
                         setState(() {});
@@ -91,20 +103,49 @@ class _ProfileTabState extends State<ProfileTab> {
                 header: const Text('History'),
                 children: [
                   CupertinoListTile(
-                    title: const Text('My posts'),
+                    title: userCreatedPosts.isEmpty
+                      ? const Text('No food posts created yet')
+                      : const Text('My food posts'),
                     leading: Icon(
                       CupertinoIcons.create_solid
                       ),
-                      trailing: const CupertinoListTileChevron(),
-                      onTap: () => {}
+                      trailing: userCreatedPosts.isEmpty 
+                      ? null
+                      : const CupertinoListTileChevron(),
+                      onTap: userCreatedPosts.isEmpty
+                      ? null
+                      : () => {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => UserPostsPage(
+                              posts:  userCreatedPosts,
+                              title: "Created Posts",
+                            ))
+                        )
+                      }
                   ),
                   CupertinoListTile(
-                    title: const Text('My reservations'),
+                    title: userRegisteredPosts.isEmpty
+                    ? const Text("No registered foods yet")
+                    : const Text('My reservations'),
                     leading: Icon(
                       CupertinoIcons.square_stack_3d_up_fill
                       ),
-                      trailing: const CupertinoListTileChevron(),
-                      onTap: () => {}
+                    trailing: userRegisteredPosts.isEmpty
+                    ? null
+                    : const CupertinoListTileChevron(),
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => UserPostsPage(
+                            posts: userRegisteredPosts,
+                            title: "Registered Posts"
+                          )
+                        )
+                      )
+                    }
                   ),
                 ],
               ),
@@ -131,8 +172,12 @@ class _ProfileTabState extends State<ProfileTab> {
                     subtitle: user.isPremium
                     ? Text('You get notifications!')
                     : Text('Premium users get notifications...'),
-                    trailing: const CupertinoListTileChevron(),
-                    onTap: (){ 
+                    trailing: user.isPremium
+                    ? null
+                    : const CupertinoListTileChevron(),
+                    onTap: user.isPremium
+                    ? null
+                    : (){ 
                       Navigator.of(context).push(
                         CupertinoPageRoute(
                           builder: (context) => StripeWebView()
@@ -147,7 +192,9 @@ class _ProfileTabState extends State<ProfileTab> {
           user != null
           ? SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0, vertical: 14
+                ),
                 child: CupertinoButton(
                   color: CupertinoColors.systemRed,
                   child: Text("Log out"), 

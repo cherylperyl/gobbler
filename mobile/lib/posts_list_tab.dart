@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'model/app_state_model.dart';
 import 'post_row_item.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile/model/user.dart';
 
 class PostsListTab extends StatelessWidget {
   const PostsListTab({super.key});
@@ -12,11 +16,12 @@ class PostsListTab extends StatelessWidget {
       builder: (context, model, child) {
         final posts = model.getPosts();
         final location = model.getLoc();
+        final user = model.getUser();
         return CustomScrollView(
           semanticChildCount: posts.length,
           slivers: <Widget>[
-            const CupertinoSliverNavigationBar(
-              largeTitle: Text('Gobbler'),
+            CupertinoSliverNavigationBar(
+              largeTitle: user != null ? Text(user.email) : Text("no user"),
             ),
             CupertinoSliverRefreshControl(
               onRefresh: () => _pullRefresh(model),
@@ -29,6 +34,17 @@ class PostsListTab extends StatelessWidget {
                 CupertinoListSection(
                   topMargin: 0,
                   children: [
+                    CupertinoButton.filled(
+                      child: Text('print user'), onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final user = prefs.getString('user');
+                      if (user != null) {
+                        print(user);
+                      }
+
+                      // print(user!.dateCreated.toIso8601String());
+                      // final userObj = User.fromJson(jsonDecode(user!));
+                    }),
                     for (var post in posts)
                       PostRowItem(
                         post: post,

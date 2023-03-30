@@ -19,6 +19,7 @@ class Post {
     required this.createdAt,
     required this.timeEnd,
     required this.isAvailable,
+    this.distance,
     this.updatedAt,
   });
 
@@ -35,6 +36,7 @@ class Post {
   final DateTime timeEnd;
   final bool isAvailable;
   final DateTime? updatedAt;
+  final double? distance;
 
   int get reservations => availableReservations;
   String get imageLink => imageUrl;
@@ -58,7 +60,8 @@ class Post {
       createdAt: DateTime.parse(json['created_at']),
       timeEnd: DateTime.parse(json['time_end']),
       isAvailable: json['is_available'],
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      distance: json['distance']
     );
   }
 }

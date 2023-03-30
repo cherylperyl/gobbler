@@ -10,16 +10,20 @@ import 'package:mobile/individual_post.dart';
 import 'package:location/location.dart';
 import 'package:mobile/login_page.dart';
 
-class CreateTab extends StatefulWidget {
-  const CreateTab({super.key});
+class EditPost extends StatefulWidget {
+  EditPost({
+    super.key,
+    required this.post
+  });
+  Post post;
 
   @override
-  State<CreateTab> createState() {
-    return _CreateTabState();
+  State<EditPost> createState() {
+    return _EditPostState();
   }
 }
 
-class _CreateTabState extends State<CreateTab> {
+class _EditPostState extends State<EditPost> {
   final formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController locationController = TextEditingController();
@@ -40,51 +44,33 @@ class _CreateTabState extends State<CreateTab> {
     imageErrorMsg = false;
     image = null;
     loading = false;
+    titleController.value = TextEditingValue(text:widget.post.title);
+    locationController.value = TextEditingValue(text:widget.post.locationDescription);
+    servingsController.value = TextEditingValue(text: widget.post.availableReservations.toString());
+    dateTime = widget.post.timeEnd;
+    selectedTime = DateFormat('y-MM-d HH:mm:ss').format(dateTime);
+    formattedTime = DateFormat('MMM d h:mma').format(dateTime);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
-        final userId = model.getUser()?.userId;
+        final userId = 22;
+        // final userId = model.getUser()?.userId;
         final location = model.getLoc();
         return CustomScrollView(
           slivers: <Widget>[
             const CupertinoSliverNavigationBar(
-              largeTitle: Text('Create post'),
+              largeTitle: Text('Edit post'),
             ),
             SliverSafeArea(
               top: false,
               minimum: const EdgeInsets.only(top:0),
               sliver: SliverToBoxAdapter(
-                child: 
-                userId != null 
-                ? buildForm(model, userId, location!)
-                : Column(
-                  children: [
-                    SizedBox(height: 30),
-                    Center(
-                      child: Text("Please log in to create a post")
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(20),
-                      child: CupertinoButton.filled(
-                        child: const Text("Log in"), 
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => LoginPage()
-                            )
-                          );
-                          setState(() {});
-                        }),
-                    )
-                  ],
-                )
-              ))
-      
+                child: buildForm(model, userId!, location!)
+              )
+            )
           ],
         );
       }
@@ -279,7 +265,7 @@ class _CreateTabState extends State<CreateTab> {
               ? const CupertinoActivityIndicator(
                 color: CupertinoColors.black,
               )
-              : Text('Create'),
+              : Text('Edit'),
               onPressed: loading
               ? null
               : () async {
@@ -320,7 +306,7 @@ class _CreateTabState extends State<CreateTab> {
                     setState((){image = null;});
                     setState((){loading = false;});
                     Fluttertoast.showToast(
-                      msg: "Post created successfully",
+                      msg: "Post edited successfully",
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.TOP,
                       timeInSecForIosWeb: 2,
@@ -328,6 +314,7 @@ class _CreateTabState extends State<CreateTab> {
                       textColor: Colors.white,
                       fontSize: 16.0
                     );
+                    // pop until profile page, then push the new post page
                     Navigator.push(
                       context,
                       CupertinoPageRoute(

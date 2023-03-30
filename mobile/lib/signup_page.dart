@@ -8,15 +8,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final formKey = GlobalKey<FormState>();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool showPassword = false;
@@ -62,9 +63,32 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(26),
                       child: const Text(
-                        'Sign in',
+                        'Sign up',
                         style: TextStyle(fontSize: 20),
                       )),
+                  CupertinoTextFormFieldRow(
+                    validator: (value) {
+                      if (value == '') {
+                        return "Please enter a username";
+                      } else {
+                        return null;
+                      }
+                    },
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    controller: usernameController,
+                    textInputAction: TextInputAction.next,
+                    placeholder: "Username",
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.extraLightBackgroundGray,
+                      border: Border.all(
+                        color: CupertinoColors.lightBackgroundGray,
+                        width:2
+                      ),
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    cursorColor: CupertinoColors.activeGreen,
+                  ),
+                  SizedBox(height: 30),
                   CupertinoTextFormFieldRow(
                     validator: (value) {
                       RegExp regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -128,7 +152,6 @@ class _LoginPageState extends State<LoginPage> {
                         ,
                           onPressed: () {setState(() {showPassword = !showPassword;});},
                         ),
-                  // SizedBox(height: 30),
                   CupertinoButton.filled(
                     child: const Text('Login'),
                     onPressed: () async {
@@ -136,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                       setState(() {isLoading=true;});
                       if (formKey.currentState!.validate()) {
                         try {
-                          await model.loginUser(emailController.text, passwordController.text);
+                          await model.signupUser(usernameController.text, emailController.text, passwordController.text);
                           setState((){errorMessage='';});
                           Fluttertoast.showToast(
                             msg: "Logged in succesfully",
@@ -147,7 +170,6 @@ class _LoginPageState extends State<LoginPage> {
                             textColor: Colors.white,
                             fontSize: 16.0
                           );
-                          
                           Navigator.of(context).pop();
                         } catch(err) {
                           if (err.toString() == 'Connection refused') {

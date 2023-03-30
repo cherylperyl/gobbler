@@ -18,7 +18,6 @@ class User {
   final String email;
   // String get assetName => '$id-0.jpg';
   // String get assetPackage => 'shrine_images';
-
   // @override
   // String toString() => '$name (id=$id)';
   factory User.fromJson(Map<String, dynamic> json) {
@@ -35,14 +34,14 @@ class User {
   String toString() {
     return "{userId: $userId, email: $email, isPremium: $isPremium, dateCreated: $dateCreated, lastUpdated: $lastUpdated, username: $username}";
   }
-  static Map<String, dynamic> toJson(User userObj) {
+  Map<String, dynamic> toJson() {
     return {
-      'userId': userObj.userId,
-      'isPremium': userObj.isPremium,
-      'username': userObj.username,
-      'dateCreated': DateFormat().format(userObj.dateCreated),
-      'lastUpdated': userObj.lastUpdated != null ? DateFormat().format(userObj.lastUpdated!) : null,
-      'email': userObj.email
+      'userId': userId,
+      'isPremium': isPremium,
+      'username': username,
+      'dateCreated': DateFormat().format(dateCreated),
+      'lastUpdated': lastUpdated != null ? DateFormat().format(lastUpdated!) : null,
+      'email': email
     };
   }
 }
