@@ -29,6 +29,7 @@ async def all_exception_handler(request, exc):
         status_code=500, content={"message": request.url.path + " " + str(exc)}
     )
 
+
 ########### DO NOT MODIFY ABOVE THIS LINE ###########
 
 POST_MS_SERVER = os.getenv("POST_MS_SERVER")
@@ -53,6 +54,12 @@ sample_post = {
     "time_end": "2030-05-01T00:00:00"
 }
 
+# catch all post ms errors and return error message
+@app.exception_handler(requests.exceptions.ConnectionError)
+async def post_ms_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500, content={"message": "Post microservice is down."}
+    )
 
 @app.get("/ping", tags=["Health Check"])
 def ping():
@@ -81,7 +88,7 @@ def create_post(
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
                         available_reservations: {post.total_reservations},
-                        total_reservations: {post.total_reservations},
+                        total_reservations: {post.total_reservations}
                         time_end: "{post.time_end}"
                     }}) {{
                         post_id,
@@ -107,16 +114,32 @@ def create_post(
     r = requests.post(post_ms_url, files=files, data={
         "operations": json.dumps(operations),
         "map": json.dumps(map)
-    })
-    created_post = r.json()["data"]["create_post"]
+    }).json()
 
-    # publish post to rabbitmq
-    channel.basic_publish(
-        exchange=amqp_setup.exchangename,
-        routing_key="newpost",
-        body=json.dumps(created_post),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+    if not r["data"]:
+
+        # log errors from post ms
+        print(r["errors"])
+
+        # return error response
+        return JSONResponse(
+            status_code=422, content={"error": "Post creation failed."}
+        )
+
+    else:
+        print("Post successfully created in Post MS.")
+        created_post = r["data"]["create_post"]
+
+        # publish post to rabbitmq
+        channel.basic_publish(
+            exchange=amqp_setup.exchangename,
+            routing_key="newpost",
+            body=json.dumps(created_post),
+            properties=pika.BasicProperties(delivery_mode=2)
+        )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+
+        post_id = created_post["post_id"]
+        print(f"Sent new post (post id: {post_id}) to RabbitMQ")
 
     return created_post
 
