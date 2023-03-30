@@ -3,6 +3,14 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+class UserCredentials(BaseModel):
+    password: str 
+
+class UserCredentialsCreate(UserCredentials):
+    email: str
+
+class UserCredentialsLogin(UserCredentials):
+    username: str
 
 class AccountBase(BaseModel):
     # this is the base class for AccountCreate and AccountUpdate
@@ -20,7 +28,7 @@ class AccountBase(BaseModel):
 class AccountCreate(AccountBase):
     # this is the class for creating a new Account
     # ONLY EDIT IF YOUR CREATE HAS FANCY STUFF
-    pass
+    password: str
 
 
 class AccountUpdate(AccountBase):
