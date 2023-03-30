@@ -324,6 +324,11 @@ services:
         - post-management-rabbitmq-logs:/var/log/rabbitmq/
     networks:
         - gobbler-net
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   post-management:
     platform: linux/amd64
@@ -334,7 +339,7 @@ services:
     container_name: 'post-management'
     restart: always
     networks:
-        - gobbler-net
+      - gobbler-net
     environment:
       AMQP_SERVER: post-management-rabbitmq
       AMQP_PORT: 5672
@@ -343,9 +348,10 @@ services:
       RESERVATION_MS_SERVER: reservation-simple-ms
       RESERVATION_MS_PORT: 5003
     ports:
-        - 8084:8084
+      - 8084:8084
     depends_on:
-        - post-management-rabbitmq
+      post-management-rabbitmq:
+        condition: service_healthy
 
   # fastapi-template-mysql:
   #   build:

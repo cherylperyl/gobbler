@@ -67,7 +67,7 @@ All endpoints (except for `/api/v1/account/create`) require authentication via J
 In order to request a token, a user account must first be created.
 
 ```shell
-curl --location --request POST 'http://localhost:8080/api/v1/account/create' \
+curl --location --request POST 'http://localhost:8080/account/create' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email":"new_user@gmail.com",
@@ -87,7 +87,7 @@ curl -i --location --request POST 'http://localhost:8080/login' --header 'Conten
 This should return a bearer token. This bearer token must be used to authorize subsequent API calls. For instance, the following should return a `[200]` response:
 
 ```shell
-curl -i --location --request GET 'http://localhost:8080/api/v1/account/test' --header 'Content-Type: application/json' --header 'Authorization: Bearer XXX'
+curl -i --location --request GET 'http://localhost:8080/account/test' --header 'Content-Type: application/json' --header 'Authorization: Bearer XXX'
 ```
 
 Alternatively, use `scripts/get_access_token.sh` to get an access token printed in your terminal.
