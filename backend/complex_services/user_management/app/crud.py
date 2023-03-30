@@ -9,8 +9,27 @@ from dateutil import parser
 
 from . import schemas
 
-endpoint = f"{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_ENDPOINT") is not None else "http://localhost:8081"
+endpoint = f"{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_MS_SERVER") is not None else "http://localhost:8081"
+auth_endpoint = f"{os.environ.get('AUTH_SERVER')}:{os.environ.get('AUTH_PORT')}" if os.environ.get("AUTH_SERVER") is not None else "http://localhost:5401"
 
+def create_auth(
+    account: schemas.UserCredentialsCreate
+) -> schemas.Account | dict:
+    post_data = {
+        "email": account.email,
+        "password": account.password 
+    }
+
+    response = requests.post(
+        f"{auth_endpoint}/account/create",
+        json = post_data
+    )
+
+    if response.status_code not in range(200, 300):
+        raise HTTPException(response.status_code, detail = response.text)
+    
+    print(response.status_code, response.text)
+    
 def create_account(
     account: schemas.AccountCreate
 ) -> schemas.Account | dict:
@@ -40,6 +59,16 @@ def create_account(
 
     return schemas.Account.parse_obj(user_data)
         
+def get_token(user: schemas.UserCredentialsLogin) -> str:
+    auth_response = requests.post(
+        f"{auth_endpoint}/login",
+        json = user.dict()
+    )
+
+    if auth_response.status_code not in range(200, 300):
+        raise HTTPException(auth_response.status_code, auth_response.text)
+    
+    return auth_response.headers["Authorization"]
 
 def get_account(user_id: int) -> schemas.Account:
     user_response = requests.get(f"{endpoint}/api/User/{user_id}")
@@ -49,6 +78,22 @@ def get_account(user_id: int) -> schemas.Account:
     
     user_json = user_response.json()
     
+    return schemas.Account(
+        userId = user_json["userId"],
+        isPremium = user_json["isPremium"],
+        username = user_json["username"],
+        lastUpdated = parser.parse(user_json["lastUpdated"]).replace(tzinfo=None),
+        dateCreated = parser.parse(user_json["dateCreated"]).replace(tzinfo=None),
+        email = user_json["email"]
+    )
+
+def get_user_by_email(email: str) -> schemas.Account:
+    user_response = requests.get(f"{endpoint}/api/User/by_email/{email}")
+    
+    if user_response.status_code not in range(200, 300):
+        raise HTTPException(user_response.status_code, user_response.text)
+    
+    user_json = user_response.json()
     return schemas.Account(
         userId = user_json["userId"],
         isPremium = user_json["isPremium"],

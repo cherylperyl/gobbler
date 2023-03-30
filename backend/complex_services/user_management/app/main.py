@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response
 
 from . import crud, schemas
 
@@ -34,12 +34,31 @@ def ping():
 
 @app.post("/createaccount", response_model=schemas.Account)
 def create_account(
-    user: schemas.AccountCreate
+    user: schemas.UserCredentialsCreate
 ):
     """
     Create a new account
     """
+    crud.create_auth(user)
     return crud.create_account(user)
+
+@app.post("/loginuser", response_model=schemas.Account)
+def login_user(
+    user: schemas.UserCredentialsLogin,
+    response: Response
+): 
+    """
+    Logs in user using username and password, returns user account object with bearer token in header. 
+    """
+
+    token = crud.get_token(user)
+    print(token)
+    # set return header to have the auth bearer token 
+    response.headers["Authorization"] = token
+    
+    user = crud.get_user_by_email(user.username)  # username is actually email in this case, don't question it
+
+    return user 
 
 @app.post("subscribe")
 def create_subscription():
