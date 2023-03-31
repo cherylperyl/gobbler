@@ -56,8 +56,6 @@ def create_reservation(
     """
     Create a new reservation
     """
-    reservation.user_id = reservation.user_id
-    reservation.post_id = reservation.post_id
     reservation.created_at = datetime.now()
     reservation.updated_at = datetime.now()
 
@@ -66,7 +64,7 @@ def create_reservation(
     post_data["updated_at"] = json.dumps(reservation.updated_at.isoformat(), default=str)[1:-4]+'Z'
 
     response = requests.post(
-        f"{reservation_ms_url}",
+        {reservation_ms_url},
         json = post_data
     )
     if response.status_code not in range(200, 300):
@@ -119,3 +117,4 @@ def delete_reservation(reservation_id: int):
     deleted_reservation = response.json()
 
     return deleted_reservation
+    
