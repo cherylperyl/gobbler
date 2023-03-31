@@ -12,7 +12,7 @@ using user.Data;
 namespace user.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230330173713_InitialMigration")]
+    [Migration("20230331022913_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,7 +38,7 @@ namespace user.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<string>("FCM_Token")
+                    b.Property<string>("FcmToken")
                         .HasColumnType("text");
 
                     b.Property<bool?>("IsPremium")

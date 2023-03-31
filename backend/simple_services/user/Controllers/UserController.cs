@@ -95,7 +95,7 @@ namespace user.Controllers
 
             await _context.SaveChangesAsync();
             
-            return Ok(await _context.Users.ToListAsync());
+            return Ok(await _context.Users.FindAsync(request.UserId));
         }
         
         
@@ -123,6 +123,18 @@ namespace user.Controllers
             if (user == null)
                 return BadRequest("User with email " + email + " not found.");
             return Ok(user);
+        }
+        
+        
+        [HttpGet("premium_users/")]
+        [SwaggerOperation(Summary = "Get all premium users")]
+        public async Task<ActionResult<List<User>>> GetPremiumUsers()
+        {
+            var users = await _context.Users
+                .Where(u => u.IsPremium == true)
+                .ToListAsync();
+            
+            return Ok(users);
         }
     }
 }

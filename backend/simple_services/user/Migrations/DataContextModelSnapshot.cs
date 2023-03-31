@@ -36,7 +36,7 @@ namespace user.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<string>("FCM_Token")
+                    b.Property<string>("FcmToken")
                         .HasColumnType("text");
 
                     b.Property<bool?>("IsPremium")
