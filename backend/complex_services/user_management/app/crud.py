@@ -9,7 +9,7 @@ from dateutil import parser
 
 from . import schemas
 
-endpoint = f"{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_MS_SERVER") is not None else "http://localhost:8081"
+endpoint = f"http://{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_MS_SERVER") is not None else "http://localhost:8081"
 auth_endpoint = f"http://{os.environ.get('AUTH_SERVER')}:{os.environ.get('AUTH_PORT')}" if os.environ.get("AUTH_SERVER") is not None else "http://localhost:5401"
 payment_endpoint = f"http://{os.environ.get('PAYMENT_SERVER')}:{os.environ.get('PAYMENT_PORT')}" if os.environ.get("PAYMENT_SERVER") is not None else "http://localhost:5006"
 
@@ -33,14 +33,14 @@ def create_account(
     account: schemas.UserCredentialsCreate
 ) -> schemas.Account:
         
-    account.dateCreated = datetime.now()
-    account.lastUpdated = datetime.now()
+    # account.dateCreated = datetime.now()
+    # account.lastUpdated = datetime.now()
 
     post_data = account.dict()
 
     # format dates to what user ms expects  
-    post_data["dateCreated"] = json.dumps(account.dateCreated.isoformat(), default=str)[1:-4]+'Z'
-    post_data["lastUpdated"] = json.dumps(account.lastUpdated.isoformat(), default=str)[1:-4]+'Z'
+    # post_data["dateCreated"] = json.dumps(account.dateCreated.isoformat(), default=str)[1:-4]+'Z'
+    # post_data["lastUpdated"] = json.dumps(account.lastUpdated.isoformat(), default=str)[1:-4]+'Z'
 
     # call User MS to create new user 
     response = requests.post(

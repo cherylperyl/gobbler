@@ -364,7 +364,7 @@ services:
       - gobbler-net
     environment:
       USER_MS_SERVER: user-simple-ms
-      USER_MS_PORT: 8081
+      USER_MS_PORT: 80
       AUTH_SERVER: authentication-service
       AUTH_PORT: 5401
       PAYMENT_SERVER: payment-simple-ms
