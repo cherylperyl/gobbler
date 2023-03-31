@@ -40,7 +40,7 @@ services:
       - https
 - name: user-management
   host: user-management
-  port: 8084
+  port: 8000
   path: "/"
   protocol: http
   routes:
