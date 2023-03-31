@@ -24,7 +24,7 @@ class IndividualPost extends StatefulWidget {
 
 class _IndividualPostState extends State<IndividualPost> {
   bool isLoading = false;
-  int availableReservations = 0;
+  num availableReservations = 0;
   final formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController locationController = TextEditingController();
