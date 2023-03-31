@@ -100,7 +100,7 @@ def get_reservation_count_by_post_id(post_id: int, db: Session = Depends(get_db)
     return reservations_count
 
 
-@app.post("/reservations/post/slots")
+@app.get("/reservations/posts/slots")
 def get_reservations_by_list_of_post_id(post_id_list: List[int], db: Session = Depends(get_db)):
     """
     Get number of reservations by a list of post_ids
@@ -110,22 +110,11 @@ def get_reservations_by_list_of_post_id(post_id_list: List[int], db: Session = D
     for post_id in post_id_list:
         reservations_count = crud.get_reservation_count_by_post_id(post_id, db)
         if not reservations_count:
-            reservation_numbers.append("Invalid Post ID")
+            reservation_numbers.append(0)
         else:
             reservation_numbers.append(reservations_count)
 
     return reservation_numbers
-
-
-@app.get("/reservations/user/{user_id}", response_model=List[schemas.Reservation])
-def get_reservations_by_user_id(user_id: int, db: Session = Depends(get_db)):
-    """
-    Get reservations by user_id
-    """
-    reservations = crud.get_reservations_by_user_id(user_id, db)
-    if not reservations:
-        raise HTTPException(status_code=404, detail="No reservations found")
-    return reservations
 
 
 @app.get("/reservations/user/{user_id}/post/{post_id}", response_model=schemas.Reservation)
