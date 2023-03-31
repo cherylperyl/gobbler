@@ -47,6 +47,7 @@ dependencies:
   firebase_messaging: ^14.3.0
   overlay_support: ^2.1.0
   flutter_local_notifications: ^13.0.0
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:

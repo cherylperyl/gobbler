@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>185139722948-pbcam5j16rioblf5ics7pggv7cp3nrfu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.185139722948-pbcam5j16rioblf5ics7pggv7cp3nrfu</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAcl58B0lyYARY7cNY63Irw2n-mxJL0b4I</string>
+	<key>GCM_SENDER_ID</key>
+	<string>185139722948</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.mobile</string>
+	<key>PROJECT_ID</key>
+	<string>gobbler-systems</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gobbler-systems.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:185139722948:ios:c61f951351f708cdb8a791</string>
+</dict>
+</plist>

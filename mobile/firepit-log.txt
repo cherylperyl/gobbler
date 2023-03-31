@@ -1,10 +1,7 @@
 Welcome to firepit v1.1.0!
 Doing JSON parses for version checks at /snapshot/firepit/vendor/node_modules/firebase-tools/package.json
 firebase-tools
-No existing firebase-tools install found.
-Installed ft@none and packaged ft@11.25.2
-Legacy firepit / firebase-tools detected, clearing it out...
-
+Installed ft@11.25.2 and packaged ft@11.25.2
 Checking for npm/bin/npm-cli install at /Users/thaddeuslee/.cache/firebase/tools/lib/node_modules/npm/bin/npm-cli
 Checking for npm/bin/npm-cli install at /Users/thaddeuslee/.cache/firebase/tools/node_modules/npm/bin/npm-cli
 Checking for npm/bin/npm-cli install at /snapshot/firepit/node_modules/npm/bin/npm-cli
@@ -13,4 +10,5 @@ Checking for npm/bin/npm-cli install at /Users/thaddeuslee/.cache/firebase/tools
 Checking for npm/bin/npm-cli install at /Users/thaddeuslee/.cache/firebase/tools/node_modules/npm/bin/npm-cli
 Checking for npm/bin/npm-cli install at /snapshot/firepit/node_modules/npm/bin/npm-cli
 Found npm/bin/npm-cli install.
-Error: ENOENT: no such file or directory, open '/Users/thaddeuslee/.cache/firebase/runtime/shell'
+ShellJSInternalError: EACCES: permission denied, unlink '/Users/thaddeuslee/.cache/firebase/runtime/shell'
+Error: EACCES: permission denied, open '/Users/thaddeuslee/.cache/firebase/runtime/shell'

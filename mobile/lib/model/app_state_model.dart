@@ -113,7 +113,7 @@ class AppStateModel extends foundation.ChangeNotifier {
     return List.from(mockPosts);
     return List.from(_userRegisteredPosts);
   }
-  List<int> getUserRegisteredPostsIds() {
+  List<num> getUserRegisteredPostsIds() {
     List<Post> mockRegisteredPosts = [
       Post(
         userId: 23, 

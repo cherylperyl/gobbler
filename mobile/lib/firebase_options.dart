@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,40 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCh-UJhOh8G14-J5s56OLcRNHPR63lZ5cI',
-    appId: '1:60016300716:web:a957274a2fbc1193638509',
-    messagingSenderId: '60016300716',
-    projectId: 'gobbler-ebd9b',
-    authDomain: 'gobbler-ebd9b.firebaseapp.com',
-    storageBucket: 'gobbler-ebd9b.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAYhJ2b_sR9p1r3APpJzKdgRX0OQ12DlRg',
-    appId: '1:60016300716:android:d414cb2118b01912638509',
-    messagingSenderId: '60016300716',
-    projectId: 'gobbler-ebd9b',
-    storageBucket: 'gobbler-ebd9b.appspot.com',
+    apiKey: 'AIzaSyAR93H2Ycc3MslofDfchgOTwwzYVgqKLQU',
+    appId: '1:185139722948:android:3f89be6f9ef2e797b8a791',
+    messagingSenderId: '185139722948',
+    projectId: 'gobbler-systems',
+    storageBucket: 'gobbler-systems.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC8lvUPFdduUpHQXgukEtUc6Ygyhwwqz2E',
-    appId: '1:60016300716:ios:cbf5e08dc4143cbe638509',
-    messagingSenderId: '60016300716',
-    projectId: 'gobbler-ebd9b',
-    storageBucket: 'gobbler-ebd9b.appspot.com',
-    iosClientId: '60016300716-sn609n6rv8a74f6c3m1f3duo359b9jf0.apps.googleusercontent.com',
-    iosBundleId: 'com.example.mobile',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC8lvUPFdduUpHQXgukEtUc6Ygyhwwqz2E',
-    appId: '1:60016300716:ios:cbf5e08dc4143cbe638509',
-    messagingSenderId: '60016300716',
-    projectId: 'gobbler-ebd9b',
-    storageBucket: 'gobbler-ebd9b.appspot.com',
-    iosClientId: '60016300716-sn609n6rv8a74f6c3m1f3duo359b9jf0.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAcl58B0lyYARY7cNY63Irw2n-mxJL0b4I',
+    appId: '1:185139722948:ios:c61f951351f708cdb8a791',
+    messagingSenderId: '185139722948',
+    projectId: 'gobbler-systems',
+    storageBucket: 'gobbler-systems.appspot.com',
+    iosClientId: '185139722948-pbcam5j16rioblf5ics7pggv7cp3nrfu.apps.googleusercontent.com',
     iosBundleId: 'com.example.mobile',
   );
 }

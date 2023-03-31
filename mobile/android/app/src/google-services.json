@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:185139722948:android:a9c56e6f04785337b8a791",
         "android_client_info": {
-          "package_name": "com.gobbler"
+          "package_name": "com.example.mobile"
         }
       },
       "oauth_client": [

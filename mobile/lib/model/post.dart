@@ -23,22 +23,22 @@ class Post {
     this.updatedAt,
   });
 
-  final int userId;
-  final int postId;
+  final num userId;
+  final num postId;
   final String title;
   final String imageUrl;
   final String locationDescription;
-  final double locationLatitude;
-  final double locationLongitude;
-  final int availableReservations;
-  final int totalReservations;
+  final num locationLatitude;
+  final num locationLongitude;
+  final num availableReservations;
+  final num totalReservations;
   final DateTime createdAt;
   final DateTime timeEnd;
   final bool isAvailable;
   final DateTime? updatedAt;
-  final double? distance;
+  final num? distance;
 
-  int get reservations => availableReservations;
+  num get reservations => availableReservations;
   String get imageLink => imageUrl;
   String get postTitle => title;
   // String get assetName => '$id-0.jpg';
