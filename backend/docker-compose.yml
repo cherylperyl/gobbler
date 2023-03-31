@@ -295,7 +295,7 @@ services:
     build:
       context: ./complex_services/post_management
       dockerfile: Dockerfile
-    image: post-management
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-management:latest
     container_name: 'post-management'
     restart: always
     networks:
@@ -339,7 +339,7 @@ services:
     build:
       context: ./complex_services/user_management
       dockerfile: Dockerfile
-    image: user-management
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-management:latest
     container_name: 'user-management'
     restart: always 
     networks: 
