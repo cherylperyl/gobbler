@@ -110,4 +110,3 @@ def delete_reservation(reservation_id: int):
     deleted_reservation = response.json()
 
     return deleted_reservation
-    

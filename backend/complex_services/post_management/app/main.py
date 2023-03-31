@@ -247,6 +247,7 @@ def view_posts(
                         post_id,
                         title,
                         user_id,
+                        post_desc,
                         distance,
                         image_url,
                         location_latitude,
