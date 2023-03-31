@@ -94,25 +94,25 @@ def get_reservations_by_post_id(post_id: int, db: Session = Depends(get_db)):
     """
     Get number of reservations by post_id
     """
-    reservations = crud.get_reservations_by_post_id(post_id, db)
-    if not reservations:
+    reservations_count = crud.get_reservation_count_by_post_id(post_id, db)
+    if not reservations_count:
         raise HTTPException(status_code=404, detail="Invalid Post ID")
-    return len(reservations)
+    return reservations_count
 
 
 @app.post("/reservations/post/slots")
-def get_reservations_by_list_of_post_id(post_id_list: int, db: Session = Depends(get_db)):
+def get_reservations_by_list_of_post_id(post_id_list: List[int], db: Session = Depends(get_db)):
     """
     Get number of reservations by a list of post_ids
     """
-    reservation_numbers=[]
+    reservation_numbers = []
 
     for post_id in post_id_list:
-        reservations = crud.get_reservations_by_post_id(post_id, db)
-        if not reservations:
+        reservations_count = crud.get_reservation_count_by_post_id(post_id, db)
+        if not reservations_count:
             reservation_numbers.append("Invalid Post ID")
         else:
-            reservation_numbers.append(len(reservations))
+            reservation_numbers.append(reservations_count)
 
     return reservation_numbers
 
