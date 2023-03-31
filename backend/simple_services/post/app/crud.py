@@ -29,6 +29,7 @@ def get_post_by_post_id(
     db.close()
     return result
 
+
 def create_post(
     post: post_scalar.PostInput
 ) -> models.Post:
@@ -41,6 +42,7 @@ def create_post(
     db.commit()
     db.refresh(db_post)
     return db_post
+
 
 def update_post(
     db_obj: models.Post,
@@ -60,12 +62,13 @@ def update_post(
     db.close()
     return db_obj
 
+
 def get_nearby_posts(lat: float, long: float) -> List[models.Post]:
     db = SessionLocal()
     query = text("""
     SELECT ( 6371 * acos( cos( radians(:lat) ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians(:long) ) + sin( radians(:lat) ) * sin(radians(location_latitude)) ) ) 
-    AS distance, 
-    title, post_id, user_id, image_url, location_latitude, location_longitude, available_reservations, total_reservations, time_end, created_at, updated_at, is_available
+    AS distance,
+    title, post_desc, post_id, user_id, image_url, location_latitude, location_longitude, available_reservations, total_reservations, time_end, created_at, updated_at, is_available
     FROM posts
     WHERE time_end >= NOW()
     HAVING
@@ -76,11 +79,13 @@ def get_nearby_posts(lat: float, long: float) -> List[models.Post]:
     db.close()
     return results
 
+
 def get_posts_by_user(user_id: int) -> List[models.Post]:
     db = SessionLocal()
     result = db.query(models.Post).filter(models.Post.user_id == user_id)
     db.close()
     return result
+
 
 def get_posts_by_ids(post_ids: list) -> List[models.Post]:
     db = SessionLocal()
@@ -89,11 +94,10 @@ def get_posts_by_ids(post_ids: list) -> List[models.Post]:
     db.close()
     return result
 
+
 def delete_post(post: models.Post) -> models.Post:
     db = SessionLocal()
     db.delete(post)
     db.commit()
     db.close()
     return post
-
-

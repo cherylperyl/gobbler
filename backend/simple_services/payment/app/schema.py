@@ -1,17 +1,24 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
-    stripe_user_id: str = None
-    subscription: str = None
+    userId: Optional[int] = None
+    isPremium: Optional[bool] = False
+    stripeId: Optional[str] = None
+    subscriptionId: Optional[str] = None
 
 
-class UserCreate(UserBase):
-    id: str
+class UserUpdate(UserBase):
+    userId: int
+    isPremium: bool
+    stripeId: str
+    subscriptionId: str
 
 
-class User(UserBase):
-    id: str
+class CheckoutRequest(BaseModel):
+    userId: int
+    success_url: str
 
-    class Config:
-        orm_mode = True
+class StripeResponse(BaseModel):
+    redirect_url: str
