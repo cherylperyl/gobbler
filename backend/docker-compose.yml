@@ -223,7 +223,6 @@ services:
       - gobbler-net
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      # POSTGRES_DB: users
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
@@ -246,8 +245,11 @@ services:
     networks:
       - gobbler-net
     environment:
-      - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
-      - ASPNETCORE_URLS=http://+:80
+      DATABASE_SERVER: user-postgres
+      DATABASE_PORT: 5432
+      POSTGRES_USERNAME: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      ASPNETCORE_URLS: http://+:80
     ports:
         - "8081:80"
     depends_on:
