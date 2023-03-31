@@ -27,4 +27,6 @@ public class User
     
     public string? SubscriptionId { get; set; }
     
+    public string? FcmToken { get; set; }
+    
 }
