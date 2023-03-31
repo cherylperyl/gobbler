@@ -23,7 +23,6 @@ AMQP_PORT = os.getenv("AMQP_PORT")
 
 channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
 
-
 # catch all exceptions and return error message
 @app.exception_handler(Exception)
 async def all_exception_handler(request, exc):
