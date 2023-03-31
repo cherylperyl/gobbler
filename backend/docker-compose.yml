@@ -356,7 +356,6 @@ services:
     depends_on:
       - user-simple-ms
 
-
   # fastapi-template-mysql:
   #   build:
   #     context: ./fastapi_template/mysql
