@@ -35,4 +35,4 @@ class ReservationInDBBase(ReservationBase):
 class Reservation(ReservationInDBBase):
     # this is the class for returning a reservation
     # SHOULD NOT NEED TO EDIT THIS
-    post: Optional[list] = None
+    post: Optional[dict] = None
