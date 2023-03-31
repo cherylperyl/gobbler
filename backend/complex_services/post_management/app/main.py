@@ -21,12 +21,7 @@ app = FastAPI()
 AMQP_SERVER = os.getenv("AMQP_SERVER")
 AMQP_PORT = os.getenv("AMQP_PORT")
 
-channel = None
-while channel is None:
-    try:
-        channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
-    except:
-        print("AMQP server not available, retrying...")
+channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
 
 
 # catch all exceptions and return error message
@@ -120,7 +115,8 @@ def ping():
 
 @app.post("/createpost", response_model=schemas.Post, tags=["Post"])
 def create_post(
-    post: schemas.PostCreate = FormDepends(schemas.PostCreate)
+    post: schemas.PostCreate = FormDepends(schemas.PostCreate),
+    image_file: UploadFile = File(...)
 ):
     """
     Create a new post.

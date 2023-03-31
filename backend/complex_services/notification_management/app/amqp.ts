@@ -35,6 +35,7 @@ async function sendNotification(message: string) {
 
   const premiumUsers = await resp.json();
   if (premiumUsers.length === 0) {
+    console.log("No premium users to send notification to")
     return;
   }
 
@@ -47,6 +48,7 @@ async function sendNotification(message: string) {
       body: message,
     },
   });
+  console.log("Notification sent to " + tokens.length + " users")
 }
 
 export { listenToQueue };
