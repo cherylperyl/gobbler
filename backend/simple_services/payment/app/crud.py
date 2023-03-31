@@ -1,21 +1,14 @@
-from sqlalchemy.orm import Session
+import requests
+import os
 
-from . import models, schema
+from . import schema
 
+USER_MGT_ENDPOINT = os.environ.get("USER_MGT_ENDPOINT") if os.environ.get("USER_MGT_ENDPOINT") is not None else "http://localhost:8000"
 
-def get_user(db: Session, user_id: str):
-    return db.query(models.User).filter(models.User.id == user_id).first()
-
-
-def get_all_users(db: Session):
-    return db.query(models.User).all()
-
-
-def create_user(db: Session, user: schema.UserCreate):
-    db_user = models.User(
-        stripe_user_id=user.stripe_user_id, subscription=user.subscription
+def update_user(user: schema.UserUpdate) -> requests.Response:
+    # patch request to user management ms 
+    patch_data = user.dict()
+    return requests.patch(
+        f"{USER_MGT_ENDPOINT}/user/{user.userId}",
+        json=patch_data
     )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user

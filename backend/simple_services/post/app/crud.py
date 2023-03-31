@@ -68,7 +68,7 @@ def get_nearby_posts(lat: float, long: float) -> List[models.Post]:
     query = text("""
     SELECT ( 6371 * acos( cos( radians(:lat) ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians(:long) ) + sin( radians(:lat) ) * sin(radians(location_latitude)) ) ) 
     AS distance, 
-    title, post_id, user_id, image_url, location_latitude, location_longitude, total_reservations, time_end, created_at, updated_at, is_available
+    title, post_desc, post_id, user_id, image_url, location_latitude, location_longitude, total_reservations, time_end, created_at, updated_at, is_available
     FROM posts
     WHERE time_end >= NOW()
     HAVING

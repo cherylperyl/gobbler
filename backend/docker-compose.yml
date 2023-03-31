@@ -7,10 +7,6 @@ volumes:
     driver: local
   reservation-mysql-logs:
     driver: local
-  payment-mysql-data:
-    driver: local
-  payment-mysql-logs:
-    driver: local
   post-mysql-data:
     driver: local
   post-mysql-logs:
@@ -157,39 +153,6 @@ services:
       reservation-mysql:
         condition: service_healthy
 
-  payment-mysql:
-    platform: linux/amd64
-    build:
-      context: ./simple_services/payment/mysql
-      dockerfile: Dockerfile
-    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/payment-mysql:latest
-    container_name: payment-mysql
-    restart: always
-    networks:
-      - gobbler-net
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "5005:3306"
-    volumes:
-      - payment-mysql-data:/var/lib/mysql
-      - payment-mysql-logs:/var/log/mysql
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "${DATABASE_USER}",
-          "-p${DATABASE_PASSWORD}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   payment-simple-ms:
     build:
       context: ./simple_services/payment
@@ -200,17 +163,9 @@ services:
     networks:
       - gobbler-net
     environment:
-      DB_SERVER: payment-mysql
-      DB_PORT: 3306
-      DB_USER: ${DATABASE_USER}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE: payment
       STRIPE_API_KEY: ${STRIPE_API_KEY}
     ports:
       - "5006:8080"
-    depends_on:
-      payment-mysql:
-        condition: service_healthy
 
   user-postgres:
     build:
@@ -251,7 +206,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       ASPNETCORE_URLS: http://+:80
     ports:
-        - "8081:80"
+      - "8081:80"
     depends_on:
       user-postgres:
         condition: service_healthy
@@ -317,15 +272,15 @@ services:
 
   post-management-rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: 'post-management-rabbitmq'
+    container_name: "post-management-rabbitmq"
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
     volumes:
-        - post-management-rabbitmq-data:/var/lib/rabbitmq/
-        - post-management-rabbitmq-logs:/var/log/rabbitmq/
+      - post-management-rabbitmq-data:/var/lib/rabbitmq/
+      - post-management-rabbitmq-logs:/var/log/rabbitmq/
     networks:
-        - gobbler-net
+      - gobbler-net
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -337,8 +292,8 @@ services:
     build:
       context: ./complex_services/post_management
       dockerfile: Dockerfile
-    image: post-management
-    container_name: 'post-management'
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-management:latest
+    container_name: "post-management"
     restart: always
     networks:
       - gobbler-net
@@ -357,55 +312,64 @@ services:
       post-management-rabbitmq:
         condition: service_healthy
 
+  notification-management:
+    platform: linux/amd64
+    build:
+      context: ./complex_services/notification_management
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/notification-management:latest
+    container_name: "notification-management"
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      AMQP_SERVER: post-management-rabbitmq
+      AMQP_PORT: 5672
+      USER_MS_SERVER: user-simple-ms
+      USER_MS_PORT: 80
+      SERVICE_ACCOUNT_JSON_PATH: /server/service-account.json
+    ports:
+      - 8086:3000
+    depends_on:
+      post-management-rabbitmq:
+        condition: service_healthy
+
   reservation-management:
-      platform: linux/amd64
-      build:
-        context: ./complex_services/reservation_management
-        dockerfile: Dockerfile
-      image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
-      container_name: 'reservation-management'
-      restart: always
-      networks:
-          - gobbler-net
-      environment:
-        RESERVATION_MS_SERVER: reservation-simple-ms
-        RESERVATION_MS_PORT: 5003
-        POST_MS_SERVER: post-simple-ms
-        POST_MS_PORT: 8082
-      ports:
-          - 5008:5007
+    platform: linux/amd64
+    build:
+      context: ./complex_services/reservation_management
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
+    container_name: "reservation-management"
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      RESERVATION_MS_SERVER: reservation-simple-ms
+      RESERVATION_MS_PORT: 5003
+      POST_MS_SERVER: post-simple-ms
+      POST_MS_PORT: 8082
+    ports:
+      - 5008:5007
 
-  # fastapi-template-mysql:
-  #   build:
-  #     context: ./fastapi_template/mysql
-  #     dockerfile: Dockerfile
-  #   container_name: fastapi-template-mysql
-  #   restart: always
-  #   ports:
-  #     - "8081:8081"
-  #   networks:
-  #     - gobbler-net
-  #   environment:
-  #     DATABASE: reservations
-  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-  #   volumes:
-  #     - ./fastapi_template/mysql/data:/var/lib/mysql
-  #     - ./fastapi_template/mysql/logs:/var/log/mysql
-
-  # fastapi-template:
-  #   build:
-  #     context: ./fastapi_template
-  #     dockerfile: Dockerfile
-  #   image: fastapi-template
-  #   container_name: fastapi-template
-  #   restart: always
-  #   environment:
-  #     DB_SERVER: fastapi-template-mysql
-  #     DB_PORT: 8081
-  #     DB_USER: ${DATABASE_USER}
-  #     DB_PASSWORD: ${DATABASE_PASSWORD}
-  #     DATABASE: reservations
-  #   networks:
-  #     - gobbler-net
-  #   depends_on: 
-  #     - fastapi-template-mysql
+  user-management:
+    platform: linux/amd64
+    build:
+      context: ./complex_services/user_management
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-management:latest
+    container_name: "user-management"
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      USER_MS_SERVER: user-simple-ms
+      USER_MS_PORT: 8081
+      AUTH_SERVER: authentication-service
+      AUTH_PORT: 5401
+      PAYMENT_SERVER: payment-simple-ms
+      PAYMENT_PORT: 8080
+    ports:
+      - 8085:8000
+    depends_on:
+      - user-simple-ms

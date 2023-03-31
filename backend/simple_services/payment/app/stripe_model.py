@@ -11,7 +11,6 @@ class StripeEvent(BaseModel):
     request: object
     type: str
     object: str
-    account: str
     created: int
     livemode: bool
     pending_webhooks: int

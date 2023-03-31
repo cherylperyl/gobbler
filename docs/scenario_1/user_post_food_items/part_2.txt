@@ -1,5 +1,4 @@
 Notification Management->User Service:Fetch all premium users
 User Service->Notification Management:Return all premium users
-Notification Management->User Notification Queue:Send queue message of new post object to premium user queues
-User Notification Queue->Notification Service:New post object in premium user queue consumed
-Notification Service->Premium User Mobile:Send push notification
+Notification Management->Firebase Cloud Messaging:Send notification request
+Firebase Cloud Messaging->Premium User Mobile:Send notification of new post
