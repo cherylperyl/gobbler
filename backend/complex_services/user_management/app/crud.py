@@ -10,11 +10,12 @@ from dateutil import parser
 from . import schemas
 
 endpoint = f"{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_MS_SERVER") is not None else "http://localhost:8081"
-auth_endpoint = f"{os.environ.get('AUTH_SERVER')}:{os.environ.get('AUTH_PORT')}" if os.environ.get("AUTH_SERVER") is not None else "http://localhost:5401"
+auth_endpoint = f"http://{os.environ.get('AUTH_SERVER')}:{os.environ.get('AUTH_PORT')}" if os.environ.get("AUTH_SERVER") is not None else "http://localhost:5401"
+payment_endpoint = f"http://{os.environ.get('PAYMENT_SERVER')}:{os.environ.get('PAYMENT_PORT')}" if os.environ.get("PAYMENT_SERVER") is not None else "http://localhost:5006"
 
 def create_auth(
     account: schemas.UserCredentialsCreate
-) -> schemas.Account | dict:
+) -> schemas.Account:
     post_data = {
         "email": account.email,
         "password": account.password 
@@ -32,7 +33,7 @@ def create_auth(
     
 def create_account(
     account: schemas.AccountCreate
-) -> schemas.Account | dict:
+) -> schemas.Account:
         
     account.dateCreated = datetime.now()
     account.lastUpdated = datetime.now()
@@ -102,6 +103,20 @@ def get_user_by_email(email: str) -> schemas.Account:
         dateCreated = parser.parse(user_json["dateCreated"]).replace(tzinfo=None),
         email = user_json["email"]
     )
+
+def subscribe(user_id: int, success_url: str): 
+    subscribe_response = requests.post(
+        f"{payment_endpoint}/create-checkout-session",
+        json= {
+            "userId": user_id,
+            "success_url": success_url
+        }
+        )
+    
+    if subscribe_response.status_code not in range (200, 300):
+        raise HTTPException(subscribe_response.status_code, subscribe_response.text)
+
+    return subscribe_response.json()["redirect_url"]
 
 def update_account(user_id: int, patch_user: schemas.AccountCreate) -> schemas.Account:
     user = get_account(user_id)

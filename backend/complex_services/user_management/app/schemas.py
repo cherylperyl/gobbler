@@ -36,20 +36,12 @@ class AccountUpdate(AccountBase):
     # EDIT THIS SO IT HAS ALL THE FIELDS YOU WANT TO UPDATE
     pass
 
-
-# class AccountInDBBase(AccountBase):
-#     # this is the base class for AccountInDB and AccountUpdateInDB
-#     # SHOULD NOT NEED TO EDIT THIS
-#     Account_id: Optional[
-#         int
-#     ] = None  # this is optional so we can let the DB auto-increment the id
-
-#     class Config:
-#         orm_mode = True
-
-
 class Account(AccountBase):
     # this is the class for returning a Account
     # SHOULD NOT NEED TO EDIT THIS
     dateCreated: datetime
     pass
+
+class SubscribeRequest(BaseModel):
+    userId: int
+    success_url: str

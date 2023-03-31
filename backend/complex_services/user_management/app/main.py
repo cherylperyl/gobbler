@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException, Response
 
 from . import crud, schemas
 
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 
 ########### DO NOT MODIFY BELOW THIS LINE ###########
@@ -60,9 +60,16 @@ def login_user(
 
     return user 
 
-@app.post("subscribe")
-def create_subscription():
-    pass
+@app.post("/subscribe")
+def create_subscription(
+    checkout_request: schemas.SubscribeRequest
+):
+    redirect_url = crud.subscribe(
+        user_id=checkout_request.userId, 
+        success_url=checkout_request.success_url
+    )
+
+    return RedirectResponse(redirect_url, status_code=303)
 
 @app.patch("/user/{user_id}", response_model = schemas.Account)
 def update_user(
