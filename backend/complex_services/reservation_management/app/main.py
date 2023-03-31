@@ -65,22 +65,25 @@ def create_reservation(
 
 @app.get("/reservations/all/{user_id}", response_model=List[schemas.Reservation])
 def get_all_posts_reserved_by_user(user_id: int):
-    post_ids = requests.get(
-        f"{reservation_ms_url}/user/{user_id}"
-    )
-    if post_ids.status_code not in range(200, 300):
-        raise HTTPException(post_ids.status_code, detail = post_ids.text)
-        
+    url = f"{reservation_ms_url}/user/{user_id}"
+    reservations = requests.get(url)
+
+    # return empty list if user has no reservations
+    if reservations.status_code == 404:
+        return []
+
+    post_ids = [reservation["post_id"] for reservation in reservations.json()]
+
     query = f"""
                 query {{
                     post(post_ids:{post_ids}){{
                         user_id,
-                        post_id, 
+                        post_id,
                         title,
+                        post_desc,
                         image_url,
                         location_latitude,
                         location_longitude,
-                        available_reservations,
                         total_reservations,
                         created_at,
                         time_end,
@@ -89,6 +92,7 @@ def get_all_posts_reserved_by_user(user_id: int):
                     }}
                 }}
             """
+
     payload = {"query": query}
     response = requests.get(post_ms_url, params=payload)
     posts_from_ids = response.json()["data"]["posts_from_ids"]
