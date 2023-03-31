@@ -15,7 +15,7 @@ payment_endpoint = f"http://{os.environ.get('PAYMENT_SERVER')}:{os.environ.get('
 
 def create_auth(
     account: schemas.UserCredentialsCreate
-) -> schemas.Account:
+):
     post_data = {
         "email": account.email,
         "password": account.password 
@@ -29,10 +29,8 @@ def create_auth(
     if response.status_code not in range(200, 300):
         raise HTTPException(response.status_code, detail = response.text)
     
-    print(response.status_code, response.text)
-    
 def create_account(
-    account: schemas.AccountCreate
+    account: schemas.UserCredentialsCreate
 ) -> schemas.Account:
         
     account.dateCreated = datetime.now()

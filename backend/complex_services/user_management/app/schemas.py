@@ -8,6 +8,7 @@ class UserCredentials(BaseModel):
 
 class UserCredentialsCreate(UserCredentials):
     email: str
+    username: str
 
 class UserCredentialsLogin(UserCredentials):
     username: str
