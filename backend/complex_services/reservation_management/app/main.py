@@ -19,17 +19,7 @@ app = FastAPI()
 async def all_exception_handler(request, exc):
     return JSONResponse(
         status_code=500, content={"message": request.url.path + " " + str(exc)}
-    )
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+    
 
 ########### DO NOT MODIFY ABOVE THIS LINE ###########
 
@@ -40,6 +30,27 @@ POST_MS_PORT = os.getenv("POST_MS_PORT")
 
 reservation_ms_url = "http://" + RESERVATION_MS_SERVER + ":" + RESERVATION_MS_PORT + "/reservations"
 post_ms_url = "http://" + POST_MS_SERVER + ":" + POST_MS_PORT + "/graphql"
+
+########### HELPER FUNCTIONS ###########
+def calculate_available_reservations(post):
+    """
+    Calculates the number of available reservations for a post.
+    """
+    global reservation_ms_url
+
+    if post["is_available"]:
+        url = f"{reservation_ms_url}/post/slots/{post['post_id']}"
+        reservation_count = requests.get(url)
+        if reservation_count.status_code == 404:
+            reservation_count = 0
+        else:
+            reservation_count = reservation_count.json()
+
+        return post["total_reservations"] - reservation_count
+
+    else:
+        return 0
+#######################################
 
 @app.get("/ping")
 def ping():
@@ -94,10 +105,23 @@ def get_all_posts_reserved_by_user(user_id: int):
             """
 
     payload = {"query": query}
-    response = requests.get(post_ms_url, params=payload)
-    posts_from_ids = response.json()["data"]["posts_from_ids"]
+    response = requests.get(post_ms_url, params=payload).json()
 
-    return posts_from_ids
+    if not r["data"]:
+        print(r["errors"])
+        return JSONResponse(
+            status_code=422, content={"error": "Retrieve of post failed."}
+        )
+
+    posts = r["data"]["post"]
+    url = f"{reservation_ms_url}/posts/slots"
+    response = requests.get(url, json=post_ids).json()
+
+    for i in range(len(response)):
+        reservations[i]["post"]["available_reservations"] = reservations[i]["post"]["total_reservations"] - response[i]
+
+    return reservations
+
 
 @app.delete("/reserve/cancel", response_model=schemas.Reservation)
 def delete_reservation(reservation_id: int):
