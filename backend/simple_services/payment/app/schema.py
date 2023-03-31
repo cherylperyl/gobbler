@@ -19,3 +19,6 @@ class UserUpdate(UserBase):
 class CheckoutRequest(BaseModel):
     userId: int
     success_url: str
+
+class StripeResponse(BaseModel):
+    redirect_url: str

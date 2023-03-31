@@ -1,8 +1,7 @@
 import logging
-from fastapi import FastAPI, Request, status, Depends
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, Request, status, Depends, HTTPException
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import stripe
 from os import environ
 
@@ -39,13 +38,15 @@ async def create_checkout_session(
             }
         )
         # printing url so you can follow it during testing 
-        print(checkout_session.url)
+        # print(checkout_session.url)
 
-        return RedirectResponse(checkout_session.url, status_code=303)
+        return schema.StripeResponse(
+            redirect_url = checkout_session.url
+        )
 
     except Exception as e:
         print(e)
-        return e, 500
+        raise HTTPException(500, e)
 
 
 # stripe calls this webhook. when payment is successful, save the payment data
