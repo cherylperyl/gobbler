@@ -38,18 +38,18 @@ services:
     protocols:
       - http
       - https
-# - name: user-management
-#   host: user-management
-#   port: 8084
-#   path: "/"
-#   protocol: http
-#   routes:
-#   - name: user
-#     paths:
-#       - /user
-#     protocols:
-#       - http
-#       - https
+- name: user-management
+  host: user-management
+  port: 8084
+  path: "/"
+  protocol: http
+  routes:
+  - name: user
+    paths:
+      - /user
+    protocols:
+      - http
+      - https
 - name: reservation-management
   host: reservation-management
   port: 5007
@@ -93,6 +93,6 @@ plugins:
   config:
     url: http://authentication-service:5401/account/me
     public_paths:
-      - /login
-      - /account/create
+      - /user/loginuser
+      - /user/createaccount
       - /post/viewposts
