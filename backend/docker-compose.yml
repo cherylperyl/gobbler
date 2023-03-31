@@ -232,7 +232,7 @@ services:
       build:
         context: ./complex_services/reservation_management
         dockerfile: Dockerfile
-      image: reservation-management
+      image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
       container_name: 'reservation-management'
       restart: always
       networks:
