@@ -21,7 +21,13 @@ app = FastAPI()
 AMQP_SERVER = os.getenv("AMQP_SERVER")
 AMQP_PORT = os.getenv("AMQP_PORT")
 
-channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
+channel = None
+while channel is None:
+    try:
+        channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
+    except:
+        print("AMQP server not available, retrying...")
+
 
 # catch all exceptions and return error message
 @app.exception_handler(Exception)

@@ -1,14 +1,19 @@
 import * as Amqp from "amqp-ts";
 import fetch from "node-fetch";
 
-const admin = require("firebase-admin");
-
 require("dotenv").config();
+const admin = require("firebase-admin");
 
 const amqpHost = process.env.AMQP_SERVER || "localhost";
 const amqpPort = process.env.AMQP_PORT || 5672;
 const userServiceHost = process.env.USER_MS_SERVER || "localhost";
 const userServicePort = process.env.USER_MS_PORT || 80;
+const serviceAccountJsonPath = process.env.SERVICE_ACCOUNT_JSON_PATH || "../../service-account.json";
+
+const serviceAccount = require(serviceAccountJsonPath);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 async function listenToQueue() {
   const connection = new Amqp.Connection(`amqp://${amqpHost}:${amqpPort}`);
@@ -24,11 +29,16 @@ async function listenToQueue() {
 }
 
 async function sendNotification(message: string) {
-  const premiumUsers = (await fetch(
-    `http://${userServiceHost}:${userServicePort}/premium`
-  ).then((res: any) => res.json())) as Array<{}>;
+  const resp = await fetch(
+    `http://${userServiceHost}:${userServicePort}/api/User/premium_users`
+  );
 
-  const tokens = premiumUsers.map((user: any) => user.token);
+  const premiumUsers = await resp.json();
+  if (premiumUsers.length === 0) {
+    return;
+  }
+
+  const tokens = premiumUsers.map((user: any) => user.fcmToken);
 
   await admin.messaging().sendMulticast({
     tokens,

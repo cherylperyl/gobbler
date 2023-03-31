@@ -372,11 +372,12 @@ services:
       AMQP_PORT: 5672
       USER_MS_SERVER: user-simple-ms
       USER_MS_PORT: 80
+      SERVICE_ACCOUNT_JSON_PATH: /server/service-account.json
     ports:
       - 8085:3000
-    # depends_on:
-    #   post-management-rabbitmq:
-    #     condition: service_healthy
+    depends_on:
+      post-management-rabbitmq:
+        condition: service_healthy
 
   # fastapi-template-mysql:
   #   build:
