@@ -19,7 +19,7 @@ app = FastAPI()
 async def all_exception_handler(request, exc):
     return JSONResponse(
         status_code=500, content={"message": request.url.path + " " + str(exc)}
-    
+    )
 
 ########### DO NOT MODIFY ABOVE THIS LINE ###########
 
@@ -83,11 +83,13 @@ def get_all_posts_reserved_by_user(user_id: int):
     if reservations.status_code == 404:
         return []
 
-    post_ids = [reservation["post_id"] for reservation in reservations.json()]
+    reservations = reservations.json()
+
+    post_ids = [reservation["post_id"] for reservation in reservations]
 
     query = f"""
                 query {{
-                    post(post_ids:{post_ids}){{
+                    posts_from_ids(post_ids:{post_ids}){{
                         user_id,
                         post_id,
                         title,
@@ -105,19 +107,21 @@ def get_all_posts_reserved_by_user(user_id: int):
             """
 
     payload = {"query": query}
-    response = requests.get(post_ms_url, params=payload).json()
+    r = requests.get(post_ms_url, params=payload).json()
 
     if not r["data"]:
         print(r["errors"])
         return JSONResponse(
-            status_code=422, content={"error": "Retrieve of post failed."}
+            status_code=422, content={"error": "Retrieve of posts failed."}
         )
 
-    posts = r["data"]["post"]
+    posts = r["data"]["posts_from_ids"]
+
     url = f"{reservation_ms_url}/posts/slots"
     response = requests.get(url, json=post_ids).json()
 
     for i in range(len(response)):
+        reservations[i]["post"] = posts[i]
         reservations[i]["post"]["available_reservations"] = reservations[i]["post"]["total_reservations"] - response[i]
 
     return reservations
