@@ -1,8 +1,10 @@
 fastapi==0.89.1
 haversine==2.8.0
+google_cloud_storage==2.7.0
 mysql-connector-python==8.0.32
 pydantic==1.10.4
 python-dotenv==0.21.0
+python-multipart==0.0.5
 SQLAlchemy==1.4.46
 SQLAlchemy-Utils==0.39.0
 strawberry-graphql==0.159.0

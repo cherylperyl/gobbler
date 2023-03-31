@@ -29,13 +29,28 @@ namespace user.Controllers
         
         
         [HttpPost]
-        [SwaggerOperation(Summary = "Add new user. (No need pass user_id as it is auto-incremented in DB)")]
+        [SwaggerOperation(Summary = "Add new user. (Only require username and email)")]
         public async Task<ActionResult<List<User>>> AddUser(User user)
         {
+            // validate request body
+            var errors = new List<string>();
+            if (user.Username == null)
+                errors.Add("Username is required.");
+            if (user.Email == null)
+                errors.Add("Email is required.");
+            if (errors.Count > 0)
+                return BadRequest(errors);
+
             var user_db = await _context.Users
                 .FirstOrDefaultAsync(u=>u.Email == user.Email);
             if (user_db == null)
             {
+                // add default params
+                user.IsPremium = false;
+                DateTime time_now = DateTime.Now.ToUniversalTime();
+                user.DateCreated = time_now;
+                user.LastUpdated = time_now;
+
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 return Ok(user);
@@ -57,22 +72,30 @@ namespace user.Controllers
         
         
         [HttpPut]
-        [SwaggerOperation(Summary = "Update user details by user_id")]
+        [SwaggerOperation(Summary = "Update user details by user_id. (Only need to pass in fields that you want to update.)")]
         public async Task<ActionResult<List<User>>> UpdateUser(User request)
         {
+            // get user from db
             var user = await _context.Users.FindAsync(request.UserId);
             if (user == null)
                 return BadRequest("User with user_id " + request.UserId.ToString() + " not found.");
+
+            // foreach property in user, if found in request, update it
+            foreach (var key in user.GetType().GetProperties())
+            {
+                var value = request.GetType().GetProperty(key.Name).GetValue(request);
+                if (value != null)
+                {
+                    user.GetType().GetProperty(key.Name).SetValue(user, value);
+                }
+            }
             
-            user.IsPremium = request.IsPremium;
-            user.Username = request.Username;
-            user.DateCreated = request.DateCreated;
-            user.LastUpdated = request.LastUpdated;
-            user.Email = request.Email;
-            
+            // update last updated date
+            user.LastUpdated = DateTime.Now.ToUniversalTime();
+
             await _context.SaveChangesAsync();
             
-            return Ok(await _context.Users.ToListAsync());
+            return Ok(await _context.Users.FindAsync(request.UserId));
         }
         
         
@@ -100,6 +123,18 @@ namespace user.Controllers
             if (user == null)
                 return BadRequest("User with email " + email + " not found.");
             return Ok(user);
+        }
+        
+        
+        [HttpGet("premium_users/")]
+        [SwaggerOperation(Summary = "Get all premium users")]
+        public async Task<ActionResult<List<User>>> GetPremiumUsers()
+        {
+            var users = await _context.Users
+                .Where(u => u.IsPremium == true)
+                .ToListAsync();
+            
+            return Ok(users);
         }
     }
 }

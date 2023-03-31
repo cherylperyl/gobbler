@@ -15,7 +15,6 @@ DATABASE = os.getenv("DATABASE")
 SQLALCHEMY_DATABASE_URI: str = (
     f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DATABASE}"
 )
-print(SQLALCHEMY_DATABASE_URI)
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
