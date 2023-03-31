@@ -39,7 +39,21 @@ async function sendNotification(message: string) {
     return;
   }
 
-  const tokens = premiumUsers.map((user: any) => user.fcmToken);
+  const messageObj = JSON.parse(message);
+  const posterId = messageObj.user_id;
+
+  const tokens: string[] = [];
+
+  for (const user of premiumUsers) {
+    if (user.userId !== posterId) {
+      tokens.push(user.fcmToken);
+    }
+  }
+
+  if (tokens === undefined || tokens.length === 0) {
+    console.log("No premium users to send notification to")
+    return;
+  }
 
   await admin.messaging().sendMulticast({
     tokens,
