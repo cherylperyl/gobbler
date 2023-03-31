@@ -2,45 +2,21 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- name: login
-  host: authentication-service # this name must be the same as the container name
-  port: 5401 # this is the container port
-  path: "/login" # this is the base path for the container
-  protocol: http
-  routes:
-  - name: login
-    paths:
-      - /login # this is the kong path
-    protocols:
-      - http
-      - https
-- name: account
-  host: authentication-service
-  port: 5401
-  path: "/account"
-  protocol: http
-  routes:
-  - name: account
-    paths:
-      - /account
-    protocols:
-      - http
-      - https
 - name: post-management
-  host: post-management
-  port: 8084
-  path: "/"
+  host: post-management # this name must be the same as the container name
+  port: 80 # this is the container port
+  path: "/" # this is the base path for the container
   protocol: http
   routes:
   - name: post
     paths:
-      - /post
+      - /post # this is the kong path
     protocols:
       - http
       - https
 - name: user-management
   host: user-management
-  port: 8000
+  port: 80
   path: "/"
   protocol: http
   routes:
@@ -52,7 +28,7 @@ services:
       - https
 - name: reservation-management
   host: reservation-management
-  port: 5007
+  port: 80
   path: "/"
   protocol: http
   routes:
