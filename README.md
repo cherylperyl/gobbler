@@ -24,6 +24,7 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 # Set-up Instructions
 1. Clone this repo and refer to the README file in the "backend" folder on how to start the application.
 
+
 # Frameworks and Databases Utilised
 **Services and UI**
 - FastAPI

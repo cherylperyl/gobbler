@@ -1,7 +1,26 @@
+# Table of Contents
+1. [Setting up Stripe](#setting-up-stripe)
+2. [Setting up Gobbler with Docker](#setting-up-gobbler-with-docker)
+
+
+# Setting up Stripe
+To test locally, download the [Stripe CLI](https://stripe.com/docs/stripe-cli) and set it to forward events to the app 
+
+`stripe listen --forward-to localhost:5000/webhook`
+
+You can then trigger Stripe events to simulate successful subscriptions 
+
+`stripe trigger customer.subscription.created`
+
+When deployed, a Stripe account will be set up to forward customer.subscription.created events to the deployed endpoint 
+
+
+# Setting up Gobbler with Docker
+
 ### `/.env.example`
 
 Make a copy of this file and rename it `/.env`. Populate as necessary. This is the secure store of environment variables.
-**NEVER COMMIT ENVIRONMENT VARIABLES**. If you happen to accidentally commit, immediately ping the group so someone with know how can try to wipe it from git history.
+**NEVER COMMIT ENVIRONMENT VARIABLES**. 
 
 ## Connecting to GCP
 
@@ -60,3 +79,4 @@ If you have made changes to the Dockerfile, requirements.txt, or any other files
     # macOS
     docker-compose up
     ```
+
