@@ -328,8 +328,8 @@ services:
         - gobbler-net
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 30s
       retries: 3
 
   post-management:
@@ -371,7 +371,7 @@ services:
         POST_MS_SERVER: post-simple-ms
         POST_MS_PORT: 8082
       ports:
-          - 5007:5007
+          - 5008:5007
 
   # fastapi-template-mysql:
   #   build:
