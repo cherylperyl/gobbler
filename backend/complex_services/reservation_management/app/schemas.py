@@ -9,8 +9,6 @@ class ReservationBase(BaseModel):
     # EDIT THIS 
     user_id: int
     post_id: int
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
 
 
 class ReservationCreate(ReservationBase):
@@ -29,15 +27,12 @@ class ReservationUpdate(ReservationBase):
 class ReservationInDBBase(ReservationBase):
     # this is the base class for ReservationInDB and ReservationUpdateInDB
     # SHOULD NOT NEED TO EDIT THIS
-    reservation_id: Optional[
-        int
-    ] = None  # this is optional so we can let the DB auto-increment the id
-
-    class Config:
-        orm_mode = True
+    reservation_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
 class Reservation(ReservationInDBBase):
     # this is the class for returning a reservation
     # SHOULD NOT NEED TO EDIT THIS
-    reservation_id: int
+    pass

@@ -56,23 +56,12 @@ def create_reservation(
     """
     Create a new reservation
     """
-    reservation.created_at = datetime.now()
-    reservation.updated_at = datetime.now()
-
-    post_data = reservation.dict()
-    post_data["created_at"] = json.dumps(reservation.created_at.isoformat(), default=str)[1:-4]+'Z'
-    post_data["updated_at"] = json.dumps(reservation.updated_at.isoformat(), default=str)[1:-4]+'Z'
-
-    response = requests.post(
-        {reservation_ms_url},
-        json = post_data
-    )
+    response = requests.post(reservation_ms_url, json=reservation.dict())
     if response.status_code not in range(200, 300):
-        raise HTTPException(response.status_code, detail = response.text)
-    
-    reservation_data = response.json()
-    
-    return schemas.Reservation.parse_obj(reservation_data)
+        raise HTTPException(response.status_code, detail=response.text)
+
+    return response.json()
+
 
 @app.get("/reservations/all/{user_id}", response_model=List[schemas.Reservation])
 def get_all_posts_reserved_by_user(user_id: int):
