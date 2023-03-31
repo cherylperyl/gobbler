@@ -128,7 +128,7 @@ def create_post(
                         post_desc: "{post.post_desc}",
                         user_id: {post.user_id},
                         image_file: $image_file,
-                        file_name: "{post.image_file.filename}",
+                        file_name: "{image_file.filename}",
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
                         available_reservations: {post.total_reservations},
@@ -152,7 +152,7 @@ def create_post(
                 }}
             """
 
-    files, data = add_image_file_to_query(post.image_file, query)
+    files, data = add_image_file_to_query(image_file, query)
 
     r = requests.post(post_ms_url, files=files, data=data).json()
 
@@ -396,7 +396,8 @@ def view_created_post(
 @app.post("/updatepost", response_model=schemas.Post, tags=["Post"])
 def update_post(
     post_id: int,
-    post: schemas.PostUpdate = FormDepends(schemas.PostUpdate)
+    post: schemas.PostUpdate = FormDepends(schemas.PostUpdate),
+    image_file: UploadFile = File(None)
 ):
     """
     Attributes that can be updated: image, title, post_desc, location_latitude,
@@ -411,7 +412,7 @@ def update_post(
 
             if key == "image_file":
                 value = "$image_file"
-                post_query += f"file_name: \"{post.image_file.filename}\", "
+                post_query += f"file_name: \"{image_file.filename}\", "
 
             if (type(value) == str or type(value) == datetime) and value != "$image_file":
                 post_query += f"{key}: \"{value}\", "
@@ -434,7 +435,7 @@ def update_post(
                     is_available
                 }"""
 
-    if post.image_file is None:
+    if image_file is None:
         query = f"""
                     mutation {{
                         update_post(post_id: {post_id},
@@ -453,7 +454,7 @@ def update_post(
                         ){to_return}
                     }}
                 """
-        files, data = add_image_file_to_query(post.image_file, query)
+        files, data = add_image_file_to_query(image_file, query)
         r = requests.post(post_ms_url, files=files, data=data).json()
 
     if not r["data"]:

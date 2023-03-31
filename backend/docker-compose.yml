@@ -328,8 +328,8 @@ services:
         - gobbler-net
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 30s
       retries: 3
 
   post-management:
@@ -378,6 +378,24 @@ services:
     depends_on:
       post-management-rabbitmq:
         condition: service_healthy
+
+  reservation-management:
+      platform: linux/amd64
+      build:
+        context: ./complex_services/reservation_management
+        dockerfile: Dockerfile
+      image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
+      container_name: 'reservation-management'
+      restart: always
+      networks:
+          - gobbler-net
+      environment:
+        RESERVATION_MS_SERVER: reservation-simple-ms
+        RESERVATION_MS_PORT: 5003
+        POST_MS_SERVER: post-simple-ms
+        POST_MS_PORT: 8082
+      ports:
+          - 5008:5007
 
   # fastapi-template-mysql:
   #   build:
