@@ -21,16 +21,6 @@ async def all_exception_handler(request, exc):
         status_code=500, content={"message": request.url.path + " " + str(exc)}
     )
 
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 ########### DO NOT MODIFY ABOVE THIS LINE ###########
 
 RESERVATION_MS_SERVER = os.getenv("RESERVATION_MS_SERVER")
@@ -40,6 +30,27 @@ POST_MS_PORT = os.getenv("POST_MS_PORT")
 
 reservation_ms_url = "http://" + RESERVATION_MS_SERVER + ":" + RESERVATION_MS_PORT + "/reservations"
 post_ms_url = "http://" + POST_MS_SERVER + ":" + POST_MS_PORT + "/graphql"
+
+########### HELPER FUNCTIONS ###########
+def calculate_available_reservations(post):
+    """
+    Calculates the number of available reservations for a post.
+    """
+    global reservation_ms_url
+
+    if post["is_available"]:
+        url = f"{reservation_ms_url}/post/slots/{post['post_id']}"
+        reservation_count = requests.get(url)
+        if reservation_count.status_code == 404:
+            reservation_count = 0
+        else:
+            reservation_count = reservation_count.json()
+
+        return post["total_reservations"] - reservation_count
+
+    else:
+        return 0
+#######################################
 
 @app.get("/ping")
 def ping():
@@ -72,11 +83,13 @@ def get_all_posts_reserved_by_user(user_id: int):
     if reservations.status_code == 404:
         return []
 
-    post_ids = [reservation["post_id"] for reservation in reservations.json()]
+    reservations = reservations.json()
+
+    post_ids = [reservation["post_id"] for reservation in reservations]
 
     query = f"""
                 query {{
-                    post(post_ids:{post_ids}){{
+                    posts_from_ids(post_ids:{post_ids}){{
                         user_id,
                         post_id,
                         title,
@@ -94,19 +107,34 @@ def get_all_posts_reserved_by_user(user_id: int):
             """
 
     payload = {"query": query}
-    response = requests.get(post_ms_url, params=payload)
-    posts_from_ids = response.json()["data"]["posts_from_ids"]
+    r = requests.get(post_ms_url, params=payload).json()
 
-    return posts_from_ids
+    if not r["data"]:
+        print(r["errors"])
+        return JSONResponse(
+            status_code=422, content={"error": "Retrieve of posts failed."}
+        )
+
+    posts = r["data"]["posts_from_ids"]
+
+    url = f"{reservation_ms_url}/posts/slots"
+    response = requests.get(url, json=post_ids).json()
+
+    for i in range(len(response)):
+        reservations[i]["post"] = posts[i]
+        reservations[i]["post"]["available_reservations"] = reservations[i]["post"]["total_reservations"] - response[i]
+
+    return reservations
+
 
 @app.delete("/reserve/cancel", response_model=schemas.Reservation)
 def delete_reservation(reservation_id: int):
     response = requests.delete(
-        f"{reservation_ms_url}/reservations/{reservation_id}"
+        f"{reservation_ms_url}/{reservation_id}"
     )
     if response.status_code not in range(200, 300):
-        raise HTTPException(response.status_code, detail = response.text)
-    
+        raise HTTPException(response.status_code, detail=response.text)
+
     deleted_reservation = response.json()
 
     return deleted_reservation
