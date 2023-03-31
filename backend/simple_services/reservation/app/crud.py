@@ -44,6 +44,7 @@ def get_reservation_by_user_id_and_post_id(user_id: int, post_id: int, db: Sessi
         db.query(models.Reservation)
         .filter(models.Reservation.user_id == user_id, models.Reservation.post_id == post_id)
         .first()
+    )
 
 
 def create_reservation(
