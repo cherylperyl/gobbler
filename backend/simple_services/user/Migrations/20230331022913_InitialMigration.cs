@@ -22,7 +22,8 @@ namespace user.Migrations
                     LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     StripeId = table.Column<string>(type: "text", nullable: true),
-                    SubscriptionId = table.Column<string>(type: "text", nullable: true)
+                    SubscriptionId = table.Column<string>(type: "text", nullable: true),
+                    FcmToken = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
