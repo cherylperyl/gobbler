@@ -5,6 +5,7 @@ from app.database import Base
 class Post(Base):
     __tablename__ = "posts"
     post_id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    post_desc = Column(String(500), nullable=False)
     title = Column(String(50), nullable=False)
     user_id = Column(Integer, nullable=False)
     image_url = Column(String(120))

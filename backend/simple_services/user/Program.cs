@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using user.Data;
 
@@ -7,8 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+var config = new StringBuilder("User Id=POSTGRES_USERNAME;Password=POSTGRES_PASSWORD;Server=DATABASE_SERVER;Port=DATABASE_PORT;Database=users;IntegratedSecurity=true;Pooling=true;");
+string conn = config
+    .Replace("POSTGRES_USERNAME", builder.Configuration["POSTGRES_USERNAME"])
+    .Replace("POSTGRES_PASSWORD", builder.Configuration["POSTGRES_PASSWORD"])
+    .Replace("DATABASE_SERVER", builder.Configuration["DATABASE_SERVER"])
+    .Replace("DATABASE_PORT", builder.Configuration["DATABASE_PORT"])
+    .Replace("DATABASE_NAME", builder.Configuration["DATABASE_NAME"])
+    .ToString();
+
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseNpgsql(conn)
 );
 builder.Services.AddEndpointsApiExplorer();
 

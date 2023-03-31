@@ -181,7 +181,6 @@ services:
       - gobbler-net
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      # POSTGRES_DB: users
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
@@ -204,8 +203,11 @@ services:
     networks:
       - gobbler-net
     environment:
-      - "ConnectionStrings__DefaultConnection=User Id=${DATABASE_USER};Password=${DATABASE_PASSWORD};Server=user-postgres;Port=5432;Database=users;IntegratedSecurity=true;Pooling=true;"
-      - ASPNETCORE_URLS=http://+:80
+      DATABASE_SERVER: user-postgres
+      DATABASE_PORT: 5432
+      POSTGRES_USERNAME: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      ASPNETCORE_URLS: http://+:80
     ports:
         - "8081:80"
     depends_on:
@@ -282,6 +284,11 @@ services:
         - post-management-rabbitmq-logs:/var/log/rabbitmq/
     networks:
         - gobbler-net
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   post-management:
     platform: linux/amd64
@@ -292,7 +299,7 @@ services:
     container_name: 'post-management'
     restart: always
     networks:
-        - gobbler-net
+      - gobbler-net
     environment:
       AMQP_SERVER: post-management-rabbitmq
       AMQP_PORT: 5672
@@ -300,11 +307,13 @@ services:
       POST_MS_PORT: 8082
       RESERVATION_MS_SERVER: reservation-simple-ms
       RESERVATION_MS_PORT: 5003
+      USER_MS_SERVER: user-simple-ms
+      USER_MS_PORT: 80
     ports:
-        - 8084:8084
+      - 8084:8084
     depends_on:
-        - post-management-rabbitmq
-  
+      post-management-rabbitmq:
+        condition: service_healthy
 
   user-management:
     platform: linux/amd64 
@@ -323,7 +332,6 @@ services:
       - 8085:8000
     depends_on:
       - user-simple-ms
-
 
   # fastapi-template-mysql:
   #   build:
