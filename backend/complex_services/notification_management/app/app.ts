@@ -25,7 +25,7 @@ app.use(
   })
 );
 
-export const server = app.listen(3000);
+export const server = app.listen(80);
 listenToQueue();
 
-console.log(`Server running on port 3000`);
+console.log(`Server running on port 80`);

@@ -7,4 +7,4 @@ COPY ./conf.d/my.cnf /etc/mysql/conf.d/
 
 ADD setup.sql /docker-entrypoint-initdb.d
 
-EXPOSE 8083
+EXPOSE 3306

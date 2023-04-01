@@ -39,8 +39,9 @@ def create_account(
     """
     Create a new account
     """
+    created = crud.create_account(user)
     crud.create_auth(user)
-    return crud.create_account(user)
+    return created 
 
 @app.post("/loginuser", response_model=schemas.Account)
 def login_user(

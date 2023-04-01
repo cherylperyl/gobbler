@@ -92,7 +92,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
     ports:
-      - "5401:5401"
+      - "5401:80"
     depends_on:
       authentication-service-postgres:
         condition: service_healthy
@@ -106,7 +106,7 @@ services:
     container_name: reservation-mysql
     restart: always
     ports:
-      - "5004:5004"
+      - "5004:3306"
     networks:
       - gobbler-net
     environment:
@@ -143,12 +143,12 @@ services:
       - gobbler-net
     environment:
       DB_SERVER: reservation-mysql
-      DB_PORT: 5004
+      DB_PORT: 3306
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: reservations
     ports:
-      - "5003:5003"
+      - "5003:80"
     depends_on:
       reservation-mysql:
         condition: service_healthy
@@ -165,7 +165,7 @@ services:
     environment:
       STRIPE_API_KEY: ${STRIPE_API_KEY}
     ports:
-      - "5006:8080"
+      - "5006:80"
 
   user-postgres:
     build:
@@ -225,7 +225,7 @@ services:
       MYSQL_DATABASE: posts
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "8083:8083"
+      - "8083:3306"
     volumes:
       - post-mysql-data:/var/lib/mysql
       - post-mysql-logs:/var/log/mysql
@@ -257,13 +257,13 @@ services:
       - gobbler-net
     environment:
       DB_SERVER: post-mysql
-      DB_PORT: 8083
+      DB_PORT: 3306
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE: posts
-      GOOGLE_APPLICATION_CREDS: /root/.config/gcloud/application_default_credentials.json
+      GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json
     ports:
-      - "8082:8082"
+      - "8082:80"
     volumes:
       - ~/.config/gcloud:/root/.config/gcloud
     depends_on:
@@ -271,7 +271,11 @@ services:
         condition: service_healthy
 
   post-management-rabbitmq:
-    image: rabbitmq:3-management-alpine
+    platform: linux/amd64
+    build:
+      context: ./complex_services/post_management/rabbitmq
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-management-rabbitmq:latest
     container_name: "post-management-rabbitmq"
     ports:
       - 5672:5672
@@ -301,13 +305,13 @@ services:
       AMQP_SERVER: post-management-rabbitmq
       AMQP_PORT: 5672
       POST_MS_SERVER: post-simple-ms
-      POST_MS_PORT: 8082
+      POST_MS_PORT: 80
       RESERVATION_MS_SERVER: reservation-simple-ms
-      RESERVATION_MS_PORT: 5003
+      RESERVATION_MS_PORT: 80
       USER_MS_SERVER: user-simple-ms
       USER_MS_PORT: 80
     ports:
-      - 8084:8084
+      - "8084:80"
     depends_on:
       post-management-rabbitmq:
         condition: service_healthy
@@ -329,7 +333,9 @@ services:
       USER_MS_PORT: 80
       SERVICE_ACCOUNT_JSON_PATH: /server/service-account.json
     ports:
-      - 8086:3000
+      - "8086:80"
+    volumes:
+      - ./complex_services/notification_management/service-account.json:/server/service-account.json
     depends_on:
       post-management-rabbitmq:
         condition: service_healthy
@@ -346,11 +352,25 @@ services:
       - gobbler-net
     environment:
       RESERVATION_MS_SERVER: reservation-simple-ms
-      RESERVATION_MS_PORT: 5003
+      RESERVATION_MS_PORT: 80
       POST_MS_SERVER: post-simple-ms
-      POST_MS_PORT: 8082
+      POST_MS_PORT: 80
+      RESERVATION_MANAGEMENT_REDIS_SERVER: reservation-management-redis
+      RESERVATION_MANAGEMENT_REDIS_PORT: 6379
     ports:
-      - 5008:5007
+      - "5008:80"
+    depends_on:
+      - reservation-management-redis
+
+  reservation-management-redis:
+    platform: linux/amd64
+    image: redis
+    container_name: "reservation-management-redis"
+    restart: always
+    networks:
+      - gobbler-net
+    ports:
+      - "6379:6379"
 
   user-management:
     platform: linux/amd64
@@ -364,12 +384,12 @@ services:
       - gobbler-net
     environment:
       USER_MS_SERVER: user-simple-ms
-      USER_MS_PORT: 8081
+      USER_MS_PORT: 80
       AUTH_SERVER: authentication-service
-      AUTH_PORT: 5401
+      AUTH_PORT: 80
       PAYMENT_SERVER: payment-simple-ms
-      PAYMENT_PORT: 8080
+      PAYMENT_PORT: 80
     ports:
-      - 8085:8000
+      - 8085:80
     depends_on:
       - user-simple-ms
