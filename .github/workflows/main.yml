@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Add Docker group to runner user
-        run: sudo usermod -aG docker runner
+        run: sudo usermod -aG docker $USER
       - name: Build and Push Docker Image
         working-directory: ./backend
         run: |
