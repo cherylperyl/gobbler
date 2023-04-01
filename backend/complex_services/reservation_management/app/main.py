@@ -67,11 +67,17 @@ def create_reservation(
     """
     Create a new reservation
     """
-    response = requests.post(reservation_ms_url, json=reservation.dict())
-    if response.status_code not in range(200, 300):
-        raise HTTPException(response.status_code, detail=response.text)
+    current_users = requests.get(f"{reservation_ms_url}/post/{reservation.post_id}")
+    if reservation.user_id in current_users:
+        return JSONResponse(
+            status_code=422, content={"error": "User has already registered for this post."}
+        ) 
+    else:
+        response = requests.post(reservation_ms_url, json=reservation.dict())
+        if response.status_code not in range(200, 300):
+            raise HTTPException(response.status_code, detail=response.text)
 
-    return response.json()
+        return response.json()
 
 
 @app.get("/reservations/all/{user_id}", response_model=List[schemas.Reservation])
