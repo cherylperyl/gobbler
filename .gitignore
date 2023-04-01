@@ -136,5 +136,6 @@ dmypy.json
 #vscode
 /.vscode
 
-# Env Var Docker Compose
+# Kubernetes manifests
+kubernetes/
 docker-compose-resolved.*

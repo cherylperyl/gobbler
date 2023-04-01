@@ -9,7 +9,6 @@ class UserCredentials(BaseModel):
 class UserCredentialsCreate(UserCredentials):
     email: str
     username: str
-    fcmToken: Optional[str] = None
 
 class UserCredentialsLogin(UserCredentials):
     username: str
