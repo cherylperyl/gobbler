@@ -26,3 +26,10 @@ sudo apt-get install kubectl
 gcloud auth login
 sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
 gcloud container clusters get-credentials gobbler --region=asia-southeast1
+
+# Give permissions to Docker
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo systemctl restart docker
+sudo ./svc.sh stop
+sudo ./svc.sh start
