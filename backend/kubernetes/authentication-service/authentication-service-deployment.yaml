@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: authentication-service
   name: authentication-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: authentication-service
