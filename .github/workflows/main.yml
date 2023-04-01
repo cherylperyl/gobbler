@@ -11,10 +11,13 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
+      - name: Add Docker group to runner user
+        run: sudo usermod -aG docker runner
       - name: Build and Push Docker Image
         working-directory: ./backend
         run: |
-          docker run --rm --privileged docker:dind sh -c "docker compose build && docker compose push"
+          docker compose build
+          docker compose push
       - name: Run Bash Script
         working-directory: ./backend
         run: ./scripts/deploy-kube.sh
