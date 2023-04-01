@@ -30,7 +30,6 @@ spec:
             - name: MYSQL_DATABASE
               value: posts
             - name: MYSQL_ROOT_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler

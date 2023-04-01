@@ -25,15 +25,11 @@ spec:
         # io.kompose.network/backend-gobbler-net: "true"
         io.kompose.service: post-simple-ms
     spec:
-      # serviceAccountName: default
-      # nodeSelector:
-      #   iam.gke.io/gke-metadata-server-enabled: "true"
       containers:
         - env:
             - name: DATABASE
               value: posts
             - name: DB_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
@@ -43,7 +39,6 @@ spec:
             - name: DB_SERVER
               value: post-mysql
             - name: DB_USER
-              # value: ${DATABASE_USER}
               valueFrom:
                 secretKeyRef:
                   name: gobbler

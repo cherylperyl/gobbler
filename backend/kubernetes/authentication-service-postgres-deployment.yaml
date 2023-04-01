@@ -30,13 +30,11 @@ spec:
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
                   key: DATABASE_PASSWORD
             - name: POSTGRES_USER
-              # value: ${DATABASE_USER}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
@@ -56,8 +54,6 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: authentication-service-pgdata
-            # - mountPath: /var/secrets/google
-            #   name: gobbler-secrets
       restartPolicy: Always
       volumes:
         - name: authentication-service-pgdata

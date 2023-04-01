@@ -29,7 +29,6 @@ spec:
             - name: DATABASE
               value: reservations
             - name: DB_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
@@ -39,7 +38,6 @@ spec:
             - name: DB_SERVER
               value: reservation-mysql
             - name: DB_USER
-              # value: ${DATABASE_USER}
               valueFrom:
                 secretKeyRef:
                   name: gobbler

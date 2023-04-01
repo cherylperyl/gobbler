@@ -33,13 +33,11 @@ spec:
             - name: DATABASE_SERVER
               value: user-postgres
             - name: POSTGRES_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
                   key: DATABASE_PASSWORD
             - name: POSTGRES_USERNAME
-              # value: ${DATABASE_USER}
               valueFrom:
                 secretKeyRef:
                   name: gobbler

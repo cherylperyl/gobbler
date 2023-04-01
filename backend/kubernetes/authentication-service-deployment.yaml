@@ -27,7 +27,6 @@ spec:
       containers:
         - env:
             - name: AUTH_TOKEN_SECRET
-              # value: ${AUTH_TOKEN_SECRET}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
@@ -37,13 +36,11 @@ spec:
             - name: DATABASE_SERVER
               value: authentication-service-postgres
             - name: POSTGRES_PASSWORD
-              # value: ${DATABASE_PASSWORD}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
                   key: DATABASE_PASSWORD
             - name: POSTGRES_USERNAME
-              # value: ${DATABASE_USER}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
@@ -53,13 +50,5 @@ spec:
           ports:
             - containerPort: 80
           resources: {}
-          # volumeMounts:
-          #   - mountPath: /var/secrets/google
-          #     name: gobbler-secrets
-          #     readOnly: true
       restartPolicy: Always
-      # volumes:
-      #   - name: gobbler-secrets
-      #     secret:
-      #       secretName: gobbler
 status: {}

@@ -27,7 +27,6 @@ spec:
       containers:
         - env:
             - name: STRIPE_API_KEY
-              # value: ${STRIPE_API_KEY}
               valueFrom:
                 secretKeyRef:
                   name: gobbler
