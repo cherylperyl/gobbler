@@ -6,9 +6,12 @@ metadata:
 spec:
   ingress:
     - from:
-        - podSelector:
-            matchLabels:
-              io.kompose.network/backend-gobbler-net: "true"
+      - podSelector:
+          matchLabels:
+            io.kompose.network/backend-gobbler-net: "true"
+      - podSelector:
+          matchLabels:
+            io.kompose.service: "kong"
   podSelector:
     matchLabels:
       io.kompose.network/backend-gobbler-net: "true"

@@ -54,5 +54,10 @@ spec:
             - containerPort: 8003
             - containerPort: 8004
           resources: {}
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8000
+          #   initialDelaySeconds: 120
       restartPolicy: Always
 status: {}
