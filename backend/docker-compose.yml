@@ -349,8 +349,22 @@ services:
       RESERVATION_MS_PORT: 80
       POST_MS_SERVER: post-simple-ms
       POST_MS_PORT: 80
+      RESERVATION_MANAGEMENT_REDIS_SERVER: reservation-management-redis
+      RESERVATION_MANAGEMENT_REDIS_PORT: 6379
     ports:
       - "5008:80"
+    depends_on:
+      - reservation-management-redis
+
+  reservation-management-redis:
+    platform: linux/amd64
+    image: redis
+    container_name: "reservation-management-redis"
+    restart: always
+    networks:
+      - gobbler-net
+    ports:
+      - "6379:6379"
 
   user-management:
     platform: linux/amd64
