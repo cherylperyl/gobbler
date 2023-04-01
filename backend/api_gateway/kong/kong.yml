@@ -2,39 +2,39 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- name: fastapi-template
-  host: fastapi-template # this name must be the same as the container name
-  port: 8080
-  path: "/reservations"
+- name: post-management
+  host: post-management # this name must be the same as the container name
+  port: 80 # this is the container port
+  path: "/" # this is the base path for the container
   protocol: http
   routes:
-  - name: fastapi-template
+  - name: post
     paths:
-      - /reservations
+      - /post # this is the kong path
     protocols:
       - http
       - https
-- name: login
-  host: authentication-service
-  port: 5401
-  path: "/login"
+- name: user-management
+  host: user-management
+  port: 80
+  path: "/"
   protocol: http
   routes:
-  - name: login
+  - name: user
     paths:
-      - /login
+      - /user
     protocols:
       - http
       - https
-- name: account
-  host: authentication-service
-  port: 5401
-  path: "/account"
+- name: reservation-management
+  host: reservation-management
+  port: 80
+  path: "/"
   protocol: http
   routes:
-  - name: account
+  - name: reservation
     paths:
-      - /account
+      - /reservation
     protocols:
       - http
       - https
@@ -69,5 +69,6 @@ plugins:
   config:
     url: http://authentication-service:5401/account/me
     public_paths:
-      - /login
-      - /account/create
+      - /user/loginuser
+      - /user/createaccount
+      - /post/viewposts
