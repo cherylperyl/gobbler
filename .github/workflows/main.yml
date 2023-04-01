@@ -1,0 +1,21 @@
+name: Docker Compose Build & Push
+
+on:
+  push:
+    branches:
+      - main
+      - jon/add-gh-action
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Navigate to /backend
+        run: cd backend
+      - name: Build and Push Docker Image
+        run: |
+          docker compose build
+          docker compose push
+      - name: Run Bash Script
+        run: ./backend/scripts/deploy-kube.sh
