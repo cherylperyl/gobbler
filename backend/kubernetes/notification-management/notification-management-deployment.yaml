@@ -36,6 +36,10 @@ spec:
               value: "80"
             - name: USER_MS_SERVER
               value: user-simple-ms
+            - name: RESERVATION_MS_PORT
+              value: "80"
+            - name: RESERVATION_MS_SERVER
+              value: reservation-simple-ms
           image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/notification-management:latest
           name: notification-management
           ports:
