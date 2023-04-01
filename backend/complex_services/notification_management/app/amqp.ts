@@ -19,8 +19,6 @@ async function listenToQueue() {
   const connection = new Amqp.Connection(`amqp://${amqpHost}:${amqpPort}`);
   await connection.completeConfiguration();
   const queue = connection.declareQueue("newposts");
-  const exchange = connection.declareExchange("newposts");
-  queue.bind(exchange);
   queue.activateConsumer((message) => {
     console.log("Message received: " + message.getContent());
     sendNotification(message.getContent());
