@@ -68,7 +68,7 @@ def create_reservation(
     Create a new reservation
     """
     reservations = requests.get(f"{reservation_ms_url}/post/{reservation.post_id}")
-    current_users = [reservation_obj["user_id"] for reservation_obj in reservations]
+    current_users = {reservation_obj["user_id"] for reservation_obj in reservations}
     if reservation.user_id in current_users:
         return JSONResponse(
             status_code=422, content={"error": "User has already registered for this post."}
@@ -92,7 +92,7 @@ def get_all_posts_reserved_by_user(user_id: int):
 
     reservations = reservations.json()
 
-    post_ids = [reservation["post_id"] for reservation in reservations]
+    post_ids = {reservation["post_id"] for reservation in reservations}
 
     query = f"""
                 query {{
