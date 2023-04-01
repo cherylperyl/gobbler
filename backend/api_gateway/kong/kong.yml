@@ -67,7 +67,7 @@ plugins:
     preflight_continue: false
 - name: authentication_plugin
   config:
-    url: http://authentication-service:5401/account/me
+    url: http://authentication-service:80/account/me
     public_paths:
       - /user/loginuser
       - /user/createaccount
