@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: reservation-simple-ms
   name: reservation-simple-ms
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       io.kompose.service: reservation-simple-ms

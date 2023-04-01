@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: post-simple-ms
   name: post-simple-ms
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       io.kompose.service: post-simple-ms
