@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: reservation-management
+  name: reservation-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: reservation-management
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: reservation-management
+    spec:
+      containers:
+        - env:
+            - name: POST_MS_PORT
+              value: "80"
+            - name: POST_MS_SERVER
+              value: post-simple-ms
+            - name: RESERVATION_MS_PORT
+              value: "80"
+            - name: RESERVATION_MS_SERVER
+              value: reservation-simple-ms
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
+          name: reservation-management
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}
