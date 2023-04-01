@@ -51,9 +51,7 @@ spec:
       restartPolicy: Always
       volumes:
         - name: post-management-rabbitmq-data
-          persistentVolumeClaim:
-            claimName: post-management-rabbitmq-data
+          emptyDir: {}
         - name: post-management-rabbitmq-logs
-          persistentVolumeClaim:
-            claimName: post-management-rabbitmq-logs
+          emptyDir: {}
 status: {}
