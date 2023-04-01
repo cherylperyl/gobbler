@@ -14,8 +14,7 @@ jobs:
       - name: Build and Push Docker Image
         working-directory: ./backend
         run: |
-          docker compose build
-          docker compose push
+          docker run --rm --privileged docker:dind sh -c "docker compose build && docker compose push"
       - name: Run Bash Script
         working-directory: ./backend
         run: ./scripts/deploy-kube.sh
