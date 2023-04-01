@@ -11,11 +11,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      - name: Navigate to /backend
-        run: cd backend
       - name: Build and Push Docker Image
+        working-directory: ./backend
         run: |
           docker compose build
           docker compose push
       - name: Run Bash Script
-        run: ./backend/scripts/deploy-kube.sh
+        working-directory: ./backend
+        run: ./scripts/deploy-kube.sh
