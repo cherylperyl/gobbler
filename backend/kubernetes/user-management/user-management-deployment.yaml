@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: user-management
   name: user-management
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       io.kompose.service: user-management

@@ -37,5 +37,6 @@ spec:
       targetPort: 8004
   selector:
     io.kompose.service: kong
+  loadBalancerIP: "34.87.159.129"
 status:
   loadBalancer: {}
