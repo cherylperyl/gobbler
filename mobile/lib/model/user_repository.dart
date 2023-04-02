@@ -6,32 +6,53 @@ import 'package:http/http.dart' as http;
 
 class UserRepository {
   // change to one endpoint only
-  static Future<String> loginUser(String email, String password) async {
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5401",'/login');
+  static Future<User> loginUser(String email, String password) async {
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/loginuser');
     var response = await http.post(
       url,
       body: jsonEncode(<String, String>{
         'username': email,
         'password': password
-      }));
+      }),
+      headers: { "Content-Type": "application/json" });
+    print(url);
+    print(response.body);
     if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final user = User.fromJson(data);
       final headers = response.headers;
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('bearerToken', headers['authorization']!);
-      return headers['authorization']!;
+      prefs.setString('bearerToken', headers['authorization']!);
+      print('bearerToken ${headers['authorization']}');
+      print('userJson = ${data}');
+      prefs.setString('user', response.body);
+
+      return user;
     }
     return Future.error('Unable to login user');
   }
   static Future<bool> signupUser(String username, String email, String password) async {
-    // may need to change to send the 
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5401",'/account/create');
+    final prefs = await SharedPreferences.getInstance();
+    final fcm = prefs.getString('messagingToken');
+    print('fcm $fcm');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']}",'/user/createaccount');
+    var jsonBody = jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+        'username': username,
+        'fcmToken': '$fcm'
+    });
+    print(url);
+    print(jsonBody);
     var response = await http.post(
       url,
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password
-      }));
+      body: jsonBody,
+      headers: { "Content-Type": "application/json" }
+    );
+    print('here');
+    print('response body ${response.body}');
     if (response.statusCode == 200) {
+      print(response.body);
       return Future.value(true);
     }
     return Future.error('Unable to signup user');

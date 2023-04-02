@@ -36,6 +36,7 @@ class _SignupPageState extends State<SignupPage> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    usernameController.dispose();
     super.dispose();
   }
 
@@ -44,6 +45,7 @@ class _SignupPageState extends State<SignupPage> {
     return Consumer<AppStateModel>(
       builder: (context, model, child){
         return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(),
           child: Form(
             key: formKey,
             child: Padding(
@@ -61,11 +63,21 @@ class _SignupPageState extends State<SignupPage> {
                       )),
                   Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.all(26),
+                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                       child: const Text(
-                        'Sign up',
+                        'Register',
                         style: TextStyle(fontSize: 20),
                       )),
+                  isLoading 
+                  ? const Center(child: CupertinoActivityIndicator(),)
+                  : Container(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    child: Center(
+                      child: Text(errorMessage, 
+                      style: TextStyle(color: CupertinoColors.systemRed),)
+                    ),
+                  ),
                   CupertinoTextFormFieldRow(
                     validator: (value) {
                       if (value == '') {
@@ -74,7 +86,7 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       }
                     },
-                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    padding: EdgeInsets.symmetric(horizontal: 2, ),
                     controller: usernameController,
                     textInputAction: TextInputAction.next,
                     placeholder: "Username",
@@ -153,7 +165,7 @@ class _SignupPageState extends State<SignupPage> {
                           onPressed: () {setState(() {showPassword = !showPassword;});},
                         ),
                   CupertinoButton.filled(
-                    child: const Text('Login'),
+                    child: const Text('Register'),
                     onPressed: () async {
                       formKey.currentState!.save();
                       setState(() {isLoading=true;});
@@ -162,7 +174,7 @@ class _SignupPageState extends State<SignupPage> {
                           await model.signupUser(usernameController.text, emailController.text, passwordController.text);
                           setState((){errorMessage='';});
                           Fluttertoast.showToast(
-                            msg: "Logged in succesfully",
+                            msg: "Registered succesfully",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.TOP,
                             timeInSecForIosWeb: 2,
@@ -172,11 +184,11 @@ class _SignupPageState extends State<SignupPage> {
                           );
                           Navigator.of(context).pop();
                         } catch(err) {
-                          if (err.toString() == 'Connection refused') {
+                          if (err.toString() == 'Connection timed out') {
                             setState(() { errorMessage = 'Please check your internet connection';});
                           } else {
                             print(err.toString());
-                            setState(() { errorMessage = 'Incorrect email and/or password';});
+                            setState(() { errorMessage = 'Please check your internet connection';});
                           }
                         }
                       }
@@ -185,22 +197,18 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      const Text("Don't have an account?"),
+                      const Text("Already have an account?"),
                       CupertinoButton(
                         child: const Text(
-                          'Register',
+                          'Login',
                         ),
                         onPressed: () {
-                          //signup screen
+                          Navigator.of(context).pop();
                         },
                       )
                     ],
                     mainAxisAlignment: MainAxisAlignment.center,
                   ),
-                  isLoading 
-                  ? const Center(child: CupertinoActivityIndicator(),)
-                  : Container(),
-                  Center(child: Text(errorMessage, style: TextStyle(color: CupertinoColors.systemRed),))
                 ],
               )),
           ),

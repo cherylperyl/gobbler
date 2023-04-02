@@ -18,7 +18,6 @@ class PostsListTab extends StatelessWidget {
         final location = model.getLoc();
         final user = model.getUser();
         return CustomScrollView(
-          semanticChildCount: posts.length,
           slivers: <Widget>[
             CupertinoSliverNavigationBar(
               largeTitle: user != null ? Text(user.email) : Text("no user"),
@@ -30,28 +29,19 @@ class PostsListTab extends StatelessWidget {
               top: false,
               minimum: const EdgeInsets.only(top: 0),
               sliver: SliverToBoxAdapter(
-                child: posts.isNotEmpty ?
-                CupertinoListSection(
-                  topMargin: 0,
-                  children: [
-                    CupertinoButton.filled(
-                      child: Text('print user'), onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final user = prefs.getString('user');
-                      if (user != null) {
-                        print(user);
-                      }
-
-                      // print(user!.dateCreated.toIso8601String());
-                      // final userObj = User.fromJson(jsonDecode(user!));
-                    }),
-                    for (var post in posts)
-                      PostRowItem(
-                        post: post,
-                      )
-                  ],
-                )
-                : const CupertinoListTile(title: Text('No posts available'))
+                child: posts != null 
+                ? posts.isNotEmpty
+                  ? CupertinoListSection(
+                    topMargin: 0,
+                    children: [
+                      for (var post in posts)
+                        PostRowItem(
+                          post: post,
+                        )
+                    ],
+                  )
+                  : const CupertinoListTile(title: Text('No posts to show'))
+                : const CupertinoListTile(title: Text('Loading posts...'))
               ),
             ),   
             SliverSafeArea(
@@ -68,6 +58,5 @@ class PostsListTab extends StatelessWidget {
 
   Future<void> _pullRefresh(AppStateModel model) async {
     model.loadPosts();
-    model.updateLocation();
   }
 }

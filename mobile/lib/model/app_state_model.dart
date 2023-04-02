@@ -19,6 +19,7 @@ class AppStateModel extends foundation.ChangeNotifier {
   List<Post> _availablePosts = [];
   List<Post> _userCreatedPosts = [];
   List<Post> _userRegisteredPosts = [];
+  Map<num, int> _userRegisteredPostsIds = Map<num,int>();
   LocationData? _currentLocation;
   User? _user;
   LocationRepository locationRespository = LocationRepository();
@@ -42,125 +43,29 @@ class AppStateModel extends foundation.ChangeNotifier {
 
 
   // Returns a copy of the list of available Posts, filtered by category.
-  List<Post> getPosts() {
+  List<Post>? getPosts() {
     return List.from(_availablePosts);
   }
   List<Post> getUserCreatedPosts() {
-    List<Post> mockPosts = [
-        Post(
-          userId: 22, 
-          postId: 22, 
-          title: "Chicken Rice", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-        ),
-        Post(
-          userId: 22, 
-          postId: 23, 
-          title: "Nasi Lemak", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-          )
-    ];
-    return List.from(mockPosts);
-    // return List.from(_userCreatedPosts);
+    return List.from(_userCreatedPosts);
   }
   List<Post> getUserRegisteredPosts() {
-    List<Post> mockPosts = [
-        Post(
-          userId: 23, 
-          postId: 22, 
-          title: "Chicken Rice", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-        ),
-        Post(
-          userId: 23, 
-          postId: 23, 
-          title: "Nasi Lemak", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-          )
-    ];
-    return List.from(mockPosts);
     return List.from(_userRegisteredPosts);
   }
-  List<num> getUserRegisteredPostsIds() {
-    List<Post> mockRegisteredPosts = [
-      Post(
-        userId: 23, 
-        postId: 22, 
-        title: "Chicken Rice", 
-        imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-        locationDescription: "My mother's house", 
-        locationLatitude: 2, 
-        locationLongitude: 2, 
-        availableReservations: 22, 
-        totalReservations: 23, 
-        createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-        timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-        isAvailable: true
-      ),
-      Post(
-        userId: 23, 
-        postId: 23, 
-        title: "Nasi Lemak", 
-        imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-        locationDescription: "My mother's house", 
-        locationLatitude: 2, 
-        locationLongitude: 2, 
-        availableReservations: 22, 
-        totalReservations: 23, 
-        createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-        timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-        isAvailable: true
-        )
-    ];
-    return mockRegisteredPosts.map((post) => post.postId).toList();
-    return _userRegisteredPosts.map((post) => post.postId).toList();
+  Map<num, int> getUserRegisteredPostsIds() {
+    return _userRegisteredPostsIds;
   }
 
   LocationData? getLoc() {
     return _currentLocation;
   }
   User? getUser() {
-    return User(
-      userId: 2,
-      isPremium: true,
-      username: "bobby",
-      dateCreated: DateTime.now(),
-      lastUpdated: null,
-      email: "bobby@gmail.com"
-    );
     return _user;
+  }
+  User setUserToPremium() {
+    _user!.isPremium = true;
+    notifyListeners();
+    return _user!;
   }
   
 
@@ -207,21 +112,57 @@ class AppStateModel extends foundation.ChangeNotifier {
   }
 
   void loadPosts() async {
-    _availablePosts = await PostRepository.fetchPosts();
+    _currentLocation = await locationRespository.getLoc();
+    print(_currentLocation);
+    notifyListeners();
+    int user_id = 0;
+    if (_user != null) {
+      user_id = _user!.userId;
+    }
+    if (_currentLocation != null) {
+      double long = _currentLocation!.longitude!, lat = _currentLocation!.latitude!; 
+      
+      _availablePosts = await PostRepository.fetchPosts(long, lat, user_id);  
+      
+      print(_availablePosts);
+    } else {
+      _availablePosts = await PostRepository.fetchPosts(1.2993038848815959, 103.84554001541605, user_id);  
+    }
+
     notifyListeners();
   }
 
-  void updateLocation() async {
-    _currentLocation = await locationRespository.getLoc();
-    notifyListeners();
-  }
+  // void updateLocation() async {
+  //   _currentLocation = await locationRespository.getLoc();
+  //   notifyListeners();
+  // }
 
   Future<void> getLoggedInUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final user = prefs.getString('user');
-    if (user != null) {
-      _user = User.fromJson(jsonDecode(user));
+    String? userStr = prefs.getString('user');
+    String? bearer = prefs.getString('bearerToken');
+    print('userStr $userStr');
+    if (userStr != null) {
+      _user = User.fromJson(jsonDecode(userStr));
+      print('_user $_user');
+      print('bearer $bearer');
+      if (bearer != null && _user != null) {
+        _userCreatedPosts = await PostRepository.fetchCreatedPosts(_user!.userId);
+        print('_userCreatedPosts $_userCreatedPosts');
+        final reservationList = await PostRepository.fetchRegisteredPosts(_user!.userId);
+        print('reservationList $reservationList');
+        _userRegisteredPosts = [];
+        _userRegisteredPostsIds.clear();
+        for (var i = 0; i < reservationList.length; i++) {
+          _userRegisteredPosts.add(Post.fromJson(reservationList[i]['post']));
+          _userRegisteredPostsIds[reservationList[i]['post_id']] = reservationList[i]['reservation_id'];
+        }
+        print('userRegisteredPosts $_userRegisteredPosts');
+        print('userRegisteredPostsIds $_userRegisteredPostsIds');
+      }
+      notifyListeners();  
     }
+      
     notifyListeners();
   }
 
@@ -239,15 +180,22 @@ class AppStateModel extends foundation.ChangeNotifier {
   }
   // possibly change to call one endpoint only
   Future<void> loginUser(String email, String password) async {
-    String? bearer = await UserRepository.loginUser(email, password);
-    _user = await UserRepository.getUserData(bearer);
+    _user = await UserRepository.loginUser(email, password);
     
+    notifyListeners();
     if (_user != null) {
-      _userCreatedPosts = await PostRepository.fetchCreatedPosts(_user!.userId);
-      _userRegisteredPosts = await PostRepository.fetchRegisteredPosts(_user!.userId);
       final prefs = await SharedPreferences.getInstance();
-      // print('jsonEncode ${jsonEncode(userJson)}');
-      prefs.setString('user', jsonEncode(_user!));
+      _userCreatedPosts = await PostRepository.fetchCreatedPosts(_user!.userId);
+      final reservationList = await PostRepository.fetchRegisteredPosts(_user!.userId);
+      print('reservationList $reservationList');
+      _userRegisteredPosts = [];
+      _userRegisteredPostsIds.clear();
+      for (var i = 0; i < reservationList.length; i++) {
+         _userRegisteredPosts.add(Post.fromJson(reservationList[i]['post']));
+        _userRegisteredPostsIds[reservationList[i]['post_id']] = reservationList[i]['reservation_id'];
+      }
+      print('userRegisteredPosts $_userRegisteredPosts');
+      print('userRegisteredPostsIds $_userRegisteredPostsIds');
     }
     notifyListeners();
   }
@@ -256,10 +204,50 @@ class AppStateModel extends foundation.ChangeNotifier {
   }
 
   Future<void> logoutUser() async {
-    await UserRepository.logoutUser();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('user');
+    prefs.remove('bearerToken');
     _user = null;
     notifyListeners();
   }
+
+  Future<bool> reservePost(num postId, int userId) async {
+    bool success = await PostRepository.reservePost(postId, userId);
+    if (success) {
+      final reservationList = await PostRepository.fetchRegisteredPosts(_user!.userId);
+      print('reservationList $reservationList');
+      _userRegisteredPosts = [];
+      _userRegisteredPostsIds.clear();
+      for (var i = 0; i < reservationList.length; i++) {
+         _userRegisteredPosts.add(Post.fromJson(reservationList[i]['post']));
+        _userRegisteredPostsIds[reservationList[i]['post_id']] = reservationList[i]['reservation_id'];
+      }
+      print('userRegisteredPosts $_userRegisteredPosts');
+      print('userRegisteredPostsIds $_userRegisteredPostsIds');
+      notifyListeners();
+      
+    }
+    return success;
+  }
+
+  Future<bool> cancelReservation(int reservationId) async {
+  bool success = await PostRepository.cancelReservation(reservationId);
+  if (success) {
+    final reservationList = await PostRepository.fetchRegisteredPosts(_user!.userId);
+    print('reservationList $reservationList');
+    _userRegisteredPosts = [];
+    _userRegisteredPostsIds.clear();
+    for (var i = 0; i < reservationList.length; i++) {
+      _userRegisteredPosts.add(Post.fromJson(reservationList[i]['post']));
+      _userRegisteredPostsIds[reservationList[i]['post_id']] = reservationList[i]['reservation_id'];
+    }
+    print('userRegisteredPosts $_userRegisteredPosts');
+    print('userRegisteredPostsIds $_userRegisteredPostsIds');
+    notifyListeners();
+  }
+  return success;
+  }
+
 
   Future<Post?> uploadPost(
     String title, 
@@ -279,6 +267,37 @@ class AppStateModel extends foundation.ChangeNotifier {
       image, 
       locationData
     );
+    _userCreatedPosts = await PostRepository.fetchCreatedPosts(userId);
+    notifyListeners();
+    return post;
+  }
+
+  Future<Post?> updatePost(
+  String title, 
+  String locationDesc, 
+  String servings,
+  String expiryTime,
+  int userId,
+  XFile image,
+  LocationData locationData,
+  num postId,
+  ) async {
+    final post = await PostRepository.updatePost(
+      postId, 
+      title, 
+      locationDesc, 
+      servings, 
+      expiryTime, 
+      userId, 
+      image, 
+      locationData,
+    );
+    _userCreatedPosts = await PostRepository.fetchCreatedPosts(userId);
+    notifyListeners();
+    return post;
+  }
+  Future<Post?> hidePost(num postId) async {
+    Post? post = await PostRepository.hidePost(postId);
     return post;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile/edit_post.dart';
 import 'package:mobile/login_page.dart';
 import 'package:mobile/model/post.dart';
@@ -36,20 +37,23 @@ class _IndividualPostState extends State<IndividualPost> {
   bool imageErrorMsg = false;
   bool loading = false;
   XFile? image;
+  late bool isAvailable;
 
   @override
   void initState() {  
     isLoading = false;
     availableReservations = widget.post.availableReservations;
+    isAvailable = widget.post.isAvailable;
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
-        // final userId = model.getUser()?.userId;
-        const userId = 22;
-        final userRegisteredPosts = model.getUserRegisteredPostsIds();
+        final userId = model.getUser()?.userId;
+        
+        final userRegisteredPosts = model.getUserRegisteredPosts();
+        final userRegisteredPostsIds = model.getUserRegisteredPostsIds();
         return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: const Text("Gobble Snack"),
@@ -75,7 +79,7 @@ class _IndividualPostState extends State<IndividualPost> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  widget.post.title, 
+                  widget.post.title,  
                   style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 20),)),
               Container(
@@ -121,22 +125,32 @@ class _IndividualPostState extends State<IndividualPost> {
                   margin: EdgeInsets.symmetric(horizontal: 18),
                   width: double.infinity,
                   child: userId == widget.post.userId
-                  ? CupertinoButton(
-                    color: CupertinoColors.systemRed,
-                    child: Text("Delete your post"),
-                    onPressed: () {},
-                    
-                  )
-                  : userRegisteredPosts.contains(widget.post.postId)
-                    ? CupertinoButton.filled(
-                      child: Text("Registered"), 
-                      onPressed: null,
+                  ? isAvailable
+                    ? CupertinoButton(
+                      color: CupertinoColors.systemRed,
+                      child: Text("Hide your post"),
+                      onPressed: () {
+                        print('widget.post.postId ${widget.post.postId}');
+                        handleDeletePressed(context, model, widget.post.postId);
+                      },
+                    )
+                    : CupertinoButton.filled(
                       disabledColor: CupertinoColors.systemGrey,
+                      child: Text("Post hidden"),
+                      onPressed: null,
+                    )
+                  : userRegisteredPostsIds.containsKey(widget.post.postId)
+                    ? CupertinoButton(
+                      child: Text("Cancel registration"), 
+                      onPressed: () {
+                        handleCancelPressed(context, model, userRegisteredPostsIds[widget.post.postId]!);
+                      },
+                      color: CupertinoColors.systemRed
                     )
                     : CupertinoButton.filled(
                       child: Text("Chope!"), 
                       onPressed: () {
-                        handleReservationPressed(context);
+                        handleReservationPressed(context, model, widget.post.postId, userId);
                       }),
                 )
             ],),
@@ -148,14 +162,21 @@ class _IndividualPostState extends State<IndividualPost> {
 
   String getExpiryTime() {
     Duration timeBetween = widget.post.timeEnd.difference(DateTime.now());
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(timeBetween.inMinutes.remainder(60));
-    return "${twoDigits(timeBetween.inHours)} hours $twoDigitMinutes minutes";
+    if (timeBetween.inMinutes < 0) {
+      return "Ended ${DateFormat().format(widget.post.timeEnd)}";
+    }
+    // String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = timeBetween.inMinutes.remainder(60).toString();
+    if (timeBetween.inHours > 1) {
+      return "${timeBetween.inHours} hours $twoDigitMinutes minutes";    
+    } else if (timeBetween.inHours == 0) {
+      return "$twoDigitMinutes minutes";  
+    }
+    return "${timeBetween.inHours} hour $twoDigitMinutes minutes";
   }
-  void handleReservationPressed(BuildContext context) async {
+  void handleReservationPressed(BuildContext context, AppStateModel model, num postId, int? userId) async {
     final prefs = await SharedPreferences.getInstance();
-    final String? bearer = prefs.getString('bearerToken');
-    if (bearer == null) {
+    if (userId == null) {
           Navigator.push(
             context,
             CupertinoPageRoute(
@@ -163,10 +184,11 @@ class _IndividualPostState extends State<IndividualPost> {
             )
           );
     } else {
-      _showAlertDialog(context);
+      _showAlertDialog(context, model, postId, userId!);
     }
   }
-  void _showAlertDialog(BuildContext context) {
+  
+  void _showAlertDialog(BuildContext context, AppStateModel model, num postId, int userId) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -182,15 +204,144 @@ class _IndividualPostState extends State<IndividualPost> {
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            onPressed: () {
-              
+            onPressed: () async {
               setState(() { isLoading = true; });
-              // call to make reservation
-              setState(() { availableReservations -= 1;});
-
+              bool success = await model.reservePost(postId, userId);
+              if (success) {
+                setState(() { availableReservations -= 1;});
+                Fluttertoast.showToast(
+                  msg: "Food reserved successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.activeGreen,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Could not reserve food",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.systemRed,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              }
+              
               Navigator.pop(context);
             },
             child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void handleCancelPressed(BuildContext context, AppStateModel model, int reservationId) async {
+    _showCancelDialog(context, model, reservationId);
+  }
+
+  void _showCancelDialog(BuildContext context, AppStateModel model, int reservationId) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text('Are you sure you want to cancel your reservation?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () async {
+              setState(() { isLoading = true; });
+              bool success = await model.cancelReservation(reservationId);
+              if (success) {
+                setState(() { availableReservations += 1;});
+                Fluttertoast.showToast(
+                  msg: "Cancelled reservation successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.activeGreen,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Could not cancel reservation",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.systemRed,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Yes, cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void handleDeletePressed(BuildContext context, AppStateModel model, num postId) async {
+    _showDeleteDialog(context, model, postId);
+  }
+
+  void _showDeleteDialog(BuildContext context, AppStateModel model, num postId) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text("Are you sure you want to hide your post? Users won't be able to see it anymore."),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () async {
+              setState(() { isLoading = true; });
+              Post? res = await model.hidePost(postId);
+              if (res != null) {
+                print(res);
+                setState((){ isAvailable = false; });
+                Fluttertoast.showToast(
+                  msg: "Post hidden successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.activeGreen,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Could not hide post",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: CupertinoColors.systemRed,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+                );
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Yes, hide it'),
           ),
         ],
       ),
