@@ -234,7 +234,9 @@ def view_posts(
 ):
     """
     Gets all posts within a 5km radius of the user's location in ascending
-    order of distance. If not logged in, pass in user_id = 0.
+    order of distance.
+    All posts have is_available = true.
+    If not logged in, pass in user_id = 0.
     """
     query = f"""
                 query {{
@@ -293,6 +295,9 @@ def view_posts(
 
             if nearby_posts[i]["available_reservations"] == 0:
                 nearby_posts[i]["is_available"] = False
+
+        # filter out unavailable posts
+        nearby_posts = [post for post in nearby_posts if post["is_available"]]
 
         return nearby_posts
 
@@ -437,7 +442,7 @@ def update_post(
                 value = "$image_file"
                 post_query += f"file_name: \"{image_file.filename}\", "
 
-            if (type(value) == str or type(value) == datetime) and value != "$image_file":
+            if (type(value) == str or type(value) == datetime) and value != "$image_file" and value != "true" and value != "false":
                 post_query += f"{key}: \"{value}\", "
             else:
                 post_query += f"{key}: {value}, "
