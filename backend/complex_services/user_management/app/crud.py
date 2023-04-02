@@ -153,6 +153,10 @@ def update_account(user_id: int, patch_user: schemas.AccountCreate) -> schemas.A
     return schemas.Account.parse_obj(user_data)
 
 def process_webhook(event: StripeEvent):
-    requests.post(
+    resp = requests.post(
         f"{payment_endpoint}/webhook",
+        json=event.dict()
     )
+    if resp.status_code != 200:
+        raise HTTPException(resp.status_code, resp.text)
+    return resp.json()

@@ -84,4 +84,7 @@ async def process_webhook(event: StripeEvent):
     webhook_secret = (
         ""  # TODO - set up secret validation for webhook to filter out spoofed requests
     )
-    crud.process_webhook(event)
+    print("Webhook received: " + str(event.__dict__))
+    paid_user = crud.process_webhook(event)
+    if paid_user:
+        crud.update_account(paid_user["userId"], schemas.AccountUpdate(isPremium=True))
