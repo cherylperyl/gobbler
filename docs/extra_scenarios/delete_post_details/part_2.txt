@@ -1,0 +1,6 @@
+Notification Management->Reservation Service:Fetch all reservations
+Reservation Service->Notification Management:Return all reservations
+Notification Management->User Service:Fetch user tokens
+User Service->Notification Management:Return user tokens
+Notification Management->Firebase Cloud Messaging:Send notification request
+Firebase Cloud Messaging->Premium User Mobile:Send notification of deleted post

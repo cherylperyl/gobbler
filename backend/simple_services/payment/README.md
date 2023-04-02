@@ -30,3 +30,15 @@ For convenience, the app will also print out the redirect URL in case Postman or
 ## Todos
 - Setup webhook secret in app.py
 - Integrate properly with user management ms (how to link to it?)
+
+# Setting up Stripe
+
+To test locally, download the [Stripe CLI](https://stripe.com/docs/stripe-cli) and set it to forward events to the app
+
+`stripe listen --forward-to localhost:5000/webhook`
+
+You can then trigger Stripe events to simulate successful subscriptions
+
+`stripe trigger customer.subscription.created`
+
+When deployed, a Stripe account will be set up to forward customer.subscription.created events to the deployed endpoint
