@@ -8,6 +8,7 @@ import json
 from dateutil import parser
 
 from . import schemas
+from .stripe_model import StripeEvent
 
 endpoint = f"http://{os.environ.get('USER_MS_SERVER')}:{os.environ.get('USER_MS_PORT')}" if os.environ.get("USER_MS_SERVER") is not None else "http://localhost:8081"
 auth_endpoint = f"http://{os.environ.get('AUTH_SERVER')}:{os.environ.get('AUTH_PORT')}" if os.environ.get("AUTH_SERVER") is not None else "http://localhost:5401"
@@ -150,4 +151,8 @@ def update_account(user_id: int, patch_user: schemas.AccountCreate) -> schemas.A
     # print(user_data)
 
     return schemas.Account.parse_obj(user_data)
-    
+
+def process_webhook(event: StripeEvent):
+    requests.post(
+        f"{payment_endpoint}/webhook",
+    )

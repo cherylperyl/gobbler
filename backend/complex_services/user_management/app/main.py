@@ -1,10 +1,11 @@
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi.responses import JSONResponse, RedirectResponse
+
 
 from . import crud, schemas
-
-from fastapi.responses import JSONResponse, RedirectResponse
+from .stripe_model import StripeEvent
 
 
 ########### DO NOT MODIFY BELOW THIS LINE ###########
@@ -33,49 +34,54 @@ def ping():
 
 
 @app.post("/createaccount", response_model=schemas.Account)
-def create_account(
-    user: schemas.UserCredentialsCreate
-):
+def create_account(user: schemas.UserCredentialsCreate):
     """
     Create a new account
     """
     created = crud.create_account(user)
     crud.create_auth(user)
-    return created 
+    return created
+
 
 @app.post("/loginuser", response_model=schemas.Account)
-def login_user(
-    user: schemas.UserCredentialsLogin,
-    response: Response
-): 
+def login_user(user: schemas.UserCredentialsLogin, response: Response):
     """
-    Logs in user using username and password, returns user account object with bearer token in header. 
+    Logs in user using username and password, returns user account object with bearer token in header.
     """
 
     token = crud.get_token(user)
     print(token)
-    # set return header to have the auth bearer token 
+    # set return header to have the auth bearer token
     response.headers["Authorization"] = token
-    
-    user = crud.get_user_by_email(user.username)  # username is actually email in this case, don't question it
 
-    return user 
+    user = crud.get_user_by_email(
+        user.username
+    )  # username is actually email in this case, don't question it
+
+    return user
+
 
 @app.post("/subscribe")
-def create_subscription(
-    checkout_request: schemas.SubscribeRequest
-):
+def create_subscription(checkout_request: schemas.SubscribeRequest):
     redirect_url = crud.subscribe(
-        user_id=checkout_request.userId, 
-        success_url=checkout_request.success_url
+        user_id=checkout_request.userId, success_url=checkout_request.success_url
     )
 
     return {"stripe_checkout_url": redirect_url}
 
-@app.patch("/user/{user_id}", response_model = schemas.Account)
-def update_user(
-    user_id: int,
-    update_data: schemas.AccountUpdate
-):
+
+@app.patch("/user/{user_id}", response_model=schemas.Account)
+def update_user(user_id: int, update_data: schemas.AccountUpdate):
     user = crud.get_account(user_id)
     return crud.update_account(user_id, update_data)
+
+
+@app.post("/webhook")
+async def process_webhook(event: StripeEvent):
+    """
+    Forward Stripe webhook to payment service
+    """
+    webhook_secret = (
+        ""  # TODO - set up secret validation for webhook to filter out spoofed requests
+    )
+    crud.process_webhook(event)
