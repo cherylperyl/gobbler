@@ -71,9 +71,9 @@ services:
       - authentication-service-pgdata:/var/lib/postgresql/data
     healthcheck:
       test: /usr/bin/pg_isready
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   authentication-service:
     platform: linux/amd64
@@ -127,9 +127,9 @@ services:
           "${DATABASE_USER}",
           "-p${DATABASE_PASSWORD}",
         ]
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   reservation-simple-ms:
     platform: linux/amd64
@@ -186,9 +186,9 @@ services:
       - user-service-pgdata:/var/lib/postgresql/data
     healthcheck:
       test: /usr/bin/pg_isready
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   user-simple-ms:
     build:
@@ -241,9 +241,9 @@ services:
           "${DATABASE_USER}",
           "-p${DATABASE_PASSWORD}",
         ]
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   post-simple-ms:
     platform: linux/amd64
@@ -289,7 +289,7 @@ services:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 30s
-      retries: 3
+      retries: 10
 
   post-management:
     platform: linux/amd64
