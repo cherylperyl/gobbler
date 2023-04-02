@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: post-mysql
+  name: post-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: post-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: post-mysql
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              value: posts
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_PASSWORD
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-mysql:latest
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+                - -u
+                - ${DATABASE_USER}
+                - -p${DATABASE_PASSWORD}
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: post-mysql
+          ports:
+            - containerPort: 3306
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: post-mysql-data
+            - mountPath: /var/log/mysql
+              name: post-mysql-logs
+      restartPolicy: Always
+      volumes:
+        - name: post-mysql-data
+          persistentVolumeClaim:
+            claimName: post-mysql-data
+        - name: post-mysql-logs
+          persistentVolumeClaim:
+            claimName: post-mysql-logs
+status: {}

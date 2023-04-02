@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:  
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: reservation-management-redis
+  name: reservation-management-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: reservation-management-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: reservation-management-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: redis-data
+          emptyDir: {}

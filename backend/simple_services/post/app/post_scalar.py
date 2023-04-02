@@ -11,7 +11,6 @@ class PostInput:
     image_file: Upload
     location_latitude: float
     location_longitude: float
-    available_reservations: int
     total_reservations: int
     time_end: datetime
     file_name: str
@@ -23,7 +22,6 @@ class Post:
     post_desc: str
     location_latitude: float
     location_longitude: float
-    available_reservations: int
     total_reservations: int
     time_end: datetime
     created_at: datetime
@@ -31,7 +29,7 @@ class Post:
     post_id: int
     is_available: bool
     image_url: str
-    
+
 @strawberry.type
 class PostNearby(Post):
     distance: float
@@ -43,7 +41,6 @@ class PostUpdate:
     image_file: Optional[Upload] = None
     location_latitude: Optional[float] = None
     location_longitude: Optional[float] = None
-    available_reservations: Optional[int] = None
     total_reservations: Optional[int] = None
     time_end: Optional[datetime] = None
     is_available: Optional[bool] = None

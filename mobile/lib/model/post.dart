@@ -6,7 +6,7 @@
 // }
 
 class Post {
-  const Post({
+  Post({
     required this.userId,
     required this.postId,
     required this.title,
@@ -30,7 +30,7 @@ class Post {
   final String locationDescription;
   final num locationLatitude;
   final num locationLongitude;
-  final num availableReservations;
+  num availableReservations;
   final num totalReservations;
   final DateTime createdAt;
   final DateTime timeEnd;

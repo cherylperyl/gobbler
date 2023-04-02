@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: post-simple-ms
+  name: post-simple-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: post-simple-ms
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: post-simple-ms
+    spec:
+      containers:
+        - env:
+            - name: DATABASE
+              value: posts
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_PASSWORD
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_SERVER
+              value: post-mysql
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_USER
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/post-simple-ms:latest
+          name: post-simple-ms
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/secrets/google
+              name: gobbler-gcp-key
+      restartPolicy: Always
+      volumes:
+        - name: gobbler-gcp-key
+          secret:
+            secretName: gobbler-gcp
+status: {}

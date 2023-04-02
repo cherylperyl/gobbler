@@ -126,6 +126,7 @@ class PostRepository {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final post = Post.fromJson(data);
+      post.availableReservations = int.parse(servings);
       return post;
     }
     return null;
