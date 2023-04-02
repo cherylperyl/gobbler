@@ -70,7 +70,7 @@ def create_subscription(
         success_url=checkout_request.success_url
     )
 
-    return RedirectResponse(redirect_url, status_code=303)
+    return {"stripe_checkout_url": redirect_url}
 
 @app.patch("/user/{user_id}", response_model = schemas.Account)
 def update_user(
