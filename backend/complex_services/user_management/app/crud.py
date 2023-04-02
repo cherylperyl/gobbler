@@ -143,8 +143,7 @@ def update_account(user_id: int, patch_user: schemas.AccountCreate) -> schemas.A
     # convert dates to enable pydantic parsing 
     if len(user_data) == 0:
         raise HTTPException(400, "User not found")
-    
-    user_data = user_data[0]
+
     user_data["lastUpdated"] = parser.parse(user_data["lastUpdated"])
     user_data["dateCreated"] = parser.parse(user_data["dateCreated"])
 

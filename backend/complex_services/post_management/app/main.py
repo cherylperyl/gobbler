@@ -168,7 +168,7 @@ def create_post(
 
         # publish post to rabbitmq
         channel.basic_publish(
-            exchange=amqp_setup.exchangename,
+            exchange="newpost",
             routing_key="newpost",
             body=json.dumps(created_post),
             properties=pika.BasicProperties(delivery_mode=2)
@@ -464,14 +464,22 @@ def update_post(
             status_code=422, content={"error": "Update of post failed."}
         )
 
-    else:
-        print("Update of post successful.")
-        updated_post = r["data"]["update_post"]
-        updated_post["available_reservations"] = calculate_available_reservations(updated_post)
-        if updated_post["available_reservations"] == 0:
-            updated_post["is_available"] = False
 
-        return updated_post
+    print("Update of post successful.")
+    updated_post = r["data"]["update_post"]
+    updated_post["available_reservations"] = calculate_available_reservations(updated_post)
+    if updated_post["available_reservations"] == 0:
+        updated_post["is_available"] = False
+
+    # publish post to rabbitmq
+    channel.basic_publish(
+        exchange="updatepost",
+        routing_key="updatepost",
+        body=json.dumps(updated_post),
+        properties=pika.BasicProperties(delivery_mode=2)
+    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+
+    return updated_post
 
 
 @app.delete("/deletepost", response_model=schemas.Post, tags=["Post"])
@@ -510,6 +518,14 @@ def delete_post(
             status_code=422, content={"error": "Delete of post failed."}
         )
 
-    else:
-        print("Delete of post successful.")
-        return r["data"]["delete_post"]
+    deleted_post = r["data"]["delete_post"]
+    # publish post to rabbitmq
+    channel.basic_publish(
+        exchange="deletepost",
+        routing_key="deletepost",
+        body=json.dumps(deleted_post),
+        properties=pika.BasicProperties(delivery_mode=2)
+    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+
+    print("Delete of post successful.")
+    return deleted_post
