@@ -19,8 +19,6 @@ async function listenToQueue() {
   const connection = new Amqp.Connection(`amqp://${amqpHost}:${amqpPort}`);
   await connection.completeConfiguration();
   const queue = connection.declareQueue("newposts");
-  const exchange = connection.declareExchange("newposts");
-  queue.bind(exchange);
   queue.activateConsumer((message) => {
     console.log("Message received: " + message.getContent());
     sendNotification(message.getContent());
@@ -39,7 +37,21 @@ async function sendNotification(message: string) {
     return;
   }
 
-  const tokens = premiumUsers.map((user: any) => user.fcmToken);
+  const messageObj = JSON.parse(message);
+  const posterId = messageObj.user_id;
+
+  const tokens: string[] = [];
+
+  for (const user of premiumUsers) {
+    if (user.userId !== posterId) {
+      tokens.push(user.fcmToken);
+    }
+  }
+
+  if (tokens === undefined || tokens.length === 0) {
+    console.log("No premium users to send notification to")
+    return;
+  }
 
   await admin.messaging().sendMulticast({
     tokens,

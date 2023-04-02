@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: user-simple-ms
+  name: user-simple-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: user-simple-ms
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: user-simple-ms
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_SERVER
+              value: user-postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_PASSWORD
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_USER
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/user-simple-ms:latest
+          name: user-simple-ms
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}

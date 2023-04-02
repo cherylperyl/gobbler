@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kong
+  name: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kong
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: kong
+    spec:
+      containers:
+        - env:
+            - name: KONG_ADMIN_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_ADMIN_ERROR_LOG
+              value: /dev/stderr
+            - name: KONG_ADMIN_GUI_URL
+              value: http://localhost:8002
+            - name: KONG_ADMIN_LISTEN
+              value: 0.0.0.0:8001
+            - name: KONG_DATABASE
+              value: "off"
+            - name: KONG_DECLARATIVE_CONFIG
+              value: kong.yml
+            - name: KONG_PROXY_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_PROXY_ERROR_LOG
+              value: /dev/stderr
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/kong:latest
+          name: kong
+          ports:
+            - containerPort: 8000
+            - containerPort: 8443
+            - containerPort: 8001
+            - containerPort: 8444
+            - containerPort: 8002
+            - containerPort: 8445
+            - containerPort: 8003
+            - containerPort: 8004
+          resources: {}
+      restartPolicy: Always
+status: {}

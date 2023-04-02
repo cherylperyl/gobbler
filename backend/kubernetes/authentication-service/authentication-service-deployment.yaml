@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: authentication-service
+  name: authentication-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: authentication-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.service: authentication-service
+    spec:
+      containers:
+        - env:
+            - name: AUTH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: AUTH_TOKEN_SECRET
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_SERVER
+              value: authentication-service-postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_PASSWORD
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gobbler
+                  key: DATABASE_USER
+          image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/authentication-service:latest
+          name: authentication-service
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}

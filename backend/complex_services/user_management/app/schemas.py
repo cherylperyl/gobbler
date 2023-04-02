@@ -9,6 +9,7 @@ class UserCredentials(BaseModel):
 class UserCredentialsCreate(UserCredentials):
     email: str
     username: str
+    fcmToken: Optional[str] = None
 
 class UserCredentialsLogin(UserCredentials):
     username: str
@@ -24,6 +25,7 @@ class AccountBase(BaseModel):
     email: Optional[str]
     stripeId: Optional[str] = None
     subscriptionId: Optional[str]
+    fcmToken: Optional[str] = None
 
 
 class AccountCreate(AccountBase):
