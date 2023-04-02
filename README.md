@@ -14,7 +14,7 @@ Reducing food waste one buffet at a time
 
 
 # Project Overview
-<img src="gobbler.png">
+<img src="readme_files\gobbler.png">
 Food wastage is a severe problem in Singapore, and the amount of food waste has grown by 20% in the past 10 years. Current solutions include informal “buffet clearer” Telegram groups, which are not scalable and susceptible to spam. As such, we have created “Gobbler”, a centralized platform for users to post leftover food, and for other users to reserve a slot to take the leftover food. This will help to reduce the food wastage problem from the ground up.
 
 
@@ -30,10 +30,14 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 - FastAPI
 - GraphQL
 - Flutter
+- EF Core
+- SpringBoot
 
 **Database**
 - MySQL
 - Firebase
+- postgreSQL
+- Google Cloud
 
 **Others**
 - Stripe Payment API
