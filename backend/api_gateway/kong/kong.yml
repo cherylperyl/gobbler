@@ -65,6 +65,10 @@ plugins:
     credentials: true
     max_age: 3600
     preflight_continue: false
+- name: rate-limiting
+  config: 
+    minute: 100
+    policy: local
 - name: authentication_plugin
   config:
     url: http://authentication-service:80/account/me
