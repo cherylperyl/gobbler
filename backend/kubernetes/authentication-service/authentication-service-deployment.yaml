@@ -21,7 +21,7 @@ spec:
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
-        # io.kompose.network/backend-gobbler-net: "true"
+        io.kompose.network/backend-gobbler-net: "true"
         io.kompose.service: authentication-service
     spec:
       containers:

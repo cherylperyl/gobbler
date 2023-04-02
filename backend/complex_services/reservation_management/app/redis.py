@@ -5,11 +5,9 @@ from fastapi import HTTPException
 from contextlib import ContextDecorator
 import redis
 
-print(os.environ.get("RESERVATION_MANAGEMENT_REDIS_SERVER"))
-print(os.environ.get("RESERVATION_MANAGEMENT_REDIS_PORT"))
 redis_client = redis.Redis(
-    host=os.environ.get("RESERVATION_MANAGEMENT_REDIS_SERVER"),
-    port=os.environ.get("RESERVATION_MANAGEMENT_REDIS_PORT"),
+    host=os.getenv("RESERVATION_MANAGEMENT_REDIS_SERVER"),
+    port=os.getenv("RESERVATION_MANAGEMENT_REDIS_PORT"),
 )
 
 

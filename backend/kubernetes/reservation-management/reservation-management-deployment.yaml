@@ -21,6 +21,7 @@ spec:
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
+        io.kompose.network/backend-gobbler-net: "true"
         io.kompose.service: reservation-management
     spec:
       containers:
@@ -33,6 +34,10 @@ spec:
               value: "80"
             - name: RESERVATION_MS_SERVER
               value: reservation-simple-ms
+            - name: RESERVATION_MANAGEMENT_REDIS_SERVER
+              value: reservation-management-redis
+            - name: RESERVATION_MANAGEMENT_REDIS_PORT
+              value: "6379"
           image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/reservation-management:latest
           name: reservation-management
           ports:
