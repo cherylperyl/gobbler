@@ -71,4 +71,6 @@ plugins:
     public_paths:
       - /user/loginuser
       - /user/createaccount
+      # Adding this because of header issues with Flutter Webview package
+      - /user/subscribe
       - /post/viewposts
