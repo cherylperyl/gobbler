@@ -131,8 +131,7 @@ def create_post(
                         file_name: "{image_file.filename}",
                         location_latitude: {post.location_latitude},
                         location_longitude: {post.location_longitude},
-                        available_reservations: {post.total_reservations},
-                        total_reservations: {post.total_reservations}
+                        total_reservations: {post.total_reservations},
                         time_end: "{post.time_end}"
                     }}) {{
                         post_id,
@@ -142,7 +141,6 @@ def create_post(
                         image_url,
                         location_latitude,
                         location_longitude,
-                        available_reservations,
                         total_reservations,
                         time_end,
                         created_at,
@@ -236,7 +234,9 @@ def view_posts(
 ):
     """
     Gets all posts within a 5km radius of the user's location in ascending
-    order of distance. If not logged in, pass in user_id = 0.
+    order of distance.
+    All posts have is_available = true.
+    If not logged in, pass in user_id = 0.
     """
     query = f"""
                 query {{
@@ -252,7 +252,6 @@ def view_posts(
                         image_url,
                         location_latitude,
                         location_longitude,
-                        available_reservations,
                         total_reservations,
                         time_end,
                         created_at,
@@ -272,11 +271,33 @@ def view_posts(
 
     else:
         nearby_posts = r["data"]["nearby_posts"]
-        for post in nearby_posts:
-            post["reserved"] = get_reservation_status(user_id, post["post_id"])
-            post["available_reservations"] = calculate_available_reservations(post)
-            if post["available_reservations"] == 0:
-                post["is_available"] = False
+        post_ids = [post["post_id"] for post in nearby_posts]
+
+        url = f"{reservation_ms_url}/posts/slots"
+        reservation_counts = requests.get(url, json=post_ids).json()
+
+        url = f"{reservation_ms_url}/user/{user_id}"
+        reservations = requests.get(url)
+        if reservations.status_code == 404:
+            reservations = []
+        else:
+            reservations = reservations.json()
+
+        reserved_post_ids = {post["post_id"] for post in reservations}
+
+        for i in range(len(nearby_posts)):
+            if nearby_posts[i]["post_id"] in reserved_post_ids:
+                nearby_posts[i]["reserved"] = True
+            else:
+                nearby_posts[i]["reserved"] = False
+
+            nearby_posts[i]["available_reservations"] = nearby_posts[i]["total_reservations"] - reservation_counts[i]
+
+            if nearby_posts[i]["available_reservations"] == 0:
+                nearby_posts[i]["is_available"] = False
+
+        # filter out unavailable posts
+        nearby_posts = [post for post in nearby_posts if post["is_available"]]
 
         return nearby_posts
 
@@ -317,10 +338,16 @@ def created_posts(
 
     else:
         created_posts = r["data"]["posts_by_user"]
-        for post in created_posts:
-            post["available_reservations"] = calculate_available_reservations(post)
-            if post["available_reservations"] == 0:
-                post["is_available"] = False
+        post_ids = [post["post_id"] for post in created_posts]
+
+        url = f"{reservation_ms_url}/posts/slots"
+        reservation_counts = requests.get(url, json=post_ids).json()
+
+        for i in range(len(created_posts)):
+            created_posts[i]["available_reservations"] = created_posts[i]["total_reservations"] - reservation_counts[i]
+
+            if created_posts[i]["available_reservations"] == 0:
+                created_posts[i]["is_available"] = False
 
         return created_posts
 
@@ -415,7 +442,7 @@ def update_post(
                 value = "$image_file"
                 post_query += f"file_name: \"{image_file.filename}\", "
 
-            if (type(value) == str or type(value) == datetime) and value != "$image_file":
+            if (type(value) == str or type(value) == datetime) and value != "$image_file" and value != "true" and value != "false":
                 post_query += f"{key}: \"{value}\", "
             else:
                 post_query += f"{key}: {value}, "

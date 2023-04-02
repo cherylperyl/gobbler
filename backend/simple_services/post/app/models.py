@@ -11,7 +11,7 @@ class Post(Base):
     image_url = Column(String(120))
     location_latitude = Column(DECIMAL(11, 6), nullable=False)
     location_longitude = Column(DECIMAL(11, 6), nullable=False)
-    available_reservations = Column(Integer, nullable=False)
+    # available_reservations = Column(Integer, nullable=False)
     total_reservations = Column(Integer, nullable=False)
     time_end = Column(DATETIME, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False)
