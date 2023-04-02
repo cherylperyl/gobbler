@@ -4,7 +4,7 @@ class LocationRepository {
   Location location = Location();
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;
-  late LocationData _locationData;
+  late LocationData locationData;
   
   Future<LocationData?> getLoc() async {
     _serviceEnabled = await location.serviceEnabled();
@@ -14,7 +14,6 @@ class LocationRepository {
         return null;
       }
     }
-
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
@@ -23,7 +22,7 @@ class LocationRepository {
       }
     }
 
-    _locationData = await location.getLocation();
-    return _locationData;
+    locationData = await location.getLocation();
+    return locationData;
   }
 }

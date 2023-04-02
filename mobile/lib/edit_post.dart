@@ -56,8 +56,7 @@ class _EditPostState extends State<EditPost> {
   Widget build(BuildContext context) {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
-        final userId = 22;
-        // final userId = model.getUser()?.userId;
+        final userId = model.getUser()?.userId;
         final location = model.getLoc();
         return CustomScrollView(
           slivers: <Widget>[
@@ -287,14 +286,15 @@ class _EditPostState extends State<EditPost> {
 
                 if (valid) {  
                   setState((){loading = true;});
-                  Post? post = await model.uploadPost(
+                  Post? post = await model.updatePost(
                     titleController.text, 
                     locationController.text, 
                     servingsController.text, 
                     selectedTime!, 
                     userId, 
                     image!, 
-                    location!
+                    location!,
+                    widget.post.postId,
                   );
 
                   if (post != null) {
@@ -315,13 +315,24 @@ class _EditPostState extends State<EditPost> {
                       fontSize: 16.0
                     );
                     // pop until profile page, then push the new post page
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
                         builder: (context) => IndividualPost(post: post))
                     );
                   } else {
-
+                    setState((){loading = false;});
+                    Fluttertoast.showToast(
+                      msg: "Could not edit post",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 2,
+                      backgroundColor: CupertinoColors.systemRed,
+                      textColor: Colors.white,
+                      fontSize: 16.0
+                    );
                   }
                 } 
               },

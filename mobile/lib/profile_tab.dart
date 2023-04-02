@@ -7,11 +7,13 @@ import 'package:mobile/model/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/login_page.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile/stripe_webview.dart';
+import 'package:mobile/stripe_webview copy.dart';
 import 'model/app_state_model.dart';
 import './model/user.dart';
 import './model/post.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -34,7 +36,6 @@ class _ProfileTabState extends State<ProfileTab> {
         bearer = value;
       });
     });
-    controller = WebViewController();
   }
 
   Future<String?> userData() async {
@@ -49,7 +50,7 @@ class _ProfileTabState extends State<ProfileTab> {
       builder: (context, model, child) {
         User? user = model.getUser();
         List<Post> userRegisteredPosts = model.getUserRegisteredPosts();
-        List<Post> userCreatedPosts = model.getUserCreatedPosts();
+        List<Post> userCreatedPosts =  model.getUserCreatedPosts();
         return CustomScrollView(
           slivers: [
           const CupertinoSliverNavigationBar(
@@ -62,16 +63,10 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: CupertinoButton.filled(
                       child: const Text("Log in"), 
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   CupertinoPageRoute(
-                        //     builder: (context) => LoginPage()
-                        //   )
-                        // );
                         Navigator.push(
                           context,
                           CupertinoPageRoute(
-                            builder: (context) => SignupPage()
+                            builder: (context) => LoginPage()
                           )
                         );
                         setState(() {});
@@ -119,7 +114,6 @@ class _ProfileTabState extends State<ProfileTab> {
                           context,
                           CupertinoPageRoute(
                             builder: (context) => UserPostsPage(
-                              posts:  userCreatedPosts,
                               title: "Created Posts",
                             ))
                         )
@@ -127,7 +121,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                   CupertinoListTile(
                     title: userRegisteredPosts.isEmpty
-                    ? const Text("No registered foods yet")
+                    ? const Text("No reserved foods yet")
                     : const Text('My reservations'),
                     leading: Icon(
                       CupertinoIcons.square_stack_3d_up_fill
@@ -135,13 +129,14 @@ class _ProfileTabState extends State<ProfileTab> {
                     trailing: userRegisteredPosts.isEmpty
                     ? null
                     : const CupertinoListTileChevron(),
-                    onTap: () => {
+                    onTap: userRegisteredPosts.isEmpty 
+                    ? null
+                    : () => {
                       Navigator.push(
                         context,
                         CupertinoPageRoute(
                           builder: (context) => UserPostsPage(
-                            posts: userRegisteredPosts,
-                            title: "Registered Posts"
+                            title: "Reserved Posts"
                           )
                         )
                       )
@@ -172,18 +167,16 @@ class _ProfileTabState extends State<ProfileTab> {
                     subtitle: user.isPremium
                     ? Text('You get notifications!')
                     : Text('Premium users get notifications...'),
-                    trailing: user.isPremium
-                    ? null
-                    : const CupertinoListTileChevron(),
-                    onTap: user.isPremium
-                    ? null
-                    : (){ 
+                    trailing: const CupertinoListTileChevron(),
+                    onTap: () {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (context) => StripeWebView()
+                          builder: (context) => StripeWebView(
+                            user: user,
+                          )
                         )
                       );
-                    },
+                    }
                   )
                 ],
               )

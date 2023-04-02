@@ -6,13 +6,17 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'post.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 class PostRepository {
-  static Future<List<Post>> fetchPosts() async {
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/posts');
+  static Future<List<Post>> fetchPosts(double long, double lat, int userId) async {
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/viewposts', {"latitude": "$lat", "longitude": "$long", "user_id": "$userId"});
     var response = await http.get(url);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
+      print(dataList);
       List<Post> results = [];
       dataList.forEach((el) => {
         results.add(Post.fromJson(el))
@@ -22,12 +26,16 @@ class PostRepository {
     return [];
   }
   static Future<List<Post>> fetchCreatedPosts(int userId) async {
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/createdposts', 
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/createdpost', 
       {
-        "user_id": userId
+        "user_id": '$userId'
       }
     );
-    var response = await http.get(url);
+    var response = await http.get(url, headers: {'Authorization': '$bearer'});
+    print(url);
+    print(response.body);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
       List<Post> results = [];
@@ -39,57 +47,70 @@ class PostRepository {
     }
     return [];
   }
-  static Future<List<Post>> fetchRegisteredPosts(int userId) async {
-    return [
-        Post(
-          userId: 21, 
-          postId: 22, 
-          title: "Chicken Rice", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-        ),
-        Post(
-          userId: 21, 
-          postId: 23, 
-          title: "Nasi Lemak", 
-          imageUrl: "https://www.innit.com/public/recipes/images/1033246--742330450-en-US-0_s1000.jpg", 
-          locationDescription: "My mother's house", 
-          locationLatitude: 2, 
-          locationLongitude: 2, 
-          availableReservations: 22, 
-          totalReservations: 23, 
-          createdAt: DateTime.parse("2023-04-28T06:43:24"), 
-          timeEnd: DateTime.parse("2023-04-28T06:43:24"), 
-          isAvailable: true
-          )
-      ];
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/reservations/all/$userId');
-    var response = await http.get(url);
+  static Future<List<dynamic>> fetchRegisteredPosts(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reservations/all/${userId}', 
+    );
+    var response = await http.get(url, headers: {'Authorization': '$bearer'});
+    print(url);
+    print(response.body);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
+      return dataList;
       List<Post> results = [];
       dataList.forEach((el) => {
         results.add(Post.fromJson(el))
       });
+      
       return results;
     }
     return [];
   }
 
-  static Future<void> reserveSnack(int postId) async {
+  static Future<bool> reservePost(num postId, int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final String? bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/reserve');
-    // short circuit
-    // should fetch data again from 
-    return ;
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve');
+    var response = await http.post(url, 
+      body: jsonEncode(
+        { 
+          "user_id": "$userId", 
+          "post_id": "$postId"
+          }
+      ),
+      headers: {
+        'Authorization': '$bearer', 
+        'Content-Type': 'application/json'
+      }
+    );
+    print(url);
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> cancelReservation(int reservationId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? bearer = prefs.getString('bearerToken');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve/cancel', {
+      "reservation_id": '$reservationId'
+    });
+    var response = await http.delete(url, 
+      headers: {
+        'Authorization': '$bearer', 
+        'Content-Type': 'application/json'
+      },
+    );
+    print(url);
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+
   }
 
   static Future<Post?> uploadPost(
@@ -101,34 +122,143 @@ class PostRepository {
     XFile image,
     LocationData locationData
   ) async {
-      // user_id, lat/long, 
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
     final bytes = await image.readAsBytes();
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/createpost');
-    var response = await http.post(
-      url,
-      body: jsonEncode({
-        'title': title,
-        'user_id': userId,
-        'location_description': locationDesc,
-        'location_latitude': locationData.latitude,
-        'location_longitude': locationData.longitude,
-        'available_reservations': servings,
-        'time_end': expiryTime,
-        'image_bytes': bytes
-      }),
-      headers: {
-        "Authorization": "Bearer: $bearer",
-        "Content-Type": "application/json"
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/createpost');
+    var request = http.MultipartRequest('POST', url);
+    print(bearer);
+    request.fields['title'] = title;
+    request.fields['post_desc'] =  locationDesc;
+    request.fields['location_latitude'] = '${locationData.latitude}';
+    request.fields['location_longitude'] = '${locationData.longitude}';
+    request.fields['total_reservations'] = servings;
+    request.fields['time_end'] = expiryTime;
+    request.fields['user_id'] = '$userId';
+    request.headers.addAll({ 'Authorization': '$bearer' });
+    
+    String fileType = image.path.split('.').last;
+  
+    final uploadImage = await http.MultipartFile.fromBytes(
+        'image_file', bytes, filename: "filename", contentType: MediaType('image', fileType));
+    request.files.add(uploadImage);
+    
+    try {
+    // Send request and get response
+      var response = await request.send();
+      final respStr = await response.stream.bytesToString();
+
+    // Check response status code
+      if (response.statusCode == HttpStatus.ok) {
+        // Success
+        print('Post created successfully!');
+        print(respStr);
+        final json = jsonDecode(respStr);
+        final post = Post.fromJson(json);
+        return post;
+        
+      } else {
+        // Error
+        print('Error creating post!');
+        
+        return null;
       }
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final post = Post.fromJson(data);
-      return post;
+    } catch (e) {
+      print('Error submitting request: $e');
+      return null;
     }
-    return null;
-  }
+  
+}
+static Future<Post?> updatePost(
+    num postId,
+    String title, 
+    String locationDesc, 
+    String servings,
+    String expiryTime,
+    int userId,
+    XFile image,
+    LocationData locationData
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
+    final bytes = await image.readAsBytes();
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
+    var request = http.MultipartRequest('POST', url);
+    print(bearer);
+    request.fields['title'] = title;
+    request.fields['post_desc'] =  locationDesc;
+    request.fields['location_latitude'] = '${locationData.latitude}';
+    request.fields['location_longitude'] = '${locationData.longitude}';
+    request.fields['total_reservations'] = servings;
+    request.fields['time_end'] = expiryTime;
+    request.fields['user_id'] = '$userId';
+    request.headers.addAll({ 'Authorization': '$bearer' });
+    
+    String fileType = image.path.split('.').last;
+  
+    final uploadImage = await http.MultipartFile.fromBytes(
+        'image_file', bytes, filename: "filename", contentType: MediaType('image', fileType));
+    request.files.add(uploadImage);
+    
+    try {
+    // Send request and get response
+      var response = await request.send();
+      final respStr = await response.stream.bytesToString();
+      print(response.statusCode);
+
+    // Check response status code
+      if (response.statusCode == HttpStatus.ok) {
+        // Success
+        print('Post updated successfully!');
+        print(respStr);
+        final json = jsonDecode(respStr);
+        final post = Post.fromJson(json);
+        return post;
+        
+      } else {
+        // Error
+        print('Error updating post!');
+        print(response.statusCode);
+        
+        return null;
+      }
+    } catch (e) {
+      print('Error submitting request: $e');
+      return null;
+    }
+}
+
+static Future<Post?> hidePost(
+    num postId,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final bearer = prefs.getString('bearerToken');
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
+    var request = http.MultipartRequest('POST', url);
+    request.fields['is_available'] = 'false';
+
+    request.headers.addAll({ 'Authorization': '$bearer' });
+    try {
+      var response = await request.send();
+      final respStr = await response.stream.bytesToString();
+      print(respStr);
+      if (response.statusCode == HttpStatus.ok) {
+        print ("Post hidden successfully");
+        print('response $respStr');
+        final json = jsonDecode(respStr);
+        final post = Post.fromJson(json);
+        return post;
+      } else {
+        print('Error hiding post!');
+        
+        return null;
+      }
+    } catch (e) {
+      print('Error submitting request: $e');
+      return null;
+    }
+  
+}
+ 
 
 }

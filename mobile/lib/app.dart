@@ -82,14 +82,15 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
         prefs.setString("messagingToken", token)
       }
     });
-    FirebaseMessaging.onBackgroundMessage((message) {
+    Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+      print("background notification");
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         final json = jsonDecode(notification.body!);
         flutterLocalNotificationsPlugin.show(
             2,
-            "Gobble these nuts",
+            notification.title,
             json['title'],
             NotificationDetails(
               android: AndroidNotificationDetails(
@@ -103,7 +104,8 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
             payload: notification.body);
       }
       return Future(() => null);
-    });
+    }
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -114,7 +116,7 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
         final json = jsonDecode(notification.body!);
         flutterLocalNotificationsPlugin.show(
             2,
-            "Gobble these nuts",
+            notification.title,
             json['title'],
             NotificationDetails(
               android: AndroidNotificationDetails(

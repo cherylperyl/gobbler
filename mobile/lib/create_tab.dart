@@ -334,7 +334,16 @@ class _CreateTabState extends State<CreateTab> {
                         builder: (context) => IndividualPost(post: post))
                     );
                   } else {
-
+                    Fluttertoast.showToast(
+                      msg: "Error creating post",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 2,
+                      backgroundColor: CupertinoColors.systemRed,
+                      textColor: Colors.white,
+                      fontSize: 16.0
+                    );
+                    setState((){loading = false;});
                   }
                 } 
               },

@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/model/app_state_model.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 
 class StripeWebView extends StatefulWidget {
@@ -23,14 +24,15 @@ class StripeWebView extends StatefulWidget {
 }
 
 class _StripeWebViewState extends State<StripeWebView> {
-  WebViewController? controller;
+  // WebViewController? controller;
+  InAppWebViewController? webView;
   bool showWebView = true;
   late AppStateModel appStateModel;
 
   Future<void> userData() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? prefsBearer = prefs.getString('bearerToken');
-    print("web view controller $prefsBearer");
+    // final prefs = await SharedPreferences.getInstance();
+    // String? prefsBearer = prefs.getString('bearerToken');
+    // print("web view controller $prefsBearer");
 
     // var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/subscribe');
     // var response = await http.post(url, 
@@ -45,32 +47,37 @@ class _StripeWebViewState extends State<StripeWebView> {
     //     }
     //   )
     // );
-    
+    // print(response.body);
 
-    controller = WebViewController()
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest:(request) async {
-            print('request Url ${request.url}');
-            if (request.url.startsWith("http://google.com")) {
-              appStateModel = Provider.of<AppStateModel>(context, listen:false);
-              setState(() { showWebView = false; });
-              await Future.delayed(const Duration());
-              appStateModel.setUserToPremium();
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        )
-      )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        Uri.http(
-          '${dotenv.env['BASE_API_URL']!}','/user/subscribe',
-        ),
-        method: LoadRequestMethod.post,
-        body: Uint8List.fromList('userId=2&success_url=http%3A%2F%2Fwww.google.com'.codeUnits),
-      );
+
+    // controller = WebViewController()
+    //   ..setNavigationDelegate(
+    //     NavigationDelegate(
+    //       onNavigationRequest:(request) async {
+    //         print('request Url ${request.url}');
+    //         if (request.url.startsWith("http://google.com")) {
+    //           appStateModel = Provider.of<AppStateModel>(context, listen:false);
+    //           setState(() { showWebView = false; });
+    //           await Future.delayed(const Duration());
+    //           appStateModel.setUserToPremium();
+    //           return NavigationDecision.prevent;
+    //         }
+    //         return NavigationDecision.navigate;
+    //       },
+    //     )
+    //   )
+      
+    //   ..loadRequest(
+    //     Uri.http(
+    //       '${dotenv.env['BASE_API_URL']!}','/user/subscribe',
+    //     ),
+    //     method: LoadRequestMethod.post,
+    //     body: Uint8List.fromList(utf8.encode(jsonEncode({
+    //       "userId": '${widget.user.userId}',
+    //       "success_url": "http://www.google.com"
+    //     }))),
+    //     headers: { "Authorization": "Bearer abcd",  "Content-Type": "text/plain"}
+    // );
   }
 
   @override
@@ -88,9 +95,10 @@ class _StripeWebViewState extends State<StripeWebView> {
 
   @override
   Widget build(BuildContext context) {
+    print(Uint8List.fromList(utf8.encode("userId=${widget.user.userId}&success_url=http%3A%2F%2Fwww.google.com")));
     return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
-            middle: const Text('Subscribe to premium Gobbler'),
+            middle: const Text('new to premium Gobbler'),
           ),
           child: SafeArea(
             child: Stack(
@@ -133,8 +141,16 @@ class _StripeWebViewState extends State<StripeWebView> {
                   ],
                 ),
                 showWebView 
-                ? WebViewWidget(
-                  controller: controller!,
+                ? InAppWebView(
+                  initialUrlRequest: URLRequest(
+                    url: Uri.http(
+                      '${dotenv.env['BASE_API_URL']!}','/user/subscribe',
+                    ),
+                    method: "POST",
+                    body: Uint8List.fromList(utf8.encode("userId=${widget.user.userId}&success_url=http%3A%2F%2Fwww.google.com")
+                    ),
+                    headers: {"Content-Type" : "application/json",}
+                  ),
                 )
                 : SizedBox()
               ],

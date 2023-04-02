@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mobile/model/app_state_model.dart';
 import 'package:mobile/model/user_repository.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobile/signup_page.dart';
 import 'package:provider/provider.dart';
 
 
@@ -43,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     return Consumer<AppStateModel>(
       builder: (context, model, child){
         return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(),
           child: Form(
             key: formKey,
             child: Padding(
@@ -62,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(26),
                       child: const Text(
-                        'Sign in',
+                        'Login',
                         style: TextStyle(fontSize: 20),
                       )),
                   CupertinoTextFormFieldRow(
@@ -169,7 +171,10 @@ class _LoginPageState extends State<LoginPage> {
                           'Register',
                         ),
                         onPressed: () {
-                          //signup screen
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => SignupPage())
+                          );
                         },
                       )
                     ],
