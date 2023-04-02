@@ -71,4 +71,5 @@ plugins:
     public_paths:
       - /user/loginuser
       - /user/createaccount
+      - /user/subscribe
       - /post/viewposts
