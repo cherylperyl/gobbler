@@ -51,15 +51,7 @@ spec:
       restartPolicy: Always
       volumes:
         - name: post-management-rabbitmq-data
-<<<<<<< HEAD
           emptyDir: {}
         - name: post-management-rabbitmq-logs
           emptyDir: {}
-=======
-          persistentVolumeClaim:
-            claimName: post-management-rabbitmq-data
-        - name: post-management-rabbitmq-logs
-          persistentVolumeClaim:
-            claimName: post-management-rabbitmq-logs
->>>>>>> parent of f2c58b7 (Revert "Merge branch 'main' into thad/frontend")
 status: {}
