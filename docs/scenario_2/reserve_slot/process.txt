@@ -6,6 +6,8 @@ Reservation Management->Reservation Management Redis: Get lock
 Reservation Management Redis->Reservation Management:Return lock
 Reservation Management->Post Service:Get total reservation slots
 Post Service->Reservation Management:Return total reservation slots
+Reservation Management->Reservation Service:Get current number of reservations
+Reservation Service->Reservation Management:Return current number of reservations
 Reservation Management->Reservation Service:Create new reservation slot
 Reservation Service->Reservation Management:Return new reservation slot success
 Reservation Management->Reservation Management Redis:Release lock
