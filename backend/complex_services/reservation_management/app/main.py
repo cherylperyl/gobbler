@@ -160,7 +160,7 @@ def get_all_posts_reserved_by_user(user_id: int):
 
     reservations = reservations.json()
 
-    post_ids = {reservation["post_id"] for reservation in reservations}
+    post_ids = [reservation["post_id"] for reservation in reservations]
 
     query = f"""
                 query {{
