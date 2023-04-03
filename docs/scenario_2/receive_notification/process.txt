@@ -1,4 +1,4 @@
-Notification Service->Premium Mobile User Interface:Send push notification
+Firebase Cloud Messaging->Premium Mobile User Interface:Send push notification
 Premium Mobile User Interface->Premium Mobile User Interface:Click on push notification
 Premium Mobile User Interface->API Gateway:User sends view post details request
 API Gateway->Authentication Service:Check authorization header

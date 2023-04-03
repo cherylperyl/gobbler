@@ -223,6 +223,8 @@ Deploying using Docker Compose relies on the `docker-compose.yml` file for the c
    docker compose up
    ```
 
+> Note: Individual services are accessible via port forwarding in the current Docker Compose configuration. This is just to aid in debugging and review purposes. The actual app deployment should not have any port forwarding except for Kong.
+
 ### Through Kubernetes
 
 Kubernetes deployment depends on Kubernetes manifests found in the `./kubernetes` folder. We use a combination of deployment, service, and network manifests to deploy the services in an internal network with Kong acting as an external load balancer. While we have semi-tailored certain specifications to Google Kubernetes Engine (GKE), the open-source nature of Kubernetes allows us to virtually deploy these manifests on any Kubernetes cloud provider (e.g. AWS, Azure, DigitalOcean).
