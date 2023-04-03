@@ -21,7 +21,11 @@ app = FastAPI()
 AMQP_SERVER = os.getenv("AMQP_SERVER")
 AMQP_PORT = os.getenv("AMQP_PORT")
 
-channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
+channel = None
+try:
+    channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
+except:
+    print("AMQP server not available. Skipping for now...")
 
 # catch all exceptions and return error message
 @app.exception_handler(Exception)
@@ -101,6 +105,28 @@ def calculate_available_reservations(post):
     else:
         return 0
 
+def publish_notification(exchange: str, post_information):
+    global channel
+
+    message_sent = False
+    attempts = 0
+    while not message_sent and attempts < 3:
+        try:
+            if channel is None or channel.is_closed:
+                channel = amqp_setup.setup(AMQP_SERVER, AMQP_PORT)
+            # publish post to rabbitmq
+            channel.basic_publish(
+                exchange=exchange,
+                routing_key=exchange,
+                body=json.dumps(post_information),
+                properties=pika.BasicProperties(delivery_mode=2)
+            )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+            print(f"Sent (exchange: {exchange}) notification (post id: {post_information.post_id}) to RabbitMQ")
+            return
+        except:
+            print("Unable to send notification to RabbitMQ. Retrying...")
+        attempts += 1
+
 #######################################
 
 
@@ -160,20 +186,11 @@ def create_post(
             status_code=422, content={"error": "Post creation failed."}
         )
 
-    else:
-        print("Post successfully created in Post MS.")
-        created_post = r["data"]["create_post"]
+    print("Post successfully created in Post MS.")
+    created_post = r["data"]["create_post"]
 
-        # publish post to rabbitmq
-        channel.basic_publish(
-            exchange="newpost",
-            routing_key="newpost",
-            body=json.dumps(created_post),
-            properties=pika.BasicProperties(delivery_mode=2)
-        )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
-
-        post_id = created_post["post_id"]
-        print(f"Sent new post (post id: {post_id}) to RabbitMQ")
+    publish_notification("newpost", created_post)
+    print(created_post)
 
     return created_post
 
@@ -498,13 +515,7 @@ def update_post(
     if updated_post["available_reservations"] == 0:
         updated_post["is_available"] = False
 
-    # publish post to rabbitmq
-    channel.basic_publish(
-        exchange="updatepost",
-        routing_key="updatepost",
-        body=json.dumps(updated_post),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+    publish_notification("updatepost", updated_post)
 
     return updated_post
 
@@ -546,13 +557,7 @@ def delete_post(
         )
 
     deleted_post = r["data"]["delete_post"]
-    # publish post to rabbitmq
-    channel.basic_publish(
-        exchange="deletepost",
-        routing_key="deletepost",
-        body=json.dumps(deleted_post),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+    publish_notification("deletepost", deleted_post)
 
     print("Delete of post successful.")
     return deleted_post
