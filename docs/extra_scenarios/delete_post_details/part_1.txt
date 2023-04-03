@@ -1,0 +1,11 @@
+Mobile User Interface->API Gateway: User sends delete post request
+API Gateway->Authentication Service:Check authorization header
+Authentication Service->API Gateway:Return success authorization
+API Gateway->Post Management:Forward delete post request
+Post Management->Post Service:Delete post
+Post Service->Post Service:Checks if request user is post owner
+Post Service->Post Management:Return deleted post success
+Post Management->Delete Post Queue:Send delete post message
+Delete Post Queue->Notification Management:Consume delete post message
+Post Management->API Gateway:Return deleted post success
+API Gateway->Mobile User Interface:Return deleted post success

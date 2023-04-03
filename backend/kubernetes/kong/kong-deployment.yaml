@@ -42,6 +42,8 @@ spec:
               value: /dev/stdout
             - name: KONG_PROXY_ERROR_LOG
               value: /dev/stderr
+            - name: KONG_PLUGINS
+              value: rate-limiting,authentication_plugin
           image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/kong:latest
           name: kong
           ports:
