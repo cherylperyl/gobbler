@@ -7,7 +7,7 @@ import 'package:mobile/model/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/login_page.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile/stripe_webview copy.dart';
+import 'package:mobile/stripe_webview.dart';
 import 'model/app_state_model.dart';
 import './model/user.dart';
 import './model/post.dart';

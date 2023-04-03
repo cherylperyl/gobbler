@@ -28,75 +28,72 @@ class _StripeWebViewState extends State<StripeWebView> {
   late AppStateModel appStateModel;
 
   Future<void> userData() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? prefsBearer = prefs.getString('bearerToken');
-    print("web view controller $prefsBearer");
 
-    // var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/subscribe');
-    // var response = await http.post(url, 
-    //   headers: {
-    //     'Authorization': '$prefsBearer', 
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: jsonEncode(
-    //     {
-    //       "userId" : '${widget.user.userId}',
-    //       "success_url": "http://www.google.com"
-    //     }
-    //   )
-    // );
+    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/subscribe');
+    var response = await http.post(url, 
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: jsonEncode(
+        {
+          "userId" : '${widget.user.userId}',
+          "success_url": "http://www.google.com"
+        }
+      )
+    );
+    print("url $url");
+    print("response ${response.body}");
+    var redirectLink = jsonDecode(response.body)['stripe_checkout_url'];
     
-
-    controller = WebViewController()
+    setState((){
+      controller = WebViewController()
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest:(request) async {
             print('request Url ${request.url}');
-            if (request.url.startsWith("http://google.com")) {
               appStateModel = Provider.of<AppStateModel>(context, listen:false);
               setState(() { showWebView = false; });
               await Future.delayed(const Duration());
               appStateModel.setUserToPremium();
               return NavigationDecision.prevent;
-            }
             return NavigationDecision.navigate;
           },
         )
       )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
-        Uri.http(
-          '${dotenv.env['BASE_API_URL']!}','/user/subscribe',
+        Uri.parse(
+          '$redirectLink',
         ),
-        method: LoadRequestMethod.post,
-        body: Uint8List.fromList('userId=2&success_url=http%3A%2F%2Fwww.google.com'.codeUnits),
       );
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await userData();
-      setState(() {});
-    });
+    setState((){ controller = null; });
+    WidgetsBinding.instance.addPostFrameCallback((_) => userData());
     
     if(widget.user.isPremium) {
         showWebView = false; 
-      }
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
-            middle: const Text('Subscribe to premium Gobbler'),
+            middle: Text(controller == null ? "Loading..." : "Subscribe to Gobbler Premium"),
           ),
           child: SafeArea(
             child: Stack(
               children: [
                 ListView(
-                  children: [
+                  children: showWebView
+                  ? [ Container() ]
+                  : [
                     Container(
                       padding: EdgeInsets.only(top: 18),
                       alignment: Alignment.center,
@@ -133,9 +130,14 @@ class _StripeWebViewState extends State<StripeWebView> {
                   ],
                 ),
                 showWebView 
-                ? WebViewWidget(
-                  controller: controller!,
-                )
+                ? controller != null
+                  ? WebViewWidget(
+                      controller: controller!,
+                  )
+                  : const Center(
+                    child: CupertinoActivityIndicator()
+                  )
+                  
                 : SizedBox()
               ],
             ),

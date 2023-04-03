@@ -74,6 +74,7 @@ flutter:
   assets:
     - .env
     - assets/success.webp
+    - assets/homeemptyfridge.jpeg
 
 
 

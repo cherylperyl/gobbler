@@ -23,27 +23,11 @@ class AppStateModel extends foundation.ChangeNotifier {
   LocationData? _currentLocation;
   User? _user;
   LocationRepository locationRespository = LocationRepository();
-  // The currently selected category of Posts.
-  // Category _selectedCategory = Category.all;
 
-  // The IDs and quantities of Posts currently in the cart.
-  final _PostsInCart = <int, int>{};
-
-  Map<int, int> get PostsInCart {
-    return Map.from(_PostsInCart);
-  }
-
-  // Total number of items in the cart.
-  int get totalCartQuantity {
-    return _PostsInCart.values.fold(0, (accumulator, value) {
-      return accumulator + value;
-    });
-  }
-
-
-
-  // Returns a copy of the list of available Posts, filtered by category.
   List<Post>? getPosts() {
+    if (_availablePosts.isEmpty) {
+      return null;
+    }
     return List.from(_availablePosts);
   }
   List<Post> getUserCreatedPosts() {
@@ -66,49 +50,6 @@ class AppStateModel extends foundation.ChangeNotifier {
     _user!.isPremium = true;
     notifyListeners();
     return _user!;
-  }
-  
-
-  // Search the Post catalog
-  // List<Post> search(String searchTerms) {
-  //   return getPosts().where((Post) {
-  //     return Post.name.toLowerCase().contains(searchTerms.toLowerCase());
-  //   }).toList();
-  // }
-
-  // Adds a Post to the cart.
-  void addPostToCart(int PostId) {
-    if (!_PostsInCart.containsKey(PostId)) {
-      _PostsInCart[PostId] = 1;
-    } else {
-      _PostsInCart[PostId] = _PostsInCart[PostId]! + 1;
-    }
-
-    notifyListeners();
-  }
-
-  // Removes an item from the cart.
-  void removeItemFromCart(int PostId) {
-    if (_PostsInCart.containsKey(PostId)) {
-      if (_PostsInCart[PostId] == 1) {
-        _PostsInCart.remove(PostId);
-      } else {
-        _PostsInCart[PostId] = _PostsInCart[PostId]! - 1;
-      }
-    }
-
-    notifyListeners();
-  }
-
-  // Returns the Post instance matching the provided id.
-  // Post getPostById(int id) {
-  //   return _availablePosts.firstWhere((p) => p.id == id);
-  // }
-
-  // Removes everything from the cart.
-  void clearCart() {
-    _PostsInCart.clear();
-    notifyListeners();
   }
 
   void loadPosts() async {
@@ -296,8 +237,10 @@ class AppStateModel extends foundation.ChangeNotifier {
     notifyListeners();
     return post;
   }
-  Future<Post?> hidePost(num postId) async {
+  Future<Post?> hidePost(num postId, int userId) async {
     Post? post = await PostRepository.hidePost(postId);
+    _userCreatedPosts = await PostRepository.fetchCreatedPosts(userId);
+    notifyListeners();
     return post;
   }
 }
