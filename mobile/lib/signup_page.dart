@@ -135,12 +135,12 @@ class _SignupPageState extends State<SignupPage> {
                       if (value == '') {
                         return "Please enter password";
                       } 
-                      // else if (value!.length < 6) {
-                      //   return "Please use at least 6 characters";
-                      // }
-                      // else if (!regex.hasMatch(value!)) {
-                      //   return "Please include one character and one number";
-                      // }
+                      else if (value!.length < 6) {
+                        return "Please use at least 6 characters";
+                      }
+                      else if (!regex.hasMatch(value!)) {
+                        return "Please include one character and one number";
+                      }
                       return null;
                     },
                     padding: EdgeInsets.symmetric(horizontal: 2),

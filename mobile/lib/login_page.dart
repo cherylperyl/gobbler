@@ -101,12 +101,6 @@ class _LoginPageState extends State<LoginPage> {
                       if (value == '') {
                         return "Please enter password";
                       } 
-                      // else if (value!.length < 6) {
-                      //   return "Please use at least 6 characters";
-                      // }
-                      // else if (!regex.hasMatch(value!)) {
-                      //   return "Please include one character and one number";
-                      // }
                       return null;
                     },
                     padding: EdgeInsets.symmetric(horizontal: 2),
@@ -130,7 +124,6 @@ class _LoginPageState extends State<LoginPage> {
                         ,
                           onPressed: () {setState(() {showPassword = !showPassword;});},
                         ),
-                  // SizedBox(height: 30),
                   CupertinoButton.filled(
                     child: const Text('Login'),
                     onPressed: () async {

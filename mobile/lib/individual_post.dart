@@ -52,7 +52,7 @@ class _IndividualPostState extends State<IndividualPost> {
       builder: (context, model, child) {
         final userId = model.getUser()?.userId;
         
-        final userRegisteredPosts = model.getUserRegisteredPosts();
+        // final userRegisteredPosts = model.getUserRegisteredPosts();
         final userRegisteredPostsIds = model.getUserRegisteredPostsIds();
         return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
@@ -99,7 +99,11 @@ class _IndividualPostState extends State<IndividualPost> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(children: [const Icon(CupertinoIcons.placemark),const Text(" Location", style: const TextStyle(fontWeight: FontWeight.bold),)]),
-                          Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription)),
+                          userRegisteredPostsIds.containsKey(widget.post.postId) | (widget.post.userId.toInt() == userId)
+                              ? Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription))
+                              : widget.post.distance == null
+                                ? Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription))
+                                : Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text('${widget.post.distance!.toStringAsFixed(2)} km')),
                           const SizedBox(height: 12),
                           Row(children: [const Icon(CupertinoIcons.calendar),Text(" Posted at", style: TextStyle(fontWeight: FontWeight.bold),)]),
                           Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0), child: Text("Today "+DateFormat.jm().format(widget.post.createdAt.add(Duration(hours:8)))),),
@@ -125,7 +129,7 @@ class _IndividualPostState extends State<IndividualPost> {
                   margin: EdgeInsets.symmetric(horizontal: 18),
                   width: double.infinity,
                   child: userId == widget.post.userId
-                  ? isAvailable
+                  ? isAvailable && widget.post.timeEnd.compareTo(DateTime.now()) > 0
                     ? CupertinoButton(
                       color: CupertinoColors.systemRed,
                       child: Text("Hide your post"),
@@ -146,18 +150,30 @@ class _IndividualPostState extends State<IndividualPost> {
                         onPressed: null,
                       )
                   : userRegisteredPostsIds.containsKey(widget.post.postId)
-                    ? CupertinoButton(
-                      child: Text("Cancel registration"), 
-                      onPressed: () {
-                        handleCancelPressed(context, model, userRegisteredPostsIds[widget.post.postId]!);
-                      },
-                      color: CupertinoColors.systemRed
-                    )
-                    : CupertinoButton.filled(
-                      child: Text("Chope!"), 
-                      onPressed: () {
-                        handleReservationPressed(context, model, widget.post.postId, userId);
-                      }),
+                    ? widget.post.isAvailable
+                      ? CupertinoButton(
+                        child: Text("Cancel registration"), 
+                        onPressed: () {
+                          handleCancelPressed(context, model, userRegisteredPostsIds[widget.post.postId]!);
+                        },
+                        color: CupertinoColors.systemRed
+                      )
+                      : CupertinoButton.filled(
+                        child: Text('Post no longer available'),
+                        onPressed: null,
+                        disabledColor: CupertinoColors.systemGrey,
+                      )
+                    : widget.post.isAvailable 
+                      ? CupertinoButton.filled(
+                        child: Text("Chope!"), 
+                        onPressed: () {
+                          handleReservationPressed(context, model, widget.post.postId, userId);
+                        })
+                      : CupertinoButton.filled(
+                        child: Text('Post no longer available'),
+                        onPressed: null,
+                        disabledColor: CupertinoColors.systemGrey,
+                      )
                 )
             ],),
         )
@@ -171,7 +187,6 @@ class _IndividualPostState extends State<IndividualPost> {
     if (timeBetween.inMinutes < 0) {
       return "Ended ${DateFormat().format(widget.post.timeEnd)}";
     }
-    // String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = timeBetween.inMinutes.remainder(60).toString();
     if (timeBetween.inHours > 1) {
       return "${timeBetween.inHours} hours $twoDigitMinutes minutes";    

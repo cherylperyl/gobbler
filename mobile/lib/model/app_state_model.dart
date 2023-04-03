@@ -40,6 +40,7 @@ class AppStateModel extends foundation.ChangeNotifier {
     return _userRegisteredPostsIds;
   }
 
+
   LocationData? getLoc() {
     return _currentLocation;
   }

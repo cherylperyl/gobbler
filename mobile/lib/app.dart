@@ -49,8 +49,10 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
     void onDidReceiveNotificationResponse(NotificationResponse response) async {
       final String? payload = response.payload;
       if (response.payload != null) {
+        print('response.payload ${response.payload}');
         final json = jsonDecode(payload!);
         Post post = Post.fromJson(jsonDecode(payload!));
+        post.availableReservations = post.totalReservations; 
         await Navigator.push(
         context,
         CupertinoPageRoute(
@@ -88,7 +90,23 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         final json = jsonDecode(notification.body!);
-        flutterLocalNotificationsPlugin.show(
+        if (notification.title == "A post you reserved has been updated" && !json['is_available']) {
+          flutterLocalNotificationsPlugin.show(
+            2,
+            "A post you reserved is no longer available",
+            json['title'],
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                priority: Priority.max,
+                importance: Importance.max,
+                ticker: "ticker",
+              ),
+            ),
+            payload: notification.body);
+        } else {
+          flutterLocalNotificationsPlugin.show(
             2,
             notification.title,
             json['title'],
@@ -102,6 +120,7 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
               ),
             ),
             payload: notification.body);
+        }
       }
       return Future(() => null);
     }
@@ -110,11 +129,26 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      // If `onMessage` is triggered with a notification, construct our own
-      // local notification to show to users using the created channel.
       if (notification != null && android != null) {
         final json = jsonDecode(notification.body!);
-        flutterLocalNotificationsPlugin.show(
+        print(json['is_available']);
+        if (notification.title == "A post you reserved has been updated" && !json['is_available']) {
+          flutterLocalNotificationsPlugin.show(
+            2,
+            "A post you reserved is no longer available",
+            json['title'],
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                priority: Priority.max,
+                importance: Importance.max,
+                ticker: "ticker",
+              ),
+            ),
+            payload: notification.body);
+        } else {
+          flutterLocalNotificationsPlugin.show(
             2,
             notification.title,
             json['title'],
@@ -128,6 +162,8 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
               ),
             ),
             payload: notification.body);
+        }
+        
       }
     });
     

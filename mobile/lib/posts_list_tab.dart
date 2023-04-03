@@ -30,8 +30,7 @@ class PostsListTab extends StatelessWidget {
               minimum: const EdgeInsets.only(top: 0),
               sliver: SliverToBoxAdapter(
                 child: posts != null 
-                ? posts.isNotEmpty
-                  ? CupertinoListSection(
+                ? CupertinoListSection(
                     topMargin: 0,
                     children: [
                       for (var post in posts)
@@ -40,8 +39,8 @@ class PostsListTab extends StatelessWidget {
                         )
                     ],
                   )
-                  : Column(
-                    children: [
+                : Column(
+                  children: [
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: const Text('No posts to show', style: TextStyle(fontSize: 20),),
@@ -52,16 +51,6 @@ class PostsListTab extends StatelessWidget {
                         image: AssetImage('assets/homeemptyfridge.jpeg')
                       ),
                     ),
-                      
-                    ],
-                  )
-                : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: const CupertinoActivityIndicator(),
-                    ),
-                    const Text('Loading posts...', style: TextStyle(fontSize: 20),),
                   ],
                 )
                 

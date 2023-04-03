@@ -50,7 +50,9 @@ class PostRowItem extends StatelessWidget {
           style: Styles.productRowItemName,
         ),
         subtitle: Text(
-          '${post.locationDescription}',
+          post.distance == null 
+          ? '${post.locationDescription}'
+          : '${post.distance!.toStringAsFixed(2)} km',
           style: Styles.productRowItemPrice,
         ),
         trailing: const Icon(
