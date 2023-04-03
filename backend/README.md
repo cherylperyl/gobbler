@@ -270,7 +270,22 @@ kube-public       Active   51d
 kube-system       Active   51d
 ```
 
-Deploy Kubernetes manifests
+##### Loading Kubernetes secrets
+
+Unlike Docker Compose, Kubernetes does not use `.env` files but instead use Kubernetes secret. Run the following commands to add the secrets into the cluster.
+
+```bash
+# creates .env file secrets
+kubectl create secret generic gobbler --from-env-file=.env
+
+# creates GCP application default credentials secret
+kubectl create secret generic gobbler-gcp --from-file=key.json=~/.config/gcloud/application_default_credentials.json
+
+# creates Firebase service account secret
+kubectl create secret generic gobbler-firebase --from-file=service-account.json=complex_services/notification_management/service-account.json
+```
+
+##### Deploy Kubernetes manifests
 
 > Note: The Kubernetes manifests' images contain a placeholder string ${GCP_PROJECT_ID} which needs to be substituted with the actual GCP Project ID. This issue is automated in the script deploy below
 
