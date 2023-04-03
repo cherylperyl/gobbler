@@ -160,20 +160,19 @@ def create_post(
             status_code=422, content={"error": "Post creation failed."}
         )
 
-    else:
-        print("Post successfully created in Post MS.")
-        created_post = r["data"]["create_post"]
+    print("Post successfully created in Post MS.")
+    created_post = r["data"]["create_post"]
 
-        # publish post to rabbitmq
-        channel.basic_publish(
-            exchange="newpost",
-            routing_key="newpost",
-            body=json.dumps(created_post),
-            properties=pika.BasicProperties(delivery_mode=2)
-        )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
+    # publish post to rabbitmq
+    channel.basic_publish(
+        exchange="newpost",
+        routing_key="newpost",
+        body=json.dumps(created_post),
+        properties=pika.BasicProperties(delivery_mode=2)
+    )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
 
-        post_id = created_post["post_id"]
-        print(f"Sent new post (post id: {post_id}) to RabbitMQ")
+    post_id = created_post["post_id"]
+    print(f"Sent new post (post id: {post_id}) to RabbitMQ")
 
     return created_post
 

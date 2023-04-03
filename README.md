@@ -43,7 +43,7 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 <div style="text-align: center;display: flex;justify-content: center;align-items: center;">
 <a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;
 <a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;
-<a href="https://www.postgresql.org/" style="display: flex;justify-content: center;align-items: center;"><img src="https://assets.stickpng.com/images/584815fdcef1014c0b5e497a.png" alt="PostgreSQL" height="40"/>&nbsp;PostgreSQL</a>&nbsp;&nbsp;
+<a href="https://www.postgresql.org/" style="display: flex;justify-content: center;align-items: center;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" alt="PostgreSQL" height="40"/>&nbsp;PostgreSQL</a>&nbsp;&nbsp;
 <a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" width="88"/></a>
 </div>
 
