@@ -11,7 +11,7 @@ Alternatively, you can follow the steps below to build the app if you have Flutt
 
 # Building the Flutter app
 
-# Prerequisites
+### Prerequisites
 
 - [Flutter](https://docs.flutter.dev/get-started/install) installed 
 - Connected Android device or Android emulator
