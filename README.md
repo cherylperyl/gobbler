@@ -36,24 +36,16 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 
 <br>
 <p align="center">
-<a href="https://fastapi.tiangolo.com/"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI" width="88"/></a>&nbsp;&nbsp;
-<a href="https://graphql.org/"><img src="https://graphql.org/img/brand/logos/logo-wordmark.svg" alt="GraphQL Logo" width="88"></a>&nbsp;&nbsp;
-<a href="https://flutter.dev/"><img src="https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg" alt="Flutter" width="88"/></a>&nbsp;&nbsp;
-<a href="https://learn.microsoft.com/en-us/dotnet/core/introduction"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/2048px-.NET_Core_Logo.svg.png" alt=".Net Core" height="40"/></a>&nbsp;&nbsp;
-<a href="https://spring.io/"><img src="https://4.bp.blogspot.com/-ou-a_Aa1t7A/W6IhNc3Q0gI/AAAAAAAAD6Y/pwh44arKiuM_NBqB1H7Pz4-7QhUxAgZkACLcBGAs/s1600/spring-boot-logo.png" alt="SpringBoot" height="40"/></a>
+<a href="https://fastapi.tiangolo.com/"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI" width="88"/></a>&nbsp;&nbsp;<a href="https://graphql.org/"><img src="https://graphql.org/img/brand/logos/logo-wordmark.svg" alt="GraphQL Logo" width="88"></a>&nbsp;&nbsp;<a href="https://flutter.dev/"><img src="https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg" alt="Flutter" width="88"/></a>&nbsp;&nbsp;<a href="https://learn.microsoft.com/en-us/dotnet/core/introduction"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/2048px-.NET_Core_Logo.svg.png" alt=".Net Core" height="40"/></a>&nbsp;&nbsp;<a href="https://spring.io/"><img src="https://4.bp.blogspot.com/-ou-a_Aa1t7A/W6IhNc3Q0gI/AAAAAAAAD6Y/pwh44arKiuM_NBqB1H7Pz4-7QhUxAgZkACLcBGAs/s1600/spring-boot-logo.png" alt="SpringBoot" height="40"/></a>
 </p>
 <br>
 
 <p align="center"><strong>Databases</strong></p>
 <br>
 <p align="center">
-<div style="text-align: center;display: flex;justify-content: center;align-items: center;">
-<a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;
-<a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;
-<a href="https://www.postgresql.org/" style="display: flex;justify-content: center;align-items: center;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" alt="PostgreSQL" height="40"/>&nbsp;PostgreSQL</a>&nbsp;&nbsp;
-<a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" alt="PostgreSQL" width="88"/></a>
-</div>
+<a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;<a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;<a href="https://www.postgresql.org/" ><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" alt="PostgreSQL" height="40"/>&nbsp;PostgreSQL</a>&nbsp;&nbsp;<a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" alt="PostgreSQL" width="88"/></a>
 </p>
+<br>
 
 <p align="center"><strong>Others</strong></p>
 <p align="center">
