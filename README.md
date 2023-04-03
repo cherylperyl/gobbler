@@ -14,20 +14,27 @@ Reducing food waste one buffet at a time
 
 
 # Project Overview
-<html><center><img src="readme_files\gobbler.png" width=200px></center></html>
-<br>
+<p align="center">
+  <img src="readme_files\gobbler.png" width=200px>
+</p>
 Food wastage is a severe problem in Singapore, and the amount of food waste has grown by 20% in the past 10 years. Current solutions include informal “buffet clearer” Telegram groups, which are not scalable and susceptible to spam. As such, we have created “Gobbler”, a centralized platform for users to post leftover food, and for other users to reserve a slot to take the leftover food. This will help to reduce the food wastage problem from the ground up.
 
 
 # Technical Overview Diagram
-<html><img src="readme_files\technical_overview.png" style="border-radius:10px"></html>
+<html>
+<p align="center">
+<img src="readme_files\technical_overview.png" style="border-radius:10px">
+</p>
+</html>
 
 # Set-up Instructions
 1. Clone this repo and refer to the README file in the "backend" folder on how to start the application.
 
 
 # Frameworks and Databases Utilised
-<center><strong>Services and UI</strong></center>
+**Services and UI**
+
+
 <br>
 <div style="text-align: center;"><a href="https://fastapi.tiangolo.com/"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI" width="88"/></a>&nbsp;&nbsp;
 <a href="https://graphql.org/"><img src="https://graphql.org/img/brand/logos/logo-wordmark.svg" alt="GraphQL Logo" width="88"></a>&nbsp;&nbsp;
