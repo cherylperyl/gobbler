@@ -20,7 +20,7 @@ class PostsListTab extends StatelessWidget {
         return CustomScrollView(
           slivers: <Widget>[
             CupertinoSliverNavigationBar(
-              largeTitle: user != null ? Text(user.email) : Text("no user"),
+              largeTitle: Text("Gobbler")
             ),
             CupertinoSliverRefreshControl(
               onRefresh: () => _pullRefresh(model),
@@ -40,14 +40,38 @@ class PostsListTab extends StatelessWidget {
                         )
                     ],
                   )
-                  : const CupertinoListTile(title: Text('No posts to show'))
-                : const CupertinoListTile(title: Text('Loading posts...'))
+                  : Column(
+                    children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: const Text('No posts to show', style: TextStyle(fontSize: 20),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Image(
+                        image: AssetImage('assets/homeemptyfridge.jpeg')
+                      ),
+                    ),
+                      
+                    ],
+                  )
+                : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const CupertinoActivityIndicator(),
+                    ),
+                    const Text('Loading posts...', style: TextStyle(fontSize: 20),),
+                  ],
+                )
+                
               ),
             ),   
             SliverSafeArea(
               sliver: SliverToBoxAdapter(
-                child: location == null ? Text('Location not granted') :
-                Text('${location.latitude.toString()} ${location.longitude.toString()}'),
+                child: location == null 
+                ? const CupertinoListTile(title: Text('Location not granted')) 
+                : Container()
               )
             )                         
           ],

@@ -19,7 +19,10 @@ class PostRepository {
       print(dataList);
       List<Post> results = [];
       dataList.forEach((el) => {
-        results.add(Post.fromJson(el))
+        if (DateTime.parse(el['time_end']).compareTo(DateTime.now()) > 0) {
+          results.add(Post.fromJson(el))
+        }
+        
       });
       return results;
     }
@@ -160,6 +163,7 @@ class PostRepository {
       } else {
         // Error
         print('Error creating post!');
+        print(respStr);
         
         return null;
       }

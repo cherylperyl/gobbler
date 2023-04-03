@@ -102,7 +102,7 @@ class _IndividualPostState extends State<IndividualPost> {
                           Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0),child: Text(widget.post.locationDescription)),
                           const SizedBox(height: 12),
                           Row(children: [const Icon(CupertinoIcons.calendar),Text(" Posted at", style: TextStyle(fontWeight: FontWeight.bold),)]),
-                          Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0), child: Text("Today "+DateFormat.jm().format(widget.post.createdAt)),),
+                          Padding(padding: EdgeInsets.symmetric(horizontal:6, vertical: 2.0), child: Text("Today "+DateFormat.jm().format(widget.post.createdAt.add(Duration(hours:8)))),),
                           const SizedBox(height: 12),
                           Row(children: [
                             const Icon(CupertinoIcons.clear_circled),
@@ -131,14 +131,20 @@ class _IndividualPostState extends State<IndividualPost> {
                       child: Text("Hide your post"),
                       onPressed: () {
                         print('widget.post.postId ${widget.post.postId}');
-                        handleDeletePressed(context, model, widget.post.postId);
+                        handleDeletePressed(context, model, widget.post.postId, userId!);
                       },
                     )
-                    : CupertinoButton.filled(
-                      disabledColor: CupertinoColors.systemGrey,
-                      child: Text("Post hidden"),
-                      onPressed: null,
-                    )
+                    : widget.post.timeEnd.compareTo(DateTime.now()) > 0
+                      ? CupertinoButton.filled(
+                        disabledColor: CupertinoColors.systemGrey,
+                        child: Text("Post hidden"),
+                        onPressed: null,
+                      )
+                      : CupertinoButton.filled(
+                        disabledColor: CupertinoColors.systemGrey,
+                        child: Text("Post expired"),
+                        onPressed: null,
+                      )
                   : userRegisteredPostsIds.containsKey(widget.post.postId)
                     ? CupertinoButton(
                       child: Text("Cancel registration"), 
@@ -293,11 +299,11 @@ class _IndividualPostState extends State<IndividualPost> {
     );
   }
 
-  void handleDeletePressed(BuildContext context, AppStateModel model, num postId) async {
-    _showDeleteDialog(context, model, postId);
+  void handleDeletePressed(BuildContext context, AppStateModel model, num postId, int userId) async {
+    _showDeleteDialog(context, model, postId, userId);
   }
 
-  void _showDeleteDialog(BuildContext context, AppStateModel model, num postId) {
+  void _showDeleteDialog(BuildContext context, AppStateModel model, num postId, int userId) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -315,7 +321,7 @@ class _IndividualPostState extends State<IndividualPost> {
             isDefaultAction: true,
             onPressed: () async {
               setState(() { isLoading = true; });
-              Post? res = await model.hidePost(postId);
+              Post? res = await model.hidePost(postId, userId);
               if (res != null) {
                 print(res);
                 setState((){ isAvailable = false; });
