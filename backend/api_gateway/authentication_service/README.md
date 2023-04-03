@@ -67,7 +67,7 @@ All endpoints (except for `/api/v1/account/create`) require authentication via J
 In order to request a token, a user account must first be created.
 
 ```shell
-curl --location --request POST 'http://localhost:8080/account/create' \
+curl --location --request POST 'http://localhost/account/create' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email":"new_user@gmail.com",
@@ -78,7 +78,7 @@ curl --location --request POST 'http://localhost:8080/account/create' \
 Afterwhich, use the `/login` endpoint to retrieve the JWT token for the user account. Note that the param name for email here is substituted by `username`
 
 ```shell
-curl -i --location --request POST 'http://localhost:8080/login' --header 'Content-Type: application/json' --data-raw '{
+curl -i --location --request POST 'http://localhost/login' --header 'Content-Type: application/json' --data-raw '{
     "username":"new_user@gmail.com",
     "password": "new_user_password"
 }'
@@ -87,7 +87,7 @@ curl -i --location --request POST 'http://localhost:8080/login' --header 'Conten
 This should return a bearer token. This bearer token must be used to authorize subsequent API calls. For instance, the following should return a `[200]` response:
 
 ```shell
-curl -i --location --request GET 'http://localhost:8080/account/test' --header 'Content-Type: application/json' --header 'Authorization: Bearer XXX'
+curl -i --location --request GET 'http://localhost/account/me' --header 'Content-Type: application/json' --header 'Authorization: Bearer XXX'
 ```
 
 Alternatively, use `scripts/get_access_token.sh` to get an access token printed in your terminal.
