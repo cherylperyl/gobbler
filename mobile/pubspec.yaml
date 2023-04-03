@@ -47,6 +47,7 @@ dependencies:
   firebase_messaging: ^14.3.0
   flutter_inappwebview: ^5.0.5
   flutter_local_notifications: ^13.0.0
+  flutter_launcher_icons: ^0.12.0
   
 
 
@@ -75,6 +76,17 @@ flutter:
     - .env
     - assets/success.webp
     - assets/homeemptyfridge.jpeg
+
+flutter_icons:
+  image_path_android: "assets/gobbler.png"
+  image_path_ios: "assets/gobbler.png"
+  android: "launcher_icon"
+  ios: true
+  
+  
+
+  min_sdk_android: 21
+
 
 
 

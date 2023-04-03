@@ -61,12 +61,6 @@ class PostRepository {
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
       return dataList;
-      List<Post> results = [];
-      dataList.forEach((el) => {
-        results.add(Post.fromJson(el))
-      });
-      
-      return results;
     }
     return [];
   }
@@ -157,7 +151,8 @@ class PostRepository {
         print('Post created successfully!');
         print(respStr);
         final json = jsonDecode(respStr);
-        final post = Post.fromJson(json);
+        Post post = Post.fromJson(json);
+        post.availableReservations = post.totalReservations;
         return post;
         
       } else {
