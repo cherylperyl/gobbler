@@ -104,6 +104,6 @@ Refer to [backend](backend/README.md) for more details.
         <td align="center"><img src="readme_files\esther.jpg" width="150px"/><br /><sub><b>Esther Lam</b></sub></a></td>
         <td align="center"><img src="readme_files\esther.jpg" width="150px"/><br /><sub><b>Ong Chuen Kai</b></sub></a></td>
         <td align="center"><img src="readme_files\jonathan.jpg" width="150px"/><br /><sub><b>Jonathan Tan</b></sub></a></td>
-        <td align="center"><img src="readme_files\thaddeus.jpg" width="150px"/><br /><sub><b>Thaddeus Lee</b></sub></a></td>
+        <td align="center"><img src="readme_files\thaddeus.jpg" width="150px" height="200px"/><br /><sub><b>Thaddeus Lee</b></sub></a></td>
     </tr>
 </table>
