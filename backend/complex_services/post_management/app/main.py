@@ -187,7 +187,9 @@ def create_post(
         )
 
     print("Post successfully created in Post MS.")
-    created_post = r["data"]["create_post"]
+    new_post_obj = r["data"]["create_post"]
+    created_post = schemas.Post(**new_post_obj)
+    created_post.available_reservations = created_post.total_reservations
 
     publish_notification("newpost", created_post)
     print(created_post)
