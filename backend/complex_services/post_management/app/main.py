@@ -105,7 +105,7 @@ def calculate_available_reservations(post):
     else:
         return 0
 
-def publish_notification(exchange: str, post_information):
+def publish_notification(exchange: str, post_information: dict):
     global channel
 
     message_sent = False
@@ -121,9 +121,10 @@ def publish_notification(exchange: str, post_information):
                 body=json.dumps(post_information),
                 properties=pika.BasicProperties(delivery_mode=2)
             )  # delivery_mode=2 make message persistent within the matching queues until it is received by some receiver
-            print(f"Sent (exchange: {exchange}) notification (post id: {post_information.post_id}) to RabbitMQ")
+            print(f"Sent (exchange: {exchange}) notification (post id: {post_information['post_id']}) to RabbitMQ")
             return
-        except:
+        except Exception as e:
+            print(e)
             print("Unable to send notification to RabbitMQ. Retrying...")
         attempts += 1
 
@@ -187,12 +188,10 @@ def create_post(
         )
 
     print("Post successfully created in Post MS.")
-    new_post_obj = r["data"]["create_post"]
-    created_post = schemas.Post(**new_post_obj)
-    created_post.available_reservations = created_post.total_reservations
+    created_post = r["data"]["create_post"]
+    created_post["available_reservations"] = created_post["total_reservations"]
 
     publish_notification("newpost", created_post)
-    print(created_post)
 
     return created_post
 
