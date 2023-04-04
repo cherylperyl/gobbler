@@ -37,7 +37,7 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 <br>
 <p align="center"><strong>API Gateway</strong></p>
 <p align="center">
-<a href="https://konghq.com/"><img src="https://konghq.com/wp-content/uploads/2018/08/thumbnail-logo-color-full.svg" alt="Kong API Gateway" width="88"/></a>
+<a href="https://konghq.com/"><img src="https://konghq.com/wp-content/uploads/2018/08/kong-combination-mark-color-256px.png" alt="Kong API Gateway" width="88"/></a>
 <br>
 <i>CORS · Rate Limit Plugin · Custom Authentication Plugin</i>
 </p>
