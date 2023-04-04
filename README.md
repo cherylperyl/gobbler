@@ -30,52 +30,38 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 </html>
 
 # Frameworks and Databases Utilised
+<p align="center"><strong>Services and UI</strong></p>
+<p align="center">
+<a href="https://fastapi.tiangolo.com/"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI" width="88"/></a>&nbsp;&nbsp;<a href="https://graphql.org/"><img src="https://graphql.org/img/brand/logos/logo-wordmark.svg" alt="GraphQL Logo" width="88"></a>&nbsp;&nbsp;<a href="https://flutter.dev/"><img src="https://storage.googleapis.com/cms-storage-bucket/6a07d8a62f4308d2b854.svg" alt="Flutter" width="88"/></a>&nbsp;&nbsp;<a href="https://learn.microsoft.com/en-us/dotnet/core/introduction"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/2048px-.NET_Core_Logo.svg.png" alt=".Net Core" height="40"/></a>&nbsp;&nbsp;<a href="https://spring.io/"><img src="https://4.bp.blogspot.com/-ou-a_Aa1t7A/W6IhNc3Q0gI/AAAAAAAAD6Y/pwh44arKiuM_NBqB1H7Pz4-7QhUxAgZkACLcBGAs/s1600/spring-boot-logo.png" alt="SpringBoot" height="40"/></a>&nbsp;&nbsp;<a href="https://strawberry.rocks/"><img src="https://warehouse-camo.ingress.cmh1.psfhosted.org/ef5bddae9a8a975d7be7a05765bc6f2665ac7a1a/68747470733a2f2f6769746875622e636f6d2f737472617762657272792d6772617068716c2f737472617762657272792f7261772f6d61696e2f2e6769746875622f6c6f676f2e706e67" alt="Strawberry" height="40"/></a>&nbsp;&nbsp;<a href="https://www.typescriptlang.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/1200px-Typescript_logo_2020.svg.png" alt="Typescript" height="40"/></a>&nbsp;&nbsp;<a href="https://koajs.com/"><img src="https://embed-ssl.wistia.com/deliveries/3d6bf592e5cff413c9d60258434142ad.jpg" alt="Koa" height="40"/></a>&nbsp;&nbsp;
+</p>
+<br>
+<p align="center"><strong>API Gateway</strong></p>
+<p align="center">
+<a href="https://konghq.com/"><img src="https://konghq.com/wp-content/uploads/2018/08/thumbnail-logo-color-full.svg" alt="Kong API Gateway" width="88"/></a>
+<br>
+<i>CORS · Rate Limit Plugin · Custom Authentication Plugin</i>
+</p>
+<br>
 
-**Services and UI**
+<p align="center"><strong>Databases</strong></p>
+<p align="center">
+<a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;<a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;<a href="https://www.postgresql.org/" ><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" alt="PostgreSQL" height="40"/>&nbsp;PostgreSQL</a>&nbsp;&nbsp;<a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" alt="PostgreSQL" width="88"/></a>&nbsp;&nbsp;<a href="https://redis.com/"><img src="https://redis.com/wp-content/themes/wpx/assets/images/logo-redis.svg?auto=webp&quality=85,75&width=120" alt="Redis" width="88"/></a> 
+</p>
+<br>
 
-- Client (Mobile)
-  - Flutter
-- Server (Backend)
-  - Python
-    - FastAPI
-    - GraphQL (strawberry)
-  - Java
-    - Spring Boot
-  - EF Core
-  - Typescript
-    - Koa
-  - Lua
+<p align="center"><strong>AMQP</strong></p>
+<p align="center">
+<a href="https://www.rabbitmq.com/"><img src="https://logo-download.com/wp-content/data/images/png/RabbitMQ-logo.png" alt="RabbitMQ" width="88"/></a>
+</p>
+<br>
 
-**API Gateway**
-
-- Kong API Gateway
-  - CORS
-  - Rate Limit Plugin
-  - Custom Authentication Plugin
-
-**Database**
-
-- MySQL
-- postgreSQL
-- Google Cloud Storage
-- Redis
-
-**AMQP**
-
-- RabbitMQ Messaging
-
-**Others**
-
-- External Services
-  - Stripe Payment API
-  - Firebase Cloud Messaging
-- Containerization
-  - Docker
-  - Docker Compose
-  - Kubernetes
-- Google Cloud Platform
-  - Google Kubernetes Engine
-  - Artifact Registry
+<p align="center"><strong>Others</strong></p>
+<p align="center">
+<a href="https://stripe.com/en-gb-sg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1280px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe Payment API" width="88"/></a>&nbsp;&nbsp;<a href="https://kubernetes.io/"><img src="https://gcloud.devoteam.com/wp-content/uploads/sites/32/2021/10/kubernetes-logo-1-1.svg" alt="Kubernetes" height="44"/></a>&nbsp;&nbsp;<a href="https://www.docker.com/"><img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" alt="Docker" width="88"/></a>
+<br>
+<i>Firebase Cloud Messaging · Docker Compose · GCP Google Kubernetes Engine · GCP Artifact Registry</i>
+</p>
+<br>
 
 # Getting Started
 
