@@ -51,7 +51,7 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 
 <p align="center"><strong>AMQP</strong></p>
 <p align="center">
-<a href="https://www.rabbitmq.com/"><img src="https://logo-download.com/wp-content/data/images/png/RabbitMQ-logo.png" alt="RabbitMQ" width="88"/></a>
+<a href="https://www.rabbitmq.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/RabbitMQ_logo.svg/2560px-RabbitMQ_logo.svg.png" alt="RabbitMQ" width="88"/></a>
 </p>
 <br>
 
