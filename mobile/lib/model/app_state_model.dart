@@ -66,7 +66,7 @@ class AppStateModel extends foundation.ChangeNotifier {
       
       _availablePosts = await PostRepository.fetchPosts(long, lat, user_id);  
       
-      print(_availablePosts);
+      print('available posts $_availablePosts');
     } else {
       _availablePosts = await PostRepository.fetchPosts(1.2993038848815959, 103.84554001541605, user_id);  
     }

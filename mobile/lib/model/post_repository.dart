@@ -12,17 +12,19 @@ class PostRepository {
   static Future<List<Post>> fetchPosts(double long, double lat, int userId) async {
     var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/viewposts', {"latitude": "$lat", "longitude": "$long", "user_id": "$userId"});
     var response = await http.get(url);
+    print('lat ${lat} long ${long}');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
-      print(dataList);
+      print('fetchPosts response: $dataList');
       List<Post> results = [];
-      dataList.forEach((el) => {
+      dataList.forEach((el)  {
+        print('title ${el["title"]} time_end ${el["time_end"]}');
         if (DateTime.parse(el['time_end']).compareTo(DateTime.now()) > 0) {
-          results.add(Post.fromJson(el))
+          results.add(Post.fromJson(el));
         }
-        
       });
+      
       return results;
     }
     return [];
