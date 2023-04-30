@@ -12,14 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Who Am I
-        run: whoami
-      - name: Add Docker group to runner user
-        run: sudo usermod -aG docker $USER
-      - name: docker ps
-        run: docker ps
       - name: Build and Push Docker Image
         working-directory: ./backend
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
           docker compose build
           docker compose push
