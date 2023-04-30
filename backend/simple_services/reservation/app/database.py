@@ -6,12 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_SERVER = os.getenv("DB_SERVER")
-DB_PORT = os.getenv("DB_PORT")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_SERVER = os.getenv("DB_SERVER") or "127.0.0.1"
+DB_PORT = os.getenv("DB_PORT") or '3306'
+DB_USER = os.getenv("DB_USER") or 'root'
+DB_PASSWORD = os.getenv("DB_PASSWORD") or 'root'
 # DATABASE = os.getenv("DATABASE")
-DATABASE = "reservations"
+DATABASE = "reservation"
 
 # pick one
 # SQLALCHEMY_DATABASE_URI: str = (o
