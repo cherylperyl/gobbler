@@ -10,8 +10,26 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - id: checkout
+        name: Checkout code
         uses: actions/checkout@v2
+
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.GCP_IAM_PROVIDER_ID }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          access_token_lifetime: 300s
+
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v1
+        with:
+          registry: asia-southeast1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
       - name: Build and Push Docker Image
         working-directory: ./backend
         env:
@@ -19,13 +37,16 @@ jobs:
         run: |
           docker compose build
           docker compose push
+
       # - name: Run Bash Script
       #   working-directory: ./backend
       #   run: ./scripts/deploy-kube.sh
+
       - name: Install ArgoCD CLI
         run: |
           curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.1.2/argocd-linux-amd64
           chmod +x /usr/local/bin/argocd
+
       - name: Login to ArgoCD
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_DOMAIN }}
@@ -33,12 +54,14 @@ jobs:
           ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
         run: |
           argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+
       - name: Inject manifest secrets
         working-directory: ./backend
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
           ./scripts/replace-manifest-secrets.sh
+
       - name: Deploy application
         working-directory: ./backend
         env:
