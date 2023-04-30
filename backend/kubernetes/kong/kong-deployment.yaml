@@ -44,6 +44,10 @@ spec:
               value: /dev/stderr
             - name: KONG_PLUGINS
               value: rate-limiting,authentication_plugin
+            - name: KONG_SSL_CERT
+              value: /etc/kong/ssl/kong.ca-bundle
+            - name: KONG_SSL_CERT_KEY
+              value: /etc/kong/ssl/kong.key
           image: asia-southeast1-docker.pkg.dev/${GCP_PROJECT_ID}/gobbler/kong:latest
           name: kong
           ports:
@@ -61,5 +65,12 @@ spec:
           #     path: /
           #     port: 8000
           #   initialDelaySeconds: 120
+          volumeMounts:
+            - mountPath: /etc/kong/ssl
+              name: kong-ssl-cert-files
       restartPolicy: Always
+      volumes:
+        - name: kong-ssl-cert-files
+          secret:
+            secretName: kong-ssl-cert
 status: {}
