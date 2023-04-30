@@ -1,0 +1,52 @@
+name: Docker Compose Build & Push
+
+on:
+  push:
+    branches:
+      - main
+      - jon/add-cicd
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Who Am I
+        run: whoami
+      - name: Add Docker group to runner user
+        run: sudo usermod -aG docker $USER
+      - name: docker ps
+        run: docker ps
+      - name: Build and Push Docker Image
+        working-directory: ./backend
+        run: |
+          docker compose build
+          docker compose push
+      # - name: Run Bash Script
+      #   working-directory: ./backend
+      #   run: ./scripts/deploy-kube.sh
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.1.2/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+      - name: Login to ArgoCD
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_DOMAIN }}
+          ARGOCD_USERNAME: admin
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+        run: |
+          argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+      - name: Inject manifest secrets
+        working-directory: ./backend
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          ./scripts/replace-manifest-secrets.sh
+      - name: Deploy application
+        working-directory: ./backend
+        env:
+          APP_NAME: gobbler
+          NAMESPACE: default
+        run: |
+          argocd app sync $APP_NAME -n $NAMESPACE --local kubernetes
