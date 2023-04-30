@@ -74,11 +74,6 @@ class AppStateModel extends foundation.ChangeNotifier {
     notifyListeners();
   }
 
-  // void updateLocation() async {
-  //   _currentLocation = await locationRespository.getLoc();
-  //   notifyListeners();
-  // }
-
   Future<void> getLoggedInUser() async {
     final prefs = await SharedPreferences.getInstance();
     String? userStr = prefs.getString('user');
@@ -114,13 +109,11 @@ class AppStateModel extends foundation.ChangeNotifier {
     _user = await UserRepository.getUserData(bearer);
     if (_user != null) {
       final prefs = await SharedPreferences.getInstance();
-      // Map<String, dynamic> userJson = User.toJson();
-      // print('jsonEncode ${jsonEncode(userJson)}');
       prefs.setString('user', jsonEncode(_user!));
     }
     notifyListeners();
   }
-  // possibly change to call one endpoint only
+  
   Future<void> loginUser(String email, String password) async {
     _user = await UserRepository.loginUser(email, password);
     

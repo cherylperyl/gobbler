@@ -5,7 +5,6 @@ import 'user.dart';
 import 'package:http/http.dart' as http;
 
 class UserRepository {
-  // change to one endpoint only
   static Future<User> loginUser(String email, String password) async {
     var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/loginuser');
     var response = await http.post(
@@ -58,25 +57,9 @@ class UserRepository {
     return Future.error('Unable to signup user');
   }
   static Future<void> logoutUser() async {
-    // var url = Uri.http(dotenv.env['BASE_API_URL']!,'/login');
-    // var response = await http.post(
-    //   url,
-    //   body: jsonEncode(<String, String>{
-    //     'username': email,
-    //     'password': password
-    //   }));
-    // if (response.statusCode == 200) {
-    //   final data = jsonDecode(response.body);
-    //   final prefs = await SharedPreferences.getInstance();
-    //   await prefs.setString('bearerToken', data['bearer_token']);
-
-    //   return data['bearer_token'];
-    // }
-    // return Future.error('Unable to login user');
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('bearerToken');
   }
-  // probably move to one function under loginUser
   static Future<User?> getUserData(bearer) async {
     var url = Uri.http("${dotenv.env['BASE_API_URL']!}:5001",'/getUser');
     var response = await http.get(

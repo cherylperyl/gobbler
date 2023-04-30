@@ -142,13 +142,10 @@ class PostRepository {
     request.files.add(uploadImage);
     
     try {
-    // Send request and get response
       var response = await request.send();
       final respStr = await response.stream.bytesToString();
 
-    // Check response status code
       if (response.statusCode == HttpStatus.ok) {
-        // Success
         print('Post created successfully!');
         print(respStr);
         final json = jsonDecode(respStr);
@@ -157,7 +154,6 @@ class PostRepository {
         return post;
         
       } else {
-        // Error
         print('Error creating post!');
         print(respStr);
         
@@ -201,14 +197,11 @@ static Future<Post?> updatePost(
     request.files.add(uploadImage);
     
     try {
-    // Send request and get response
       var response = await request.send();
       final respStr = await response.stream.bytesToString();
       print(response.statusCode);
 
-    // Check response status code
       if (response.statusCode == HttpStatus.ok) {
-        // Success
         print('Post updated successfully!');
         print(respStr);
         final json = jsonDecode(respStr);
@@ -216,7 +209,6 @@ static Future<Post?> updatePost(
         return post;
         
       } else {
-        // Error
         print('Error updating post!');
         print(response.statusCode);
         
