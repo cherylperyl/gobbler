@@ -42,6 +42,8 @@ services:
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
       KONG_ADMIN_GUI_URL: http://localhost:8002
       KONG_PLUGINS: rate-limiting,authentication_plugin
+      KONG_SSL_CERT: /etc/kong/ssl/kong.ca-bundle
+      KONG_SSL_CERT_KEY: /etc/kong/ssl/kong.key
     ports:
       - "80:8000"
       - "8443:8443"

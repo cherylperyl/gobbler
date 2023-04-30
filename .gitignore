@@ -1,5 +1,9 @@
 **.DS_Store
 
+**.crt 
+**.ca-bundle
+**.key
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
