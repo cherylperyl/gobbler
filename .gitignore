@@ -138,3 +138,6 @@ dmypy.json
 
 # Env Var Docker Compose
 docker-compose-resolved.*
+
+# SSL Certificate secrets
+ssl-certificates/
