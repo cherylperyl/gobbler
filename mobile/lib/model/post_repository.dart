@@ -10,7 +10,7 @@ import 'package:http_parser/http_parser.dart';
 
 class PostRepository {
   static Future<List<Post>> fetchPosts(double long, double lat, int userId) async {
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/viewposts', {"latitude": "$lat", "longitude": "$long", "user_id": "$userId"});
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/viewposts', {"latitude": "$lat", "longitude": "$long", "user_id": "$userId"});
     var response = await http.get(url);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -30,7 +30,7 @@ class PostRepository {
   static Future<List<Post>> fetchCreatedPosts(int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/createdpost', 
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/createdpost', 
       {
         "user_id": '$userId'
       }
@@ -52,7 +52,7 @@ class PostRepository {
   static Future<List<dynamic>> fetchRegisteredPosts(int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reservations/all/${userId}', 
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/reservation/reservations/all/${userId}', 
     );
     var response = await http.get(url, headers: {'Authorization': '$bearer'});
     print(url);
@@ -67,7 +67,7 @@ class PostRepository {
   static Future<bool> reservePost(num postId, int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final String? bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve');
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve');
     var response = await http.post(url, 
       body: jsonEncode(
         { 
@@ -91,7 +91,7 @@ class PostRepository {
   static Future<bool> cancelReservation(int reservationId) async {
     final prefs = await SharedPreferences.getInstance();
     final String? bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve/cancel', {
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/reservation/reserve/cancel', {
       "reservation_id": '$reservationId'
     });
     var response = await http.delete(url, 
@@ -121,7 +121,7 @@ class PostRepository {
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
     final bytes = await image.readAsBytes();
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/createpost');
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/createpost');
     var request = http.MultipartRequest('POST', url);
     print(bearer);
     request.fields['title'] = title;
@@ -180,7 +180,7 @@ static Future<Post?> updatePost(
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
     final bytes = await image.readAsBytes();
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
     var request = http.MultipartRequest('POST', url);
     print(bearer);
     request.fields['title'] = title;
@@ -231,7 +231,7 @@ static Future<Post?> hidePost(
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final bearer = prefs.getString('bearerToken');
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/updatepost', {"post_id": '$postId'});
     var request = http.MultipartRequest('POST', url);
     request.fields['is_available'] = 'false';
 

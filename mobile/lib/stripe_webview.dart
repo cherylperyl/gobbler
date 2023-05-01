@@ -29,7 +29,7 @@ class _StripeWebViewState extends State<StripeWebView> {
 
   Future<void> userData() async {
 
-    var url = Uri.http("${dotenv.env['BASE_API_URL']!}",'/user/subscribe');
+    var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/user/subscribe');
     var response = await http.post(url, 
       headers: {
         'Content-Type': 'application/json'
