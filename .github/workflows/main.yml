@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - jon/add-cicd
+    # paths:
+    #   - 'backend/**'
 
 jobs:
   build-push:
@@ -45,6 +47,10 @@ jobs:
     needs: build-push
     runs-on: ubuntu-latest
     steps:
+      - id: checkout
+        name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Install ArgoCD CLI
         run: |
           curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.1.2/argocd-linux-amd64
