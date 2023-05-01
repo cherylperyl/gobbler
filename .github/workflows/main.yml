@@ -7,11 +7,11 @@ on:
       - jon/add-cicd
 
 jobs:
-  build-push-deploy:
+  build-push:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-latest
     steps:
       - id: checkout
         name: Checkout code
@@ -41,6 +41,10 @@ jobs:
           docker compose build
           docker compose push
 
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
       - name: Install ArgoCD CLI
         run: |
           curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.1.2/argocd-linux-amd64
@@ -67,4 +71,4 @@ jobs:
           APP_NAME: gobbler
           NAMESPACE: default
         run: |
-          argocd app sync $APP_NAME -n $NAMESPACE --local kubernetes
+          argocd app sync $APP_NAME --local kubernetes
