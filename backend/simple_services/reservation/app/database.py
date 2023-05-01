@@ -8,10 +8,10 @@ load_dotenv()
 
 DB_SERVER = os.getenv("DB_SERVER") 
 DB_PORT = os.getenv("DB_PORT") 
-DB_USER = os.getenv("DB_USER") or 'root'
-DB_PASSWORD = os.getenv("DB_PASSWORD") or 'root'
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD") 
 # DATABASE = os.getenv("DATABASE")
-DATABASE = "reservation"
+DATABASE = "reservations"
 
 # pick one
 # SQLALCHEMY_DATABASE_URI: str = (o
