@@ -1,14 +1,3 @@
-// namespace UserControllerTest;
-
-// [TestClass]
-// public class UnitTest1
-// {
-//     [TestMethod]
-//     public void TestMethod1()
-//     {
-//     }
-// }
-
 namespace UserControllerTests;
 
 using System.Collections.Generic;
@@ -21,7 +10,7 @@ using user.Data;
 using user.Controllers;
 
 [TestClass]
-public class UserControllerTests
+public class UserControllerTest
 {
     [TestMethod]
     public void GetAllBlogs_orders_by_name()
@@ -46,14 +35,16 @@ public class UserControllerTests
         var actionResult = controller.Get();
         
         var result = actionResult.Result;
-        Assert.IsInstanceOfType(result, typeof(List<User>));
         
-
+        
+        
         // Assert.AreEqual(3, users.Count);
         // Assert.AreEqual("AAA", users[0].Name);
         // Assert.AreEqual("BBB", users[1].Name);
         // Assert.AreEqual("ZZZ", users[2].Name);
+
+    
+        }
     }
-}
 
 

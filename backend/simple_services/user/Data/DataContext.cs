@@ -8,5 +8,5 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
     
     // Creates database tables
-    public DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 }
