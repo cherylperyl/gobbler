@@ -1,4 +1,4 @@
-name: Docker Compose Build & Push
+name: gobbler-deploy
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - jon/add-cicd
 
 jobs:
-  build-and-push:
+  build-push-deploy:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
