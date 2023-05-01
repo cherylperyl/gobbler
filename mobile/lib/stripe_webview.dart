@@ -117,7 +117,7 @@ class _StripeWebViewState extends State<StripeWebView> {
                       
                     ),
                     Image(
-                      image: AssetImage('assets/success.webp')
+                      image: AssetImage('assets/success.gif')
                     ),
                     Container(
                       alignment: Alignment.center,

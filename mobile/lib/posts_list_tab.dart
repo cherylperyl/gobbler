@@ -48,7 +48,7 @@ class PostsListTab extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Image(
-                        image: AssetImage('assets/homeemptyfridge.jpeg')
+                        image: AssetImage('assets/homeemptyfridge.jpg')
                       ),
                     ),
                   ],

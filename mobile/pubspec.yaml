@@ -74,8 +74,8 @@ flutter:
   uses-material-design: true
   assets:
     - .env
-    - assets/success.webp
-    - assets/homeemptyfridge.jpeg
+    - assets/success.gif
+    - assets/homeemptyfridge.jpg
 
 flutter_icons:
   image_path_android: "assets/gobbler.png"
