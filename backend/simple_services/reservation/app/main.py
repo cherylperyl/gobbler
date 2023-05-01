@@ -16,7 +16,6 @@ models.Base.metadata.create_all(bind=engine)
 # create FastAPI app
 app = FastAPI()
 
-
 # catch all exceptions and return error message
 @app.exception_handler(Exception)
 async def all_exception_handler(request, exc):

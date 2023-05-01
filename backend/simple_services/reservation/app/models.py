@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, TIMESTAMP
 from app.database import Base
 
-
 class Reservation(Base):
     __tablename__ = "reservations"
     reservation_id = Column(Integer, primary_key=True, autoincrement=True, index=True)
