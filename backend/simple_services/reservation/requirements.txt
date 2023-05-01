@@ -35,4 +35,4 @@ tomli==2.0.1
 typing_extensions==4.4.0
 uvicorn==0.20.0
 zipp==3.11.0
-fastapi-redis-cache==0.2.5
+redis==4.5.4
