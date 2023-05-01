@@ -94,7 +94,7 @@ def get_reservation_by_reservation_id(
     db_reservation = crud.get_reservation_by_reservation_id(reservation_id, db)
     if db_reservation is None:
         raise HTTPException(status_code=404, detail="Reservation not found")
-    return db_reservation
+    return jsonable_encoder(db_reservation)
 
 
 @app.get("/reservations/post/{post_id}", response_model=List[schemas.Reservation])
@@ -110,7 +110,8 @@ def get_reservations_by_post_id(
     reservations = crud.get_reservations_by_post_id(post_id, db)
     if not reservations:
         raise HTTPException(status_code=404, detail="No reservations found")
-    return reservations
+    return jsonable_encoder(reservations)
+
 
 @app.get("/reservations/user/{user_id}", response_model=List[schemas.Reservation])
 @cache_one_minute()
@@ -125,7 +126,8 @@ def get_reservations_by_user_id(
     reservations = crud.get_reservations_by_user_id(user_id, db)
     if not reservations:
         raise HTTPException(status_code=404, detail="No reservations found")
-    return reservations
+    return jsonable_encoder(reservations)
+
 
 @app.get("/reservations/post/slots/{post_id}")
 @cache_one_minute()
@@ -144,7 +146,6 @@ def get_reservation_count_by_post_id(
 
 
 @app.get("/reservations/posts/slots")
-@cache_one_minute()
 def get_reservations_by_list_of_post_id(
     response: Response,
     post_id_list: List[int],
@@ -162,7 +163,7 @@ def get_reservations_by_list_of_post_id(
         else:
             reservation_numbers.append(reservations_count)
 
-    return reservation_numbers
+    return jsonable_encoder(reservation_numbers)
 
 
 @app.get("/reservations/user/{user_id}/post/{post_id}", response_model=schemas.Reservation)
@@ -179,7 +180,7 @@ def get_reservation_by_user_id_and_post_id(
     reservation = crud.get_reservation_by_user_id_and_post_id(user_id, post_id, db)
     if not reservation:
         raise HTTPException(status_code=404, detail="No reservations found")
-    return reservation
+    return jsonable_encoder(reservation)
 
 
 @app.post("/reservations", response_model=schemas.Reservation)
