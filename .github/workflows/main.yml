@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - jon/add-cicd
-    # paths:
-    #   - 'backend/**'
+    paths:
+      - 'backend/**'
 
 jobs:
   build-push:
