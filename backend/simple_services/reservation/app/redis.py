@@ -21,7 +21,10 @@ def cache(key, ttl=60, tags=None):
             kwargs['db'] = db
 
             # check if the data is cached in Redis
-            cached_data = redis_client.get(redis_key)
+            try:
+                cached_data = redis_client.get(redis_key)
+            except redis.exceptions.ConnectionError:
+                cached_data = None
 
             if cached_data:
                 # if the data is cached, deserialize and return it
@@ -38,19 +41,23 @@ def cache(key, ttl=60, tags=None):
                 serialized_data = json.dumps(response_data)
 
                 # serialize the data and cache it in Redis with the specified TTL
-                redis_client.set(redis_key, serialized_data, ex=timedelta(seconds=ttl))
+                try:
+                    redis_client.set(redis_key, serialized_data, ex=timedelta(seconds=ttl))
+
+                    # associate the key with tags
+                    for tag in wrapper.tags:
+                        redis_client.sadd(tag, redis_key)
+
+                    for var, value in kwargs.items():
+                        tag = var + '-' + str(value)
+                        if var != 'db':
+                            redis_client.sadd(tag, redis_key)
+
+                except redis.exceptions.ConnectionError:
+                    pass
 
                 # create the response with the data and a MISS cache status header
                 response = JSONResponse(content=response_data, headers={"X-Cache-Status": "MISS"})
-
-                # associate the key with tags
-                for tag in wrapper.tags:
-                    redis_client.sadd(tag, redis_key)
-
-                for var, value in kwargs.items():
-                    tag = var + '-' + str(value)
-                    if var != 'db':
-                        redis_client.sadd(tag, redis_key)
 
             return response
 
@@ -65,6 +72,12 @@ def cache(key, ttl=60, tags=None):
 def invalidate(*tags):
     # get all keys associated with the tags
     keys_to_delete = set()
+
+    # check if redis is available
+    try:
+        redis_client.ping()
+    except redis.exceptions.ConnectionError:
+        return
 
     for tag in tags:
         keys_to_delete.update(redis_client.smembers(tag))
