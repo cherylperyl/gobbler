@@ -16,9 +16,6 @@ spec:
       targetPort: 8000
     - name: "https"
       port: 443
-      targetPort: 8000
-    - name: "8443"
-      port: 8443
       targetPort: 8443
     - name: "8001"
       port: 8001
