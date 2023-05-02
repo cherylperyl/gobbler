@@ -12,17 +12,19 @@ class PostRepository {
   static Future<List<Post>> fetchPosts(double long, double lat, int userId) async {
     var url = Uri.https("${dotenv.env['BASE_API_URL']!}",'/post/viewposts', {"latitude": "$lat", "longitude": "$long", "user_id": "$userId"});
     var response = await http.get(url);
+    print('lat ${lat} long ${long}');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final dataList = jsonDecode(response.body);
-      print(dataList);
+      print('fetchPosts response: $dataList');
       List<Post> results = [];
-      dataList.forEach((el) => {
+      dataList.forEach((el)  {
+        print('title ${el["title"]} time_end ${el["time_end"]}');
         if (DateTime.parse(el['time_end']).compareTo(DateTime.now()) > 0) {
-          results.add(Post.fromJson(el))
+          results.add(Post.fromJson(el));
         }
-        
       });
+      
       return results;
     }
     return [];
@@ -140,13 +142,10 @@ class PostRepository {
     request.files.add(uploadImage);
     
     try {
-    // Send request and get response
       var response = await request.send();
       final respStr = await response.stream.bytesToString();
 
-    // Check response status code
       if (response.statusCode == HttpStatus.ok) {
-        // Success
         print('Post created successfully!');
         print(respStr);
         final json = jsonDecode(respStr);
@@ -155,7 +154,6 @@ class PostRepository {
         return post;
         
       } else {
-        // Error
         print('Error creating post!');
         print(respStr);
         
@@ -199,14 +197,11 @@ static Future<Post?> updatePost(
     request.files.add(uploadImage);
     
     try {
-    // Send request and get response
       var response = await request.send();
       final respStr = await response.stream.bytesToString();
       print(response.statusCode);
 
-    // Check response status code
       if (response.statusCode == HttpStatus.ok) {
-        // Success
         print('Post updated successfully!');
         print(respStr);
         final json = jsonDecode(respStr);
@@ -214,7 +209,6 @@ static Future<Post?> updatePost(
         return post;
         
       } else {
-        // Error
         print('Error updating post!');
         print(response.statusCode);
         

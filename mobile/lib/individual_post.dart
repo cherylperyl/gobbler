@@ -51,8 +51,7 @@ class _IndividualPostState extends State<IndividualPost> {
     return Consumer<AppStateModel>(
       builder: (context, model, child) {
         final userId = model.getUser()?.userId;
-        
-        // final userRegisteredPosts = model.getUserRegisteredPosts();
+
         final userRegisteredPostsIds = model.getUserRegisteredPostsIds();
         return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(

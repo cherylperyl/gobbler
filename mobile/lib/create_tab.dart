@@ -124,7 +124,6 @@ class _CreateTabState extends State<CreateTab> {
               setState((){image = uploadImage;});
             }
             Navigator.of(context).pop();
-            // final bytes = await image?.readAsBytes();
           }, 
           child: Text("Photo Library"),
         )

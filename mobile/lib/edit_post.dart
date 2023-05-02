@@ -109,7 +109,6 @@ class _EditPostState extends State<EditPost> {
               setState((){image = uploadImage;});
             }
             Navigator.of(context).pop();
-            // final bytes = await image?.readAsBytes();
           }, 
           child: Text("Photo Library"),
         )
