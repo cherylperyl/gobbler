@@ -1,10 +1,3 @@
-// enum Category {
-//   all,
-//   accessories,
-//   clothing,
-//   home,
-// }
-
 class Post {
   Post({
     required this.userId,
@@ -41,11 +34,7 @@ class Post {
   num get reservations => availableReservations;
   String get imageLink => imageUrl;
   String get postTitle => title;
-  // String get assetName => '$id-0.jpg';
-  // String get assetPackage => 'shrine_images';
 
-  // @override
-  // String toString() => '$name (id=$id)';
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       userId: json['user_id'],

@@ -59,7 +59,6 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
           builder: (context) => IndividualPost(post: post))
       );
       }
-      
     }
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -84,46 +83,7 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
         prefs.setString("messagingToken", token)
       }
     });
-    Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-      print("background notification");
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        final json = jsonDecode(notification.body!);
-        if (notification.title == "A post you reserved has been updated" && !json['is_available']) {
-          flutterLocalNotificationsPlugin.show(
-            2,
-            "A post you reserved is no longer available",
-            json['title'],
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                priority: Priority.max,
-                importance: Importance.max,
-                ticker: "ticker",
-              ),
-            ),
-            payload: notification.body);
-        } else {
-          flutterLocalNotificationsPlugin.show(
-            2,
-            notification.title,
-            json['title'],
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                priority: Priority.max,
-                importance: Importance.max,
-                ticker: "ticker",
-              ),
-            ),
-            payload: notification.body);
-        }
-      }
-      return Future(() => null);
-    }
+
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -163,7 +123,6 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
             ),
             payload: notification.body);
         }
-        
       }
     });
     
@@ -193,7 +152,7 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
         ],
       ),
       tabBuilder: (context, index) {
-        late final CupertinoTabView returnValue;
+        late final CupertinoTabView returnValue; 
         switch (index) {
           case 0:
             returnValue = CupertinoTabView(builder: (context) {
@@ -224,3 +183,58 @@ class _CupertinoStoreHomePageState extends State<CupertinoStoreHomePage> {
   }
 }
 
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      importance: Importance.max,
+    );
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  const androidInitializationSetting = AndroidInitializationSettings("@mipmap/ic_launcher");
+  const initSettings = InitializationSettings(android: androidInitializationSetting);
+  await flutterLocalNotificationsPlugin.initialize(
+    initSettings,
+  );
+  await flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+    ?.createNotificationChannel(channel);
+
+  print("background notification");
+  RemoteNotification? notification = message.notification;
+  AndroidNotification? android = message.notification?.android;
+  if (notification != null && android != null) {
+    final json = jsonDecode(notification.body!);
+    print("json $json");
+    if (notification.title == "A post you reserved has been updated" && !json['is_available']) {
+      flutterLocalNotificationsPlugin.show(
+        2,
+        "A post you reserved is no longer available",
+        json['title'],
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            priority: Priority.max,
+            importance: Importance.max,
+            ticker: "ticker",
+          ),
+        ),
+        payload: notification.body);
+    } else {
+      flutterLocalNotificationsPlugin.show(
+        2,
+        notification.title,
+        json['title'],
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            priority: Priority.max,
+            importance: Importance.max,
+            ticker: "ticker",
+          ),
+        ),
+        payload: notification.body);
+    }
+  }
+}
