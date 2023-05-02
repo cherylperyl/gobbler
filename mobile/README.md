@@ -1,4 +1,4 @@
-# Gobbler
+# Gobbler - Mobile
 
 A simple Flutter project to showcase Gobbler's backend.
 

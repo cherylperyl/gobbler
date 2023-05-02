@@ -2,9 +2,10 @@
 
 Reducing food waste one buffet at a time
 
-1. [API Docs](https://docs.google.com/document/d/1p9xU6xDQlhA96rWvjR7AQRDs3OLuAAEXLBefcChBxCc)
-2. [Project report](https://docs.google.com/document/d/1_VMYmIKxV-ouKZ3y6g-upth47BED7S6Sr370QjmmAiU)
-3. [Project slides](https://docs.google.com/presentation/d/1uotMHmufZlSzO2_8AwSi_8_G5PUdfa7DnOEs2CoL66I)
+# 🏆 2023 VMware Tanzu Award Winner 🏆
+<i>Top Project Group of the IS213 Enterprise Solution Development course AY22/23 T2</i>
+
+Special mention to [Professor Jiang Lingxiao](https://faculty.smu.edu.sg/profile/jiang-lingxiao-896) and [Instructor Lum Eng Kit](https://scis.smu.edu.sg/people/instructors#profile_lum_eng_kit) for their guidance and feedback. 😊 Check out our [presentation slides](https://docs.google.com/presentation/d/1uotMHmufZlSzO2_8AwSi_8_G5PUdfa7DnOEs2CoL66I) and [project report](https://docs.google.com/document/d/1_VMYmIKxV-ouKZ3y6g-upth47BED7S6Sr370QjmmAiU) to learn more about our solution architecture! 🤓
 
 # Table of Contents
 

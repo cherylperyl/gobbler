@@ -1,3 +1,6 @@
+# Gobbler - Backend
+A comprehensive API docs of Gobbler's backend can be found [here](https://docs.google.com/document/d/1p9xU6xDQlhA96rWvjR7AQRDs3OLuAAEXLBefcChBxCc).
+
 # Table of Contents
 
 1. [Setting up Stripe](#setting-up-stripe)
