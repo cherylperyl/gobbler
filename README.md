@@ -2,9 +2,9 @@
 
 Reducing food waste one buffet at a time
 
-1. [API Docs](https://docs.google.com/document/d/1p9xU6xDQlhA96rWvjR7AQRDs3OLuAAEXLBefcChBxCc/edit#)
-2. [Project report](https://docs.google.com/document/d/1_VMYmIKxV-ouKZ3y6g-upth47BED7S6Sr370QjmmAiU/edit#)
-3. [Project slides](https://docs.google.com/presentation/d/1PHVv5L6tf0aZxGBe03qdmbyn4Hcb2RM2lkL6T6ADREI/edit#slide=id.g228ed7c04e1_0_135)
+1. [API Docs](https://docs.google.com/document/d/1p9xU6xDQlhA96rWvjR7AQRDs3OLuAAEXLBefcChBxCc)
+2. [Project report](https://docs.google.com/document/d/1_VMYmIKxV-ouKZ3y6g-upth47BED7S6Sr370QjmmAiU)
+3. [Project slides](https://docs.google.com/presentation/d/1uotMHmufZlSzO2_8AwSi_8_G5PUdfa7DnOEs2CoL66I)
 
 # Table of Contents
 
@@ -45,7 +45,9 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 
 <p align="center"><strong>Databases</strong></p>
 <p align="center">
-<a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;<a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;<a href="https://www.postgresql.org/" ><img src="https://marketplace.workiva.com/sites/marketplace/files/images/logos/postgre-sql-logo-16-7-en.svg" alt="PostgreSQL" height="40"/></a>&nbsp;&nbsp;<a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" alt="PostgreSQL" width="88"/></a>&nbsp;&nbsp;<a href="https://redis.com/"><img src="https://redis.com/wp-content/themes/wpx/assets/images/logo-redis.svg?auto=webp&quality=85,75&width=120" alt="Redis" width="88"/></a> 
+<a href="https://www.mysql.com/"><img src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" height="40"/></a>&nbsp;&nbsp;<a href="https://firebase.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/firebase/images/lockup.svg" alt="Firebase" width="88"/></a>&nbsp;&nbsp;<a href="https://www.postgresql.org/" ><img src="https://marketplace.workiva.com/sites/marketplace/files/images/logos/postgre-sql-logo-16-7-en.svg" alt="PostgreSQL" height="40"/></a>&nbsp;&nbsp;<a href="https://cloud.google.com/"><img src="https://www.gstatic.com/devrel-devsite/prod/vc7c98be6f4d139e237c3cdaad6a00bb295b070a83e505cb2fa4435daae3d0901/cloud/images/cloud-logo.svg" alt="PostgreSQL" width="88"/></a>&nbsp;&nbsp;<a href="https://redis.com/"><img src="https://redis.com/wp-content/themes/wpx/assets/images/logo-redis.svg?auto=webp&quality=85,75&width=120" alt="Redis" width="88"/></a>
+<br>
+<i>Redis Cache · Redis Locks</i>
 </p>
 <br>
 
@@ -57,9 +59,9 @@ Food wastage is a severe problem in Singapore, and the amount of food waste has 
 
 <p align="center"><strong>Others</strong></p>
 <p align="center">
-<a href="https://stripe.com/en-gb-sg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1280px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe Payment API" width="88"/></a>&nbsp;&nbsp;<a href="https://kubernetes.io/"><img src="https://gcloud.devoteam.com/wp-content/uploads/sites/32/2021/10/kubernetes-logo-1-1.svg" alt="Kubernetes" height="44"/></a>&nbsp;&nbsp;<a href="https://www.docker.com/"><img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" alt="Docker" width="88"/></a>
+<a href="https://stripe.com/en-gb-sg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1280px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe Payment API" width="88"/></a>&nbsp;&nbsp;<a href="https://kubernetes.io/"><img src="https://gcloud.devoteam.com/wp-content/uploads/sites/32/2021/10/kubernetes-logo-1-1.svg" alt="Kubernetes" height="44"/></a>&nbsp;&nbsp;<a href="https://argoproj.github.io/cd/"><img src="https://cncf-branding.netlify.app/img/projects/argo/stacked/color/argo-stacked-color.png" alt="ArgoCD" height="50"/></a>&nbsp;&nbsp;<a href="https://docs.pytest.org"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Pytest_logo.svg" alt="PyTest" height="50"/></a>&nbsp;&nbsp;<a href="https://www.docker.com/"><img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" alt="Docker" width="88"/></a>
 <br>
-<i>Firebase Cloud Messaging · Docker Compose · GCP Google Kubernetes Engine · GCP Artifact Registry</i>
+<i>Docker Compose · Firebase Cloud Messaging · GCP Google Kubernetes Engine · GCP Artifact Registry</i>
 </p>
 <br>
 
@@ -83,7 +85,7 @@ Refer to [mobile](mobile/README.md) for more details.
 
 ### Set-up Backend Services
 
-Our backend services are deployed at http://gobbler.world.
+Our backend services are deployed at https://gobbler.world.
 Refer to [backend](backend/README.md) for more details.
 
 # Contributors
