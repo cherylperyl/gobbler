@@ -1,0 +1,80 @@
+version: "3.9"
+
+volumes:
+  reservation-mysql-data:
+    driver: local
+  reservation-mysql-logs:
+    driver: local
+
+networks:
+  gobbler-net:
+    driver: bridge
+
+services:
+  reservation-mysql:
+    platform: linux/amd64
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    image: dev/gobbler/reservation-mysql:latest
+    container_name: reservation-mysql
+    restart: always
+    ports:
+      - "5004:3306"
+    networks:
+      - gobbler-net
+    environment:
+      DATABASE: reservations
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - reservation-mysql-data:/var/lib/mysql
+      - reservation-mysql-logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DATABASE_USER}",
+          "-p${DATABASE_PASSWORD}",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  reservation-simple-ms:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dev/gobbler/reservation-simple-ms:latest
+    container_name: reservation-simple-ms
+    restart: always
+    networks:
+      - gobbler-net
+    environment:
+      DB_SERVER: reservation-mysql
+      DB_PORT: 3306
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE: reservations
+      RESERVATION_REDIS_SERVER: reservation-redis
+      RESERVATION_REDIS_PORT: 6379
+    ports:
+      - "5003:80"
+    depends_on:
+      reservation-mysql:
+        condition: service_healthy
+
+  reservation-redis:
+      platform: linux/amd64
+      image: redis
+      container_name: "reservation-redis"
+      restart: always
+      networks:
+        - gobbler-net
+      ports:
+        - "6379:6379"
