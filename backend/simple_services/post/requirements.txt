@@ -10,3 +10,4 @@ SQLAlchemy-Utils==0.39.0
 strawberry-graphql==0.159.0
 uvicorn==0.20.0
 
+starlette>=0.27.0 # not directly required, pinned by Snyk to avoid a vulnerability
